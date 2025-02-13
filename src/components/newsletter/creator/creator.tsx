@@ -8,6 +8,7 @@ import { Search, Loader, ArrowUpNarrowWide } from "lucide-react";
 
 import Events from "./events";
 import Prompt from "./prompt";
+import { PlateEditor } from "@/components/editor/plate-editor";
 
 const Creator = () => {
   const [message, setMessage] = useState("");
@@ -78,13 +79,13 @@ const Creator = () => {
   }
 
   return (
-    <div className="flex flex-col gap-4 h-full">
+    <div className="flex flex-col gap-4 h-full w-full">
       <div className="font-extrabold text-3xl mb-8">Newsletter</div>
-      <div className="flex flex-row h-full gap-2">
+      <div className="flex flex-row h-full gap-2 w-2/3 ">
         <div
-          onMouseUp={() =>
-            setSelectedText(window.getSelection()?.toString().trim() || "")
-          }
+          // onMouseUp={() =>
+          //   setSelectedText(window.getSelection()?.toString().trim() || "")
+          // }
           className="flex flex-col bg-black/5 p-4 rounded-md border border-black/20 w-full gap-4 h-full"
         >
           {/* <Textarea
@@ -92,8 +93,10 @@ const Creator = () => {
             onChange={(e) => setMessage(e.target.value)}
             className="resize-none border-black/20 bg-white h-full"
           /> */}
-          <TypingEffect message={message} setMessage={setMessage} />
-          <Prompt text={prompt} />
+          {/* <TypingEffect message={message} setMessage={setMessage} /> */}
+
+          <PlateEditor />
+          {/* <Prompt text={prompt} />
           <div className="relative">
             <Input
               placeholder="write your prompt here"
@@ -110,11 +113,11 @@ const Creator = () => {
             >
               {loading ? <Loader className="animate-spin" /> : <Search />}
             </Button>
-          </div>
+          </div> */}
         </div>
         <Events />
       </div>
-      {selectedText && (
+      {/* {selectedText && (
         <div className="flex flex-col bg-yellow-100 p-2 rounded-md mt-2 text-sm">
           <strong>Selected Text:</strong> {selectedText}
           <div className="flex gap-1 mt-2">
@@ -138,7 +141,7 @@ const Creator = () => {
             </Button>
           </div>
         </div>
-      )}
+      )} */}
     </div>
   );
 };
