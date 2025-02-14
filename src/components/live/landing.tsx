@@ -6,7 +6,7 @@ import Background from "@/public/ucr_background.png";
 const Landing = () => {
   return (
     <div className="flex h-[780px] w-full justify-center text-white">
-      <div className="absolute h-full w-full">
+      <div className="absolute h-full w-full motion-preset-blur-down motion-duration-1500">
         <Image
           className="h-full object-cover"
           src={Background}
