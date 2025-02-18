@@ -42,13 +42,13 @@ export async function POST(req: NextRequest) {
           role: "system",
           content: system,
         },
-        { role: "user", content: JSON.stringify(prompt) },
+        { role: "user", content: prompt },
       ],
     });
 
     console.log(response);
 
-    return NextResponse.json(response);
+    return NextResponse.json(response.message);
   } catch (error: any) {
     if (error.name === "AbortError") {
       return NextResponse.json(null, { status: 408 });
