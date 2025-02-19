@@ -5,6 +5,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Search, Loader, ArrowUpNarrowWide } from "lucide-react";
+import { EventType } from "@/types/event";
 
 import Events from "./events";
 import Prompt from "./prompt";
@@ -19,24 +20,27 @@ const Creator = () => {
   const [loading, setIsLoading] = useState(false);
   const [loadingSelected, setLoadingSelected] = useState(false);
 
+  const [allEvents, setEvents] = useState<EventType[]>([]);
+  console.log(allEvents);
   console.log("text selected", selectedText);
   console.log(message);
 
-  const generateAI = async (customPrompt: string, isSelected = false) => {
-    // const prompt = {
-    //   name: "Christmas Food Drive at LA",
-    //   location: "Los Angeles, CA",
-    //   description:
-    //     "This Christmas, the spirit of giving is alive and well in Los Angeles...",
-    //   date: "Dec. 25, 2024",
-    // };
+  const formattedEvents = allEvents
+    .map(
+      (event, index) =>
+        `Event ${index + 1}: ${event.name}, ${event.description}, at ${event.location} on ${event.date}`,
+    )
+    .join("\n");
 
+  console.log(formattedEvents);
+
+  const generateAI = async (customPrompt: string, isSelected = false) => {
     if (!customPrompt.trim()) return; // prevent empty request
 
     const finalPrompt =
       selectedText && isSelected
         ? `Context: ${selectedText}\nUser Request: ${customPrompt}`
-        : customPrompt;
+        : `${customPrompt}\nEvents: ${formattedEvents}`;
 
     if (isSelected) {
       setLoadingSelected(true);
@@ -71,6 +75,11 @@ const Creator = () => {
         setIsLoading(false);
       } // Re-enable button
     }
+  };
+
+  const handleEventsChange = (updatedEvents: EventType[]) => {
+    console.log("Updated Events List in Parent:", updatedEvents);
+    setEvents(updatedEvents);
   };
 
   if (error) {
@@ -115,7 +124,7 @@ const Creator = () => {
             </Button>
           </div> */}
         </div>
-        <Events />
+        <Events onChange={handleEventsChange} />
       </div>
       {/* {selectedText && (
         <div className="flex flex-col bg-yellow-100 p-2 rounded-md mt-2 text-sm">
@@ -156,21 +165,24 @@ const TypingEffect = ({
   setMessage: (value: string) => void;
 }) => {
   const [index, setIndex] = useState(0);
-  const [isTyping, setIsTyping] = useState(true);
+  const [isTyping, setIsTyping] = useState(false);
+  const prevMessage = useMemo(() => message, []);
 
   useEffect(() => {
-    if (index < message.length) {
-      const timeout = setTimeout(() => setIndex(index + 1), 10);
+    if (message !== prevMessage) {
+      setIndex(0);
+      setIsTyping(true);
+    }
+  }, [message, prevMessage]);
+
+  useEffect(() => {
+    if (isTyping && index < message.length) {
+      const timeout = setTimeout(() => setIndex((i) => i + 1), 10);
       return () => clearTimeout(timeout);
     } else {
       setIsTyping(false);
     }
-  }, [index, message]);
-
-  useEffect(() => {
-    setIndex(0);
-    setIsTyping(true);
-  }, [message]);
+  }, [index, message, isTyping]);
 
   const displayedMessage = useMemo(
     () => message.slice(0, index),
@@ -180,7 +192,11 @@ const TypingEffect = ({
   return (
     <Textarea
       value={isTyping ? displayedMessage : message}
-      onChange={(e) => setMessage(e.target.value)}
+      onChange={(e) => {
+        setMessage(e.target.value);
+        setIsTyping(false);
+        setIndex(e.target.value.length);
+      }}
       className="resize-none border-black/20 bg-white h-full"
     />
   );
