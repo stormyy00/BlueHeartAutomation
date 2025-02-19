@@ -1,5 +1,5 @@
 import { createOrg, getOrg } from "@/utils/repository/orgRepository";
-import { getUser } from "@/utils/repository/userRepository";
+import { getUser, updateUser } from "@/utils/repository/userRepository";
 import { auth, clerkClient } from "@clerk/nextjs/server";
 import { NextRequest, NextResponse } from "next/server";
 import { Organization, User } from "shared";
@@ -72,6 +72,7 @@ export const POST = async (request: NextRequest) => {
   const result = await createOrg(data);
   const metadata = user.publicMetadata as User;
   metadata.orgId = data.id;
+  await updateUser(metadata);
 
   return NextResponse.json(
     { message: result ?? "This organization already exists." },

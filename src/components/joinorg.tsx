@@ -6,11 +6,22 @@ import { useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Organization } from "shared";
 import { Bounce, toast } from "react-toastify";
+import { useUser } from "@clerk/nextjs";
+import { useRouter } from "next/navigation";
 
 const OrganizationForm = () => {
+  const router = useRouter();
   const [orgID, setOrgID] = useState("");
   const [orgName, setOrgName] = useState("");
   const [activeTab, setActiveTab] = useState("join");
+
+  const { isLoaded, isSignedIn, user } = useUser();
+
+  if (!isLoaded) return;
+  if (!isSignedIn) {
+    router.push("/register");
+    return;
+  }
 
   const joinOrg = () => {
     fetch(`/api/orgs/${orgID}?data=false`).then((resp) => {
@@ -57,7 +68,7 @@ const OrganizationForm = () => {
         name: orgName,
         description: "Your organization's description goes here.",
         icon: "",
-        website: "http://yourwebsite.tld",
+        links: [{ name: "Home", url: "http://yourwebsite.tld" }],
         donors: [],
         media: [],
         newsletters: [],
@@ -65,6 +76,7 @@ const OrganizationForm = () => {
         themes: [],
         users: [],
         region: "US",
+        owner: user.publicMetadata.id,
       } as Organization),
       method: "POST",
       headers: {

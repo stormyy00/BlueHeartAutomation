@@ -11,11 +11,16 @@ export type User = {
   orgId: string;
 };
 
+export type Link = {
+  name: string;
+  url: string;
+};
+
 export type Organization = {
   id: string;
   name: string;
   description: string;
-  website: string;
+  owner: string;
   icon: string;
   media: string[];
   newsletters: string[];
@@ -23,6 +28,7 @@ export type Organization = {
   notes: string[];
   users: string[];
   donors: string[];
+  links: Link[];
   region: Region;
 };
 

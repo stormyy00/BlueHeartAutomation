@@ -36,20 +36,31 @@ export const GET = async (request: NextRequest, { params }: Params) => {
     dataRequested = false;
   }
 
-  if (dataRequested && result.role.toLowerCase() != "administrator") {
+  const org = await getOrg(params.orgId);
+  if (!org) {
+    return NextResponse.json(
+      {
+        message: "This organization does not exist.",
+      },
+      { status: 400 },
+    );
+  }
+
+  console.log(org.owner, org.users, result.id);
+  if (
+    dataRequested &&
+    org.owner != result.id &&
+    !org.users.includes(result.id) &&
+    result.role.toLowerCase() != "administrator"
+  ) {
     return NextResponse.json(
       { message: "You are not authorized to access another Group's data." },
       { status: 401 },
     );
   }
 
-  const org = await getOrg(params.orgId);
   return NextResponse.json(
-    {
-      message: dataRequested
-        ? (org ?? "This organization does not exist.")
-        : org != undefined,
-    },
-    { status: result ? 200 : 400 },
+    { message: dataRequested ? org : org != undefined },
+    { status: org != undefined ? 200 : 400 },
   );
 };

@@ -5,14 +5,33 @@ import Image from "next/image";
 import { GLAZE } from "@/data/mockDashboard";
 import { X } from "lucide-react";
 import OrgHeader from "./org-header";
+import { useQuery } from "@tanstack/react-query";
+import { useParams, useRouter } from "next/navigation";
 
 const Dashboard = () => {
+  const router = useRouter();
+  const { orgId } = useParams();
   const [collapse, setCollapse] = useState(true);
+  const orgQuery = useQuery({
+    queryKey: ["my-org"],
+    queryFn: async () => {
+      const resp = await fetch(`/api/orgs/${orgId}`);
+      return {
+        status: resp.status,
+        data: (await resp.json())["message"],
+      };
+    },
+  });
+  if (!orgQuery.data) return;
+  if (orgQuery.data.status == 400) {
+    router.push("/user");
+    return;
+  }
 
   return (
     <div className="flex w-full justify-center">
       <div className="flex flex-col items-center w-10/12 m-10 gap-8">
-        <OrgHeader editable={false} />
+        <OrgHeader editable={false} org={orgQuery.data.data} />
         {collapse ? (
           <div className="relative flex w-full border-2 border-black gap-4 px-6 py-1">
             <button

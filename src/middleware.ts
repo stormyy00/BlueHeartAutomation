@@ -1,5 +1,10 @@
-import { clerkMiddleware, createRouteMatcher } from "@clerk/nextjs/server";
+import {
+  clerkClient,
+  clerkMiddleware,
+  createRouteMatcher,
+} from "@clerk/nextjs/server";
 import { NextResponse } from "next/server";
+import { User } from "shared";
 
 const isProtectedRoute = createRouteMatcher(["/admin(.*)"]);
 
@@ -19,18 +24,15 @@ export default clerkMiddleware(async (auth, req) => {
   }
   const path = req.nextUrl.pathname;
 
-  //TODO: check if they have an org, if not, redirect to /user
-
-  // If they just go to /orgs
-  if (path === "/orgs") {
-    //TODO: Get their org here, temporarily just put test
-    return NextResponse.redirect(new URL("/orgs/test", req.url));
+  const clerk = await clerkClient();
+  const user = await clerk.users.getUser((await auth()).userId!);
+  const metadata = user.publicMetadata as User;
+  if (!metadata.orgId || metadata.orgId === "") {
+    return NextResponse.redirect(new URL("/user", req.url));
   }
-  // If they go to /orgs/@mine, redirect them to /orgs/<their org id>
-  if (path.startsWith("/orgs/@mine")) {
-    //TODO: Get their org here, temporarily just put test
+  if (path === "/orgs" || path.startsWith("/orgs/@mine")) {
     return NextResponse.redirect(
-      new URL(path.replace("@mine", "test"), req.url),
+      new URL(path.replace("@mine", metadata.orgId), req.url),
     );
   }
 });
