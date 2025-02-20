@@ -245,7 +245,8 @@ div.code-toolbar > .toolbar.toolbar > .toolbar-item > a:hover,
 div.code-toolbar > .toolbar.toolbar > .toolbar-item > a:focus,
 div.code-toolbar > .toolbar.toolbar > .toolbar-item > span:hover,
 div.code-toolbar > .toolbar.toolbar > .toolbar-item > span:focus {
-  background: hsl(230, 1%, 78%); /* custom: darken(--syntax-bg, 20%) */
+  background: hsl(230, 1%, 78%);
+  /* custom: darken(--syntax-bg, 20%) */
   color: hsl(230, 8%, 24%);
 }
 
@@ -262,7 +263,8 @@ div.code-toolbar > .toolbar.toolbar > .toolbar-item > span:focus {
   color: hsl(230, 8%, 24%);
   padding: 0.1em 0.6em;
   border-radius: 0.3em;
-  box-shadow: 0 2px 0 0 rgba(0, 0, 0, 0.2); /* same as Toolbar plugin default */
+  box-shadow: 0 2px 0 0 rgba(0, 0, 0, 0.2);
+  /* same as Toolbar plugin default */
 }
 
 /* Hovering over a linkable line number (in the gutter area) */
