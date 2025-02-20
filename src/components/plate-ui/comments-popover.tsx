@@ -33,7 +33,6 @@ export function CommentsPopoverContent(props: FloatingCommentsContentProps) {
       key={activeCommentId}
       scope={SCOPE_ACTIVE_COMMENT}
     >
-      // @ts-ignore
       <div
         ref={ref as unknown as React.RefObject<HTMLDivElement>}
         className={cn(popoverVariants(), "relative w-[310px]")}

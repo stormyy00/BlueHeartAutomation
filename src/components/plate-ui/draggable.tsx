@@ -148,7 +148,10 @@ export const Draggable = withRef<"div", PlateRenderElementProps>(
           </Gutter>
         )}
 
-        <div ref={previewRef} className="slate-blockWrapper">
+        <div
+          ref={previewRef as unknown as React.RefObject<HTMLDivElement>}
+          className="slate-blockWrapper"
+        >
           <MemoizedChildren>{children}</MemoizedChildren>
 
           <DropLine />
