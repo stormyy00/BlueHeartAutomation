@@ -102,7 +102,6 @@ export default {
           ...require("tailwindcss/defaultTheme").fontFamily.mono,
         ],
         sans: [
-          "var(--font-sans)",
           "ui-sans-serif",
           "-apple-system",
           "BlinkMacSystemFont",
