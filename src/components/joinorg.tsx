@@ -4,7 +4,7 @@ import { Button } from "./ui/button";
 // import Image from "next/image";
 import { useState } from "react";
 import { Input } from "@/components/ui/input";
-import { Organization } from "shared";
+import { Organization } from "@/data/types";
 import { Bounce, toast } from "react-toastify";
 import { useSession } from "next-auth/react";
 

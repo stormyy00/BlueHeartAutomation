@@ -3,7 +3,7 @@ import { getServerSession } from "next-auth";
 import { headers } from "next/headers";
 import SignIn from "./auth/redirect";
 import { options } from "@/utils/auth";
-import { Role } from "shared";
+import { Role } from "@/data/types";
 import { redirect } from "next/navigation";
 const ProtectedPage = async ({
   children,

@@ -1,9 +1,9 @@
+import { Organization } from "@/data/types";
 import { options } from "@/utils/auth";
 import { createOrg, getOrg } from "@/utils/repository/orgRepository";
 import { getUser, updateUser } from "@/utils/repository/userRepository";
 import { getServerSession } from "next-auth";
 import { NextRequest, NextResponse } from "next/server";
-import { Organization } from "shared";
 
 type Props = Organization;
 

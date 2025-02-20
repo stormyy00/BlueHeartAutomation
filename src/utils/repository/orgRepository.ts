@@ -1,3 +1,4 @@
+import { Organization } from "@/data/types";
 import {
   collection,
   doc,
@@ -8,7 +9,6 @@ import {
   updateDoc,
   where,
 } from "firebase/firestore";
-import { Organization } from "shared";
 import { db } from "../firebase";
 
 export const getOrg = async (

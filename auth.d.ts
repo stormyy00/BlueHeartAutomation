@@ -1,5 +1,5 @@
+import { Role } from "@/data/types";
 import "next-auth";
-import { Role } from "shared";
 declare module "next-auth" {
   export interface User {
     uuid: string;

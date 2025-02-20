@@ -6,7 +6,7 @@ import { Link2, Pencil } from "lucide-react";
 import { useState } from "react";
 import { Input } from "./ui/input";
 import { Button } from "./ui/button";
-import { Organization } from "shared";
+import { Organization } from "@/data/types";
 
 type props = {
   editable: boolean;
