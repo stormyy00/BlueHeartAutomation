@@ -12,7 +12,11 @@ const Dashboard = () => {
   const router = useRouter();
   const { orgId } = useParams();
   const [collapse, setCollapse] = useState(true);
-  const orgQuery = useQuery({
+  const {
+    isLoading,
+    isFetching,
+    data: orgQuery,
+  } = useQuery({
     queryKey: ["my-org"],
     queryFn: async () => {
       const resp = await fetch(`/api/orgs/${orgId}`);
@@ -22,16 +26,18 @@ const Dashboard = () => {
       };
     },
   });
-  if (!orgQuery.data) return;
+  if (isLoading || isFetching || !orgQuery) return;
   if (orgQuery.data.status == 400) {
     router.push("/user");
     return;
   }
 
+  console.log(orgQuery.data);
+
   return (
     <div className="flex w-full justify-center">
       <div className="flex flex-col items-center w-10/12 m-10 gap-8">
-        <OrgHeader editable={false} org={orgQuery.data.data} />
+        <OrgHeader editable={false} org={orgQuery.data} />
         {collapse ? (
           <div className="relative flex w-full border-2 border-black gap-4 px-6 py-1">
             <button

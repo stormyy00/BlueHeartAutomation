@@ -2,20 +2,25 @@
 
 import { ToastContainer } from "react-toastify";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { SessionProvider } from "next-auth/react";
+import { Session } from "next-auth";
 
 type Props = {
   children: React.ReactNode;
+  session: Session | null;
 };
 
 const queryClient = new QueryClient();
 
-const ClientProviders = ({ children }: Props) => {
+const Providers = ({ children, session }: Props) => {
   return (
-    <QueryClientProvider client={queryClient}>
-      <ToastContainer />
-      {children}
-    </QueryClientProvider>
+    <SessionProvider session={session}>
+      <QueryClientProvider client={queryClient}>
+        <ToastContainer />
+        {children}
+      </QueryClientProvider>
+    </SessionProvider>
   );
 };
 
-export default ClientProviders;
+export default Providers;

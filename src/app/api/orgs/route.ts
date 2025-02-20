@@ -1,20 +1,21 @@
+import { options } from "@/utils/auth";
 import { createOrg, getOrg } from "@/utils/repository/orgRepository";
 import { getUser, updateUser } from "@/utils/repository/userRepository";
-import { auth, clerkClient } from "@clerk/nextjs/server";
+import { getServerSession } from "next-auth";
 import { NextRequest, NextResponse } from "next/server";
-import { Organization, User } from "shared";
+import { Organization } from "shared";
 
 type Props = Organization;
 
 export const GET = async () => {
-  const { userId } = await auth();
-  if (!userId) {
+  const session = await getServerSession(options);
+  if (!session) {
     return NextResponse.json(
       { message: "You are not authorized to access the Groups API." },
       { status: 403 },
     );
   }
-  const result = await getUser(userId);
+  const result = await getUser(session.user.id);
   if (!result) {
     return NextResponse.json(
       {
@@ -32,29 +33,18 @@ export const GET = async () => {
 };
 
 export const POST = async (request: NextRequest) => {
-  const { userId } = await auth();
-  if (!userId) {
+  const session = await getServerSession(options);
+  if (!session) {
     return NextResponse.json(
       { message: "You are not authorized to access the Groups API." },
       { status: 403 },
-    );
-  }
-  const clerk = await clerkClient();
-  const user = await clerk.users.getUser(userId);
-  if (!user) {
-    return NextResponse.json(
-      {
-        message:
-          "Something went wrong retrieving your user data. Please try again later.",
-      },
-      { status: 400 },
     );
   }
   if (
     request.headers.get("Content-Type")?.toLowerCase() != "application/json"
   ) {
     return NextResponse.json(
-      { message: "Please provide a group data." },
+      { message: "Please provide group data." },
       { status: 400 },
     );
   }
@@ -70,9 +60,10 @@ export const POST = async (request: NextRequest) => {
   }
 
   const result = await createOrg(data);
-  const metadata = user.publicMetadata as User;
-  metadata.orgId = data.id;
-  await updateUser(metadata);
+  await updateUser({
+    ...session.user,
+    orgId: data.id,
+  });
 
   return NextResponse.json(
     { message: result ?? "This organization already exists." },

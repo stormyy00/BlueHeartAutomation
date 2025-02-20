@@ -1,6 +1,6 @@
+import { options } from "@/utils/auth";
 import { getOrg } from "@/utils/repository/orgRepository";
-import { getUser } from "@/utils/repository/userRepository";
-import { auth } from "@clerk/nextjs/server";
+import { getServerSession } from "next-auth";
 import { NextRequest, NextResponse } from "next/server";
 
 type Params = {
@@ -10,21 +10,11 @@ type Params = {
 };
 
 export const GET = async (request: NextRequest, { params }: Params) => {
-  const { userId } = await auth();
-  if (!userId) {
+  const session = await getServerSession(options);
+  if (!session) {
     return NextResponse.json(
       { message: "You are not authorized to access the Groups API." },
       { status: 403 },
-    );
-  }
-  const result = await getUser(userId);
-  if (!result) {
-    return NextResponse.json(
-      {
-        message:
-          "Something went wrong retrieving your user data. Please try again later.",
-      },
-      { status: 400 },
     );
   }
 
@@ -46,12 +36,11 @@ export const GET = async (request: NextRequest, { params }: Params) => {
     );
   }
 
-  console.log(org.owner, org.users, result.id);
   if (
     dataRequested &&
-    org.owner != result.id &&
-    !org.users.includes(result.id) &&
-    result.role.toLowerCase() != "administrator"
+    org.owner != session.user.uuid &&
+    !org.users.includes(session.user.uuid) &&
+    session.user.role.toLowerCase() != "administrator"
   ) {
     return NextResponse.json(
       { message: "You are not authorized to access another Group's data." },

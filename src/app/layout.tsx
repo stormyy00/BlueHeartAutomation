@@ -1,8 +1,9 @@
 import type { Metadata } from "next";
 import localFont from "next/font/local";
-import { ClerkProvider } from "@clerk/nextjs";
 import "./globals.css";
-import ClientProviders from "@/components/providers";
+import Providers from "@/components/providers";
+import { getServerSession } from "next-auth";
+import { options } from "@/utils/auth";
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
@@ -26,21 +27,20 @@ export default async function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const session = await getServerSession(options);
   return (
-    <ClerkProvider>
-      <html lang="en">
-        <head>
-          {/* <script
+    <html lang="en">
+      <head>
+        {/* <script
             src="https://unpkg.com/react-scan/dist/auto.global.js"
             async
           /> */}
-        </head>
-        <body
-          className={`${geistSans.variable} ${geistMono.variable} antialiased`}
-        >
-          <ClientProviders>{children}</ClientProviders>
-        </body>
-      </html>
-    </ClerkProvider>
+      </head>
+      <body
+        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+      >
+        <Providers session={session}>{children}</Providers>
+      </body>
+    </html>
   );
 }
