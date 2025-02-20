@@ -101,6 +101,7 @@
     "react-resizable-panels": "^2.1.7",
     "react-textarea-autosize": "^8.5.7",
     "react-tweet": "^3.2.1",
+    "shadcn": "^2.3.0",
     "shared": "file:shared",
     "sonner": "^1.7.4",
     "tailwind-merge": "^2.6.0",

@@ -7,20 +7,8 @@ import { createOllama } from "ollama-ai-provider";
 const ollama = createOllama();
 
 export async function POST(req: NextRequest) {
-  // console.log(await req.json())
   const { prompt, system } = await req.json();
   console.log(prompt, system);
-
-  // const apiKey = key || process.env.OPENAI_API_KEY;
-
-  // if (!apiKey) {
-  //   return NextResponse.json(
-  //     { error: "Missing OpenAI API key." },
-  //     { status: 401 },
-  //   );
-  // }
-
-  // const openai = createOpenAI({ apiKey });
 
   try {
     const result = await generateText({
@@ -30,18 +18,14 @@ export async function POST(req: NextRequest) {
       system,
       temperature: 0.7,
     });
+    const sanitizedText = result.text?.replace(/<think>[\s\S]*?<\/think>/g, "");
 
-    // const response = await ollama.chat({
-    //   model: "llama3.2",
-    //   messages: [
-    //     {
-    //       role: "system",
-    //       content: system,
-    //     },
-    //     { role: "user", content: prompt },
-    //   ],
-    // });
-    return NextResponse.json(result);
+    // Spread the rest of the fields in rawResult, override text
+    const sanitizedResult = {
+      ...result,
+      text: sanitizedText,
+    };
+    return NextResponse.json(sanitizedResult);
   } catch (error: any) {
     console.log("error", error);
     if (error.name === "AbortError") {
