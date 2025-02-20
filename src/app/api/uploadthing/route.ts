@@ -6,11 +6,20 @@ const f = createUploadthing();
 
 const ourFileRouter = {
   editorUploader: f(["image", "text", "blob", "pdf", "video", "audio"])
-    .middleware(() => {
-      return {};
+    .middleware((): Record<string, never> => {
+      return {}; // Explicitly typed empty object
     })
     .onUploadComplete(({ file }) => {
-      return { file };
+      console.log("Upload complete:", file);
+
+      return {
+        name: file.name,
+        size: file.size,
+        type: file.type,
+        key: file.key,
+        customId: file.customId,
+        url: file.url,
+      };
     }),
 } satisfies FileRouter;
 
