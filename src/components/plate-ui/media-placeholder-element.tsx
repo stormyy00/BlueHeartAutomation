@@ -218,7 +218,7 @@ export function ImageProgress({
   return (
     <div className={cn("relative", className)} contentEditable={false}>
       <img
-        ref={imageRef}
+        ref={imageRef as unknown as React.RefObject<HTMLImageElement>}
         className="h-auto w-full rounded-sm object-cover"
         alt={file.name}
         src={objectUrl}
