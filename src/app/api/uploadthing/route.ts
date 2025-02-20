@@ -12,13 +12,14 @@ const ourFileRouter = {
     .onUploadComplete(({ file }) => {
       console.log("Upload complete:", file);
 
+      // Ensure file is JSON serializable
       return {
         name: file.name,
         size: file.size,
         type: file.type,
         key: file.key,
         customId: file.customId,
-        url: file.url,
+        url: file.url, // Assuming `url` is part of the file object
       };
     }),
 } satisfies FileRouter;
