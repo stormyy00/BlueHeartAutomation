@@ -1,18 +1,14 @@
+import { generateText } from "ai";
 import type { NextRequest } from "next/server";
 
 // import { createOpenAI } from "@ai-sdk/openai";
-import { generateText } from "ai";
 import { NextResponse } from "next/server";
-
-import ollama from "ollama";
+import { createOllama } from "ollama-ai-provider";
+const ollama = createOllama();
 
 export async function POST(req: NextRequest) {
-  const {
-    // apiKey: key,
-    model = "llama3.2",
-    prompt,
-    system,
-  } = await req.json();
+  // console.log(await req.json())
+  const { prompt, system } = await req.json();
   console.log(prompt, system);
 
   // const apiKey = key || process.env.OPENAI_API_KEY;
@@ -27,29 +23,27 @@ export async function POST(req: NextRequest) {
   // const openai = createOpenAI({ apiKey });
 
   try {
-    // const result = await generateText({
-    //   abortSignal: req.signal,
-    //   model: model,
-    //   prompt: prompt,
-    //   system,
-    //   temperature: 0.7,
-    // });
-
-    const response = await ollama.chat({
-      model: model,
-      messages: [
-        {
-          role: "system",
-          content: system,
-        },
-        { role: "user", content: prompt },
-      ],
+    const result = await generateText({
+      abortSignal: req.signal,
+      model: ollama("llama3.2"),
+      prompt: prompt,
+      system,
+      temperature: 0.7,
     });
 
-    console.log(response);
-
-    return NextResponse.json(response.message);
+    // const response = await ollama.chat({
+    //   model: "llama3.2",
+    //   messages: [
+    //     {
+    //       role: "system",
+    //       content: system,
+    //     },
+    //     { role: "user", content: prompt },
+    //   ],
+    // });
+    return NextResponse.json(result);
   } catch (error: any) {
+    console.log("error", error);
     if (error.name === "AbortError") {
       return NextResponse.json(null, { status: 408 });
     }

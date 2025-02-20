@@ -3,9 +3,11 @@ import type { NextRequest } from "next/server";
 // import { createOpenAI } from "@ai-sdk/openai";
 import { convertToCoreMessages, streamText } from "ai";
 import { NextResponse } from "next/server";
-import ollama from "ollama";
+import { createOllama } from "ollama-ai-provider";
+const ollama = createOllama();
 
 export async function POST(req: NextRequest) {
+  console.log(req);
   const {
     // apiKey: key,
     messages,
@@ -30,7 +32,7 @@ export async function POST(req: NextRequest) {
     const result = await streamText({
       maxTokens: 2048,
       messages: convertToCoreMessages(messages),
-      model: model,
+      model: ollama(model),
       system: system,
     });
 
@@ -47,22 +49,22 @@ export async function POST(req: NextRequest) {
     // });
     console.log(result);
 
-    const response = await ollama.chat({
-      model: "llama3.2",
-      messages: [
-        {
-          role: "system",
-          content: system,
-        },
-        { role: "user", content: JSON.stringify(messages) },
-      ],
-    });
-    console.log(response.message.content);
+    // const response = await ollama.chat({
+    //   model: "llama3.2",
+    //   messages: [
+    //     {
+    //       role: "system",
+    //       content: system,
+    //     },
+    //     { role: "user", content: JSON.stringify(messages) },
+    //   ],
+    // });
+    // console.log(response.message.content);
 
-    console.log("test", response.message);
-    const content = response.message.content;
+    // const content = response.message.content;
+    // console.log("response:", content)
 
-    return NextResponse.json(result);
+    return result.toDataStreamResponse();
   } catch {
     return NextResponse.json(
       { error: "Failed to process AI request" },
