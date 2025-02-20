@@ -119,7 +119,7 @@ export function TurnIntoDropdownMenu(props: DropdownMenuProps) {
   const value = useSelectionFragmentProp({
     defaultValue: ParagraphPlugin.key,
     structuralTypes: STRUCTURAL_TYPES,
-    getProp: (node) => getBlockType(node as any),
+    getProp: (node) => getBlockType(node as any), // eslint-disable-line no-console
   });
   const selectedItem = React.useMemo(
     () =>

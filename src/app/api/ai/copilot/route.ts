@@ -26,9 +26,9 @@ export async function POST(req: NextRequest) {
       text: sanitizedText,
     };
     return NextResponse.json(sanitizedResult);
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.log("error", error);
-    if (error.name === "AbortError") {
+    if (error instanceof Error && error.name === "AbortError") {
       return NextResponse.json(null, { status: 408 });
     }
 

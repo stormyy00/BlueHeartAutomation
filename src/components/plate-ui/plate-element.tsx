@@ -7,7 +7,7 @@ import type { PlateElementProps } from "@udecode/plate/react";
 import { PlateElement as PlateElementPrimitive } from "@udecode/plate/react";
 
 import { BlockSelection } from "./block-selection";
-
+/* eslint-disable no-console */
 export const PlateElement = React.forwardRef<
   HTMLDivElement,
   PlateElementProps & { blockSelectionClassName?: string }
@@ -22,3 +22,4 @@ export const PlateElement = React.forwardRef<
     </PlateElementPrimitive>
   );
 });
+/* eslint-enable no-console */

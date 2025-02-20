@@ -14,7 +14,7 @@ import {
 import { cva } from "class-variance-authority";
 
 const editorContainerVariants = cva(
-  "relative w-full cursor-text overflow-y-hidden caret-primary select-text selection:bg-brand/25 focus-visible:outline-none [&_.slate-selection-area]:z-50 [&_.slate-selection-area]:border [&_.slate-selection-area]:border-brand/25 [&_.slate-selection-area]:bg-brand/15",
+  "relative w-full bg-white cursor-text overflow-y-hidden caret-primary select-text selection:bg-blue-100 focus-visible:outline-none [&_.slate-selection-area]:z-50 [&_.slate-selection-area]:border [&_.slate-selection-area]:border-blue-200/25 [&_.slate-selection-area]:bg-blue-400/15",
   {
     defaultVariants: {
       variant: "default",

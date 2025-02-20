@@ -2,7 +2,7 @@
 
 import type { TElement } from "@udecode/plate";
 
-import { faker } from "@faker-js/faker";
+// import { faker } from "@faker-js/faker";
 import { CopilotPlugin } from "@udecode/plate-ai/react";
 import { serializeMdNodes, stripMarkdown } from "@udecode/plate-markdown";
 

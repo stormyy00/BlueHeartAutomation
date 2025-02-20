@@ -1,10 +1,10 @@
 "use client";
 
-import emojiMartData from "@emoji-mart/data";
+// import emojiMartData from "@emoji-mart/data";
 import { CalloutPlugin } from "@udecode/plate-callout/react";
 import { DatePlugin } from "@udecode/plate-date/react";
 import { DocxPlugin } from "@udecode/plate-docx";
-import { EmojiPlugin } from "@udecode/plate-emoji/react";
+// import { EmojiPlugin } from "@udecode/plate-emoji/react";
 import {
   FontBackgroundColorPlugin,
   FontColorPlugin,
@@ -32,16 +32,16 @@ import { commentsPlugin } from "./comments-plugin";
 import { cursorOverlayPlugin } from "./cursor-overlay-plugin";
 import { deletePlugins } from "./delete-plugins";
 import { dndPlugins } from "./dnd-plugins";
-import { equationPlugins } from "./equation-plugins";
+// import { equationPlugins } from "./equation-plugins";
 import { exitBreakPlugin } from "./exit-break-plugin";
 import { indentListPlugins } from "./indent-list-plugins";
 import { lineHeightPlugin } from "./line-height-plugin";
 import { linkPlugin } from "./link-plugin";
-import { mediaPlugins } from "./media-plugins";
+// import { mediaPlugins } from "./media-plugins";
 import { mentionPlugin } from "./mention-plugin";
 import { resetBlockTypePlugin } from "./reset-block-type-plugin";
 import { softBreakPlugin } from "./soft-break-plugin";
-import { tablePlugin } from "./table-plugin";
+// import { tablePlugin } from "./table-plugin";
 import { tocPlugin } from "./toc-plugin";
 
 export const viewPlugins = [

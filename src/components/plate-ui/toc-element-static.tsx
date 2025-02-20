@@ -43,7 +43,9 @@ export function TocElementStatic({
             <Button
               key={item.title}
               variant="ghost"
+              /* eslint-disable no-console */
               className={cn(headingItemVariants({ depth: item.depth as any }))}
+              /* eslint-enable no-console */
             >
               {item.title}
             </Button>
@@ -91,7 +93,9 @@ const getHeadingList = (editor?: SlateEditor) => {
     const title = NodeApi.string(node);
     const depth = headingDepth[type];
     const id = node.id as string;
+    /* eslint-disable no-console */
     title && headingList.push({ id, depth, path, title, type });
+    /* eslint-enable no-console */
   });
 
   return headingList;

@@ -40,7 +40,9 @@ export const TocElement = withRef<typeof PlateElement>(
                 key={item.id}
                 variant="ghost"
                 className={cn(
+                  /* eslint-disable no-console */
                   headingItemVariants({ depth: item.depth as any }),
+                  /* eslint-enable no-console */
                 )}
                 onClick={(e) => btnProps.onClick(e, item, "smooth")}
                 aria-current

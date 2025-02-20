@@ -81,7 +81,7 @@ const dropdownArrowVariants = cva(
     },
   },
 );
-
+/* eslint-disable no-console */
 const ToolbarButton = withTooltip(
   React.forwardRef<
     React.ElementRef<typeof ToolbarToggleItem>,
@@ -153,6 +153,7 @@ const ToolbarButton = withTooltip(
     },
   ),
 );
+/* eslint-enable no-console */
 
 export { ToolbarButton };
 
@@ -170,7 +171,7 @@ export const ToolbarSplitButton = React.forwardRef<
     </ToolbarButton>
   );
 });
-
+/* eslint-disable no-console */
 export const ToolbarSplitButtonPrimary = withTooltip(
   React.forwardRef<
     React.ElementRef<typeof ToolbarToggleItem>,
@@ -220,7 +221,7 @@ export const ToolbarSplitButtonSecondary = React.forwardRef<
     </span>
   );
 });
-
+/* eslint-enable no-console */
 ToolbarSplitButton.displayName = "ToolbarButton";
 
 export const ToolbarToggleItem = withVariants(

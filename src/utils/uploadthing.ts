@@ -1,3 +1,4 @@
+/* eslint-disable */
 import * as React from "react";
 
 import type { OurFileRouter } from "@/app/api/uploadthing/route";

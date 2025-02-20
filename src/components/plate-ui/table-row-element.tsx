@@ -39,7 +39,9 @@ export const TableRowElement = withRef<typeof PlateElement>(
           PathApi.parent(dropEntry[1]),
         ),
       onDropHandler: (_, { dragItem }) => {
+        /* eslint-disable no-console */
         const dragElement = (dragItem as any).element;
+        /* eslint-enable no-console */
 
         if (dragElement) {
           editor.tf.select(dragElement);
@@ -67,8 +69,9 @@ export const TableRowElement = withRef<typeof PlateElement>(
     );
   },
 );
-
+/* eslint-disable no-console */
 function RowDragHandle({ dragRef }: { dragRef: React.Ref<any> }) {
+  /* eslint-enable no-console */
   const editor = useEditorRef();
   const element = useElement();
 

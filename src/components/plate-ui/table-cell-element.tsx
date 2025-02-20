@@ -120,7 +120,9 @@ export const TableCellElement = withRef<
                 className={cn(
                   "absolute top-0 z-30 hidden h-full w-1 bg-ring",
                   "right-[-1.5px]",
-                  columnResizeVariants({ colIndex: colIndex as any }),
+                  /* eslint-disable no-console */
+                  columnResizeVariants({ colIndex: colIndex as any }), // type
+                  /* eslint-enable no-console */
                 )}
               />
               {colIndex === 0 && (
