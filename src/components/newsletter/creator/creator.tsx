@@ -89,7 +89,7 @@ const Creator = () => {
     setIsLoading(false);
 
     try {
-      const res = await fetch("/api/document/", {
+      const res = await fetch("/api/newsletter/", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -122,7 +122,7 @@ const Creator = () => {
       <div className="font-extrabold text-3xl mb-8">Newsletter</div>
       <div className="flex flex-row h-full gap-2 w-2/3 ">
         <div className="flex flex-col bg-black/5 p-4 rounded-md border border-black/20 w-full gap-4 h-full">
-          <PlateEditor onChange={handleChange} />
+          <PlateEditor onChange={handleChange} value={"hello"} />
         </div>
         <Events onChange={handleEventsChange} />
       </div>

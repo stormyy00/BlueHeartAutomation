@@ -12,10 +12,12 @@ import { Editor, EditorContainer } from "@/components/plate-ui/editor";
 
 export function PlateEditor({
   onChange,
+  value,
 }: {
   onChange: (value: string) => void;
+  value: string;
 }) {
-  const editor = useCreateEditor();
+  const editor = useCreateEditor({ value });
 
   return (
     <DndProvider backend={HTML5Backend}>

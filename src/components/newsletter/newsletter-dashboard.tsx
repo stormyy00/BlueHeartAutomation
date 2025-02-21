@@ -45,7 +45,7 @@ const NewsletterDashboard = () => {
   };
 
   useEffect(() => {
-    fetch("/api/document", {
+    fetch("/api/newsletter", {
       method: "GET",
     })
       .then((res) => {
@@ -55,7 +55,7 @@ const NewsletterDashboard = () => {
         return res.json();
       })
       .then((data) => {
-        console.log(data);
+        // console.log(data);
         setNewsletters(data.newsletters);
       })
       .catch((error) => {
