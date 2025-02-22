@@ -6,14 +6,24 @@ type props = {
   title: string;
   id: string;
   handleConfigure: () => void;
+  onClick: () => void;
+  checked: boolean;
 };
-const NewsletterCard = ({ title, id, handleConfigure }: props) => {
+const NewsletterCard = ({
+  title,
+  id,
+  handleConfigure,
+  onClick,
+  checked,
+}: props) => {
   return (
     <div>
       <div className="bg-white rounded-lg  p-4 flex flex-col justify-between h-48 border border-black/20">
         <div className="flex flex-col gap-2">
           <div className="flex flex-row justify-between">
-            <Checkbox />
+            <span onClick={onClick}>
+              <Checkbox checked={checked} />
+            </span>
             <Pen size={16} onClick={handleConfigure} />
           </div>
           <Link href={`newsletter/${id}`} className="text-4xl font-bold">

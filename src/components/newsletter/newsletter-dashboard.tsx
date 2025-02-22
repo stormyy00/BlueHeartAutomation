@@ -1,5 +1,4 @@
 "use client";
-import { Plus, Trash } from "lucide-react";
 import { Input } from "../ui/input";
 import { Label } from "../ui/label";
 import Select from "@/components/global/select";
@@ -15,19 +14,25 @@ import {
 import { useState, ChangeEvent, useEffect } from "react";
 import { QUESTIONS } from "@/data/newsletter/newsletter";
 import { NewsletterType } from "@/types/newsletter";
-import { HTMLInputs } from "@/types/inputs";
 import { AlertDialogAction } from "@radix-ui/react-alert-dialog";
 import { Button } from "../ui/button";
+import NewsletterToolbar from "./newsletter-toolbar";
+import { Loader2 } from "lucide-react";
 
 type props = {
   newsletter: string;
-  newsletterId?: string;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  newsletterId?: string | any;
   id: string;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   handleConfigure: () => void;
 };
 
 const NewsletterDashboard = () => {
   const [newsletters, setNewsletters] = useState<props[]>([]);
+  const [newsletterSearch, setSearch] = useState<props[]>([]);
+  const [checked, setChecked] = useState<{ [key: string]: boolean }>({});
+  const [loading, setLoading] = useState(true);
 
   const [popup, setPopup] = useState({
     visible: false,
@@ -39,7 +44,7 @@ const NewsletterDashboard = () => {
     preview: "",
     body: "",
   });
-  const handleChange = (e: ChangeEvent<HTMLInputs>, key: string) => {
+  const handleChange = (e: ChangeEvent<HTMLInputElement>, key: string) => {
     setNewsletter({ ...newsletter, [key]: e.target.value });
   };
 
@@ -62,34 +67,47 @@ const NewsletterDashboard = () => {
         return res.json();
       })
       .then((data) => {
-        // console.log(data);
+        // console.log(data.newsletters);
         setNewsletters(data.newsletters);
+        setSearch(data.newsletters);
       })
       .catch((error) => {
         console.error("Error fetching newsletters:", error);
-      });
+        setLoading(false);
+      })
+      .finally(() => setLoading(false));
   }, []);
 
   return (
     <div className="flex flex-col w-10/12 m-10 gap-4">
       <Label className="font-extrabold text-3xl">Newsletter</Label>
-      <div className="flex flex-row items-center gap-2">
-        <Input placeholder="search" />
-        <Select />
-        <Plus size={48} className="cursor-pointer" />
-        <Trash size={48} className="cursor-pointer" />
-      </div>
-      <div className="grid grid-cols-3 gap-5">
-        {newsletters.map((item, index) => (
-          <NewsletterCard
-            title={item.newsletter[0] || "Hello word"}
-            id={item.newsletterId ?? index.toString()}
-            handleConfigure={handleConfigure}
-            key={index}
-          />
-        ))}
-      </div>
-
+      <NewsletterToolbar
+        data={newsletters}
+        setSearch={setSearch}
+        checked={checked}
+        setNewsletters={setNewsletters}
+      />
+      {!loading ? (
+        <div className="grid grid-cols-3 gap-5">
+          {newsletterSearch.map(({ newsletter, newsletterId }, index) => (
+            <NewsletterCard
+              title={newsletter || "Hello word"}
+              id={newsletterId ?? index.toString()}
+              handleConfigure={handleConfigure}
+              onClick={() => {
+                setChecked({
+                  ...checked,
+                  [newsletterId]: !checked[newsletterId],
+                });
+              }}
+              checked={checked[newsletterId as keyof typeof checked]}
+              key={index}
+            />
+          ))}
+        </div>
+      ) : (
+        <Loader2 size={35} />
+      )}
       <AlertDialog open={popup.visible}>
         <AlertDialogContent className="flex flex-col">
           <AlertDialogHeader>
