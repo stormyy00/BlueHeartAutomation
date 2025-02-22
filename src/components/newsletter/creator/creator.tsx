@@ -98,8 +98,9 @@ const Creator = () => {
         return res.json();
       })
       .then((data) => {
-        // console.log("creator", data.newsletter[0]);
-        setNewsletter(data.newsletter[0]);
+        const newsletter = data.newsletter.join("\n");
+        // console.log("creator", newsletter);
+        setNewsletter(newsletter);
       })
       .catch((error) => {
         console.error("Error fetching newsletters:", error);
@@ -113,7 +114,7 @@ const Creator = () => {
     setIsLoading(false);
 
     try {
-      const res = await fetch("/api/newsletter/", {
+      const res = await fetch(`/api/newsletter/${id}`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

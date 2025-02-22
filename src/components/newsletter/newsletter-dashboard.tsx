@@ -20,7 +20,7 @@ import { AlertDialogAction } from "@radix-ui/react-alert-dialog";
 import { Button } from "../ui/button";
 
 type props = {
-  title: string;
+  newsletter: string;
   newsletterId?: string;
   id: string;
   handleConfigure: () => void;
@@ -82,7 +82,7 @@ const NewsletterDashboard = () => {
       <div className="grid grid-cols-3 gap-5">
         {newsletters.map((item, index) => (
           <NewsletterCard
-            title={item.title || "Hello word"}
+            title={item.newsletter[0] || "Hello word"}
             id={item.newsletterId ?? index.toString()}
             handleConfigure={handleConfigure}
             key={index}

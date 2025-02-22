@@ -17,8 +17,10 @@ export const GET = async () => {
   }
 
   try {
-    const newslettersRef = collection(db, "newsletters");
-    const q = query(newslettersRef, where("orgId", "==", "org_123"));
+    const q = query(
+      collection(db, "newsletters"),
+      where("orgId", "==", "org_123"),
+    );
     const querySnapshot = await getDocs(q);
 
     const newsletters = querySnapshot.docs.map((doc) => ({
