@@ -1,14 +1,20 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Events from "./events";
 import { PlateEditor } from "@/components/editor/plate-editor";
 import { Button } from "@/components/ui/button";
 import { Loader } from "lucide-react";
 import { EventType } from "@/types/event";
+import { usePathname } from "next/navigation";
 
 const Creator = () => {
-  const [data, setData] = useState<string[]>([]);
+  const [data, setData] = useState<string[] | null>(null);
+  const [newsletter, setNewsletter] = useState<string>("");
+  const [error, setError] = useState(false);
+  const [loading, setIsLoading] = useState(true);
+  const pathname = usePathname();
+  const id = pathname.split("/")[4];
   // const { EventsContext } = useEventContext()
   // const [events, setEvents] = useState(EventsContext)
   // console.log("context: ", events)
@@ -16,8 +22,6 @@ const Creator = () => {
   // const [prompt, setPrompt] = useState("");
   // const [selectedPrompt, setSelectedPrompt] = useState("");
   // const [selectedText, setSelectedText] = useState("");
-  const [error, setError] = useState(false);
-  const [loading, setIsLoading] = useState(true);
   // const [loadingSelected, setLoadingSelected] = useState(false);
 
   // const [allEvents, setEvents] = useState<EventType[]>([]);
@@ -83,8 +87,27 @@ const Creator = () => {
     // setEvents(updatedEvents)
   };
 
+  useEffect(() => {
+    fetch(`/api/newsletter/${id}`, {
+      method: "GET",
+    })
+      .then((res) => {
+        if (!res.ok) {
+          throw new Error(`HTTP error! Status: ${res.status}`);
+        }
+        return res.json();
+      })
+      .then((data) => {
+        // console.log("creator", data.newsletter[0]);
+        setNewsletter(data.newsletter[0]);
+      })
+      .catch((error) => {
+        console.error("Error fetching newsletters:", error);
+      });
+  }, [id]);
+
   const generateDocument = async () => {
-    if (!data.length) return;
+    if (!data || !data.length) return;
 
     setIsLoading(false);
 
@@ -122,13 +145,15 @@ const Creator = () => {
       <div className="font-extrabold text-3xl mb-8">Newsletter</div>
       <div className="flex flex-row h-full gap-2 w-2/3 ">
         <div className="flex flex-col bg-black/5 p-4 rounded-md border border-black/20 w-full gap-4 h-full">
-          <PlateEditor onChange={handleChange} value={"hello"} />
+          {newsletter && (
+            <PlateEditor onChange={handleChange} value={newsletter} />
+          )}
         </div>
         <Events onChange={handleEventsChange} />
       </div>
       {loading ? (
         <Button
-          disabled={!data.length}
+          disabled={!data || !data.length}
           onClick={generateDocument}
           className="bg-ttickles-darkblue text-white px-4 py-2 rounded disabled:opacity-50 w-fit"
         >

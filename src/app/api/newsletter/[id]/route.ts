@@ -10,7 +10,10 @@ import {
 } from "firebase/firestore";
 import { NextRequest, NextResponse } from "next/server";
 
-export const GET = async () => {
+export const GET = async (
+  req: NextRequest,
+  { params }: { params: { id: string } },
+) => {
   const { userId } = await auth();
   if (!userId) {
     return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
@@ -18,14 +21,19 @@ export const GET = async () => {
 
   try {
     const newslettersRef = collection(db, "newsletters");
-    const q = query(newslettersRef, where("orgId", "==", "org_123"));
+    const q = query(newslettersRef, where("newsletterId", "==", params.id)); // Query by newsletterId
     const querySnapshot = await getDocs(q);
 
-    const newsletters = querySnapshot.docs.map((doc) => ({
-      ...doc.data(),
-    }));
+    if (querySnapshot.empty) {
+      return NextResponse.json(
+        { message: "No such document!" },
+        { status: 404 },
+      );
+    }
 
-    return NextResponse.json({ newsletters });
+    const newsletter = querySnapshot.docs[0].data().newsletter;
+
+    return NextResponse.json({ newsletter });
   } catch (err) {
     return NextResponse.json(
       { message: `Internal Server Error: ${err}` },

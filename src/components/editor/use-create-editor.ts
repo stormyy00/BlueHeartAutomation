@@ -159,7 +159,7 @@ export const useCreateEditor = ({ value }: { value: string }) => {
     value: [
       {
         children: [{ text: value }],
-        type: "p",
+        type: ParagraphPlugin.key,
       },
       // {
       //   children: [

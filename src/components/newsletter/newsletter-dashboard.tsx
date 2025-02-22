@@ -18,9 +18,15 @@ import { NewsletterType } from "@/types/newsletter";
 import { HTMLInputs } from "@/types/inputs";
 import { AlertDialogAction } from "@radix-ui/react-alert-dialog";
 import { Button } from "../ui/button";
+import { NEWSLETTER } from "@/data/newsletter/event";
+
+type props = {
+  title: string;
+  newsletterId?: string | number;
+};
 
 const NewsletterDashboard = () => {
-  const [newsletters, setNewsletters] = useState([]);
+  const [newsletters, setNewsletters] = useState<props[]>([]);
 
   const [popup, setPopup] = useState({
     visible: false,
@@ -44,6 +50,11 @@ const NewsletterDashboard = () => {
     });
   };
 
+  // temp
+  const mergeNewsletters = (fetchedData: props[]) => {
+    setNewsletters([...NEWSLETTER, ...fetchedData]);
+  };
+
   useEffect(() => {
     fetch("/api/newsletter", {
       method: "GET",
@@ -55,8 +66,8 @@ const NewsletterDashboard = () => {
         return res.json();
       })
       .then((data) => {
-        // console.log(data);
-        setNewsletters(data.newsletters);
+        console.log(data);
+        mergeNewsletters(data.newsletters);
       })
       .catch((error) => {
         console.error("Error fetching newsletters:", error);
@@ -73,15 +84,14 @@ const NewsletterDashboard = () => {
         <Trash size={48} className="cursor-pointer" />
       </div>
       <div className="grid grid-cols-3 gap-5">
-        <NewsletterCard
-          title="Giving Guide 2024"
-          id={2}
-          handleConfigure={handleConfigure}
-        />
-        {newsletters.map((newsletter, index) => (
+        {newsletters.map((item, index) => (
           <NewsletterCard
-            title="hello world"
-            id={index + 2}
+            title={item.title || "Hello word"}
+            id={
+              item.newsletterId
+                ? parseInt(String(item.newsletterId).replace(/\W/g, ""), 10)
+                : index + 1
+            }
             handleConfigure={handleConfigure}
             key={index}
           />
