@@ -4,7 +4,7 @@ import Link from "next/link";
 
 type props = {
   title: string;
-  id: number;
+  id: string;
   handleConfigure: () => void;
 };
 const NewsletterCard = ({ title, id, handleConfigure }: props) => {

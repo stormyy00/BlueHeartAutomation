@@ -18,11 +18,12 @@ import { NewsletterType } from "@/types/newsletter";
 import { HTMLInputs } from "@/types/inputs";
 import { AlertDialogAction } from "@radix-ui/react-alert-dialog";
 import { Button } from "../ui/button";
-import { NEWSLETTER } from "@/data/newsletter/event";
 
 type props = {
   title: string;
-  newsletterId?: string | number;
+  newsletterId?: string;
+  id: string;
+  handleConfigure: () => void;
 };
 
 const NewsletterDashboard = () => {
@@ -50,11 +51,6 @@ const NewsletterDashboard = () => {
     });
   };
 
-  // temp
-  const mergeNewsletters = (fetchedData: props[]) => {
-    setNewsletters([...NEWSLETTER, ...fetchedData]);
-  };
-
   useEffect(() => {
     fetch("/api/newsletter", {
       method: "GET",
@@ -66,8 +62,8 @@ const NewsletterDashboard = () => {
         return res.json();
       })
       .then((data) => {
-        console.log(data);
-        mergeNewsletters(data.newsletters);
+        // console.log(data);
+        setNewsletters(data.newsletters);
       })
       .catch((error) => {
         console.error("Error fetching newsletters:", error);
@@ -87,11 +83,7 @@ const NewsletterDashboard = () => {
         {newsletters.map((item, index) => (
           <NewsletterCard
             title={item.title || "Hello word"}
-            id={
-              item.newsletterId
-                ? parseInt(String(item.newsletterId).replace(/\W/g, ""), 10)
-                : index + 1
-            }
+            id={item.newsletterId ?? index.toString()}
             handleConfigure={handleConfigure}
             key={index}
           />

@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import Events from "./events";
 import { PlateEditor } from "@/components/editor/plate-editor";
 import { Button } from "@/components/ui/button";
-import { Loader } from "lucide-react";
+import { Ellipsis, Loader } from "lucide-react";
 import { EventType } from "@/types/event";
 import { usePathname } from "next/navigation";
 
@@ -103,7 +103,8 @@ const Creator = () => {
       })
       .catch((error) => {
         console.error("Error fetching newsletters:", error);
-      });
+      })
+      .finally(() => console.log("done")); // toaast
   }, [id]);
 
   const generateDocument = async () => {
@@ -148,7 +149,7 @@ const Creator = () => {
           {newsletter ? (
             <PlateEditor onChange={handleChange} value={newsletter} />
           ) : (
-            <Loader className="animate-spin" />
+            <Ellipsis className="motion-preset-pulse-sm motion-duration-1000" />
           )}
         </div>
         <Events onChange={handleEventsChange} />
