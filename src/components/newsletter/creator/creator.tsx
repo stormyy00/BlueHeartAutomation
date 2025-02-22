@@ -145,8 +145,10 @@ const Creator = () => {
       <div className="font-extrabold text-3xl mb-8">Newsletter</div>
       <div className="flex flex-row h-full gap-2 w-2/3 ">
         <div className="flex flex-col bg-black/5 p-4 rounded-md border border-black/20 w-full gap-4 h-full">
-          {newsletter && (
+          {newsletter ? (
             <PlateEditor onChange={handleChange} value={newsletter} />
+          ) : (
+            <Loader className="animate-spin" />
           )}
         </div>
         <Events onChange={handleEventsChange} />
