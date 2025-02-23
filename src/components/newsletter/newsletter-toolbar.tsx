@@ -121,7 +121,7 @@ const NewsletterToolbar = ({
       <Plus
         size={48}
         onClick={handleNewletter}
-        className="cursor-pointer hover:bg-blue-500 duration-300"
+        className="cursor-pointer hover:text-blue-500 duration-300"
       />
       <Trash
         size={48}
