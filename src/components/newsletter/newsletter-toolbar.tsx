@@ -118,8 +118,16 @@ const NewsletterToolbar = ({
         placeholder="search"
       />
       <Select />
-      <Plus size={48} onClick={handleNewletter} className="cursor-pointer" />
-      <Trash size={48} onClick={confirmDelete} className="cursor-pointer" />
+      <Plus
+        size={48}
+        onClick={handleNewletter}
+        className="cursor-pointer hover:bg-blue-500 duration-300"
+      />
+      <Trash
+        size={48}
+        onClick={confirmDelete}
+        className="cursor-pointer hover:text-red-500 duration-300"
+      />
       <AlertDialog open={popup.visible}>
         <AlertDialogContent>
           <AlertDialogHeader>
