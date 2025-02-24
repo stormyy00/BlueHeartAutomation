@@ -23,6 +23,7 @@ type props = {
   newsletter: string;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   newsletterId?: string | any;
+  newsletterStatus: string;
   id: string;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   handleConfigure: () => void;
@@ -67,7 +68,6 @@ const NewsletterDashboard = () => {
         return res.json();
       })
       .then((data) => {
-        // console.log(data.newsletters);
         setNewsletters(data.newsletters);
         setSearch(data.newsletters);
       })
@@ -85,25 +85,29 @@ const NewsletterDashboard = () => {
         data={newsletters}
         setSearch={setSearch}
         checked={checked}
+        setChecked={setChecked}
         setNewsletters={setNewsletters}
       />
       {!loading ? (
         <div className="grid grid-cols-3 gap-5">
-          {newsletterSearch.map(({ newsletter, newsletterId }, index) => (
-            <NewsletterCard
-              title={newsletter || "Hello word"}
-              id={newsletterId ?? index.toString()}
-              handleConfigure={handleConfigure}
-              onClick={() => {
-                setChecked({
-                  ...checked,
-                  [newsletterId]: !checked[newsletterId],
-                });
-              }}
-              checked={checked[newsletterId as keyof typeof checked]}
-              key={index}
-            />
-          ))}
+          {newsletterSearch.map(
+            ({ newsletter, newsletterId, newsletterStatus }, index) => (
+              <NewsletterCard
+                title={newsletter || "Hello word"}
+                id={newsletterId ?? index.toString()}
+                handleConfigure={handleConfigure}
+                status={newsletterStatus || "revise"}
+                onClick={() => {
+                  setChecked({
+                    ...checked,
+                    [newsletterId]: !checked[newsletterId],
+                  });
+                }}
+                checked={checked[newsletterId as keyof typeof checked]}
+                key={index}
+              />
+            ),
+          )}
         </div>
       ) : (
         <Loader2 size={35} />

@@ -2,6 +2,8 @@ import { useState } from "react";
 import { Plus, Trash } from "lucide-react";
 import { Input } from "../ui/input";
 import Select from "@/components/global/select";
+import { STATUSES } from "@/data/newsletter/toolbar";
+import { Button } from "../ui/button";
 // import { useRouter } from "next/navigation";
 import {
   AlertDialog,
@@ -21,8 +23,10 @@ interface props {
   data: any[];
 
   checked: { [key: string]: boolean };
+  setChecked: (value: { [key: string]: boolean }) => void;
+
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  setNewsletters: (value: any[]) => void;
+  setNewsletters: (value: any[] | ((prev: any[]) => any[])) => void;
 }
 
 const NewsletterToolbar = ({
@@ -52,6 +56,17 @@ const NewsletterToolbar = ({
       );
       setSearch(filter);
     }
+  };
+
+  const handleStatus = (newStatus: string) => {
+    setNewsletters((prev) => {
+      const updated = prev.map((item) =>
+        checked[item.newsletterId]
+          ? { ...item, newsletterStatus: newStatus }
+          : item,
+      );
+      return [...updated];
+    });
   };
 
   const handleNewletter = () => {
@@ -112,6 +127,15 @@ const NewsletterToolbar = ({
 
   return (
     <div className="flex flex-row items-center gap-2">
+      {STATUSES.map((item, index) => (
+        <Button
+          key={index}
+          onClick={() => handleStatus(item.status)}
+          className={`${item.color} font-bold textwhite`}
+        >
+          {item.status}
+        </Button>
+      ))}
       <Input
         value={value}
         onChange={(e) => handleChange(e.target.value)}

@@ -29,6 +29,7 @@ export const GET = async () => {
       return {
         newsletter: data.newsletter[0],
         newsletterId: data.newsletterId,
+        newsletterStatus: data.newsletterStatus,
       };
     });
 

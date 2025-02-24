@@ -5,13 +5,20 @@ import Link from "next/link";
 type props = {
   title: string;
   id: string;
+  status: string;
   handleConfigure: () => void;
   onClick: () => void;
   checked: boolean;
 };
+const COLORS: Record<string, string> = {
+  revise: "bg-ttickles-orange",
+  approve: "bg-ttickles-blue",
+  done: "bg-ttickles-lightblue",
+};
 const NewsletterCard = ({
   title,
   id,
+  status,
   handleConfigure,
   onClick,
   checked,
@@ -29,6 +36,11 @@ const NewsletterCard = ({
           <Link href={`newsletter/${id}`} className="text-4xl font-bold">
             {title}
           </Link>
+          <div
+            className={`${COLORS[status]} w-fit rounded-md text-white font-bold px-4 py-2 text-sm`}
+          >
+            {status}
+          </div>
         </div>
       </div>
     </div>
