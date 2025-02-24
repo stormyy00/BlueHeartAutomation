@@ -24,23 +24,21 @@ const NewsletterCard = ({
   checked,
 }: props) => {
   return (
-    <div>
-      <div className="bg-white rounded-lg  p-4 flex flex-col justify-between h-48 border border-black/20">
-        <div className="flex flex-col gap-2">
-          <div className="flex flex-row justify-between">
-            <span onClick={onClick}>
-              <Checkbox checked={checked} />
-            </span>
-            <Pen size={16} onClick={handleConfigure} />
-          </div>
-          <Link href={`newsletter/${id}`} className="text-4xl font-bold">
-            {title}
-          </Link>
-          <div
-            className={`${COLORS[status]} w-fit rounded-md text-white font-bold px-4 py-2 text-sm`}
-          >
-            {status}
-          </div>
+    <div className="bg-white rounded-lg p-4 flex flex-col justify-between h-fit border border-black/20">
+      <div className="flex flex-col gap-2">
+        <div className="flex flex-row justify-between">
+          <span onClick={onClick}>
+            <Checkbox checked={checked} />
+          </span>
+          <Pen size={16} onClick={handleConfigure} />
+        </div>
+        <Link href={`newsletter/${id}`} className="text-4xl font-bold">
+          {title}
+        </Link>
+        <div
+          className={`${COLORS[status]} w-fit rounded-md text-white font-bold px-4 py-2 text-sm`}
+        >
+          {status}
         </div>
       </div>
     </div>
