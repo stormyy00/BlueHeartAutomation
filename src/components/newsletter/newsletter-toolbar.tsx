@@ -45,17 +45,18 @@ const NewsletterToolbar = ({
     onClick: () => {},
     button: "",
   });
+
   const ids = Object.keys(checked).filter((id) => checked[id]);
+
   const handleChange = (e: string) => {
     setValue(e);
-    if (e === "") {
-      setSearch(data);
-    } else {
-      const filter = data.filter((item) =>
-        item.newsletter.toLowerCase().includes(e.toLowerCase()),
-      );
-      setSearch(filter);
-    }
+    setSearch(
+      e === ""
+        ? data
+        : data.filter(({ newsletter }) =>
+            newsletter.toLowerCase().includes(e.toLowerCase()),
+          ),
+    );
   };
 
   const handleStatus = (newStatus: string) => {
@@ -141,7 +142,20 @@ const NewsletterToolbar = ({
         onChange={(e) => handleChange(e.target.value)}
         placeholder="search"
       />
-      <Select />
+      <Select
+        options={STATUSES.map(({ status }) => ({
+          label: status,
+          value: status,
+        }))}
+        onChange={(selected) => {
+          setSearch(
+            selected === "All"
+              ? data
+              : data.filter((item) => item.newsletterStatus === selected),
+          );
+        }}
+        placeholder="filter by status"
+      />
       <Plus
         size={48}
         onClick={handleNewletter}

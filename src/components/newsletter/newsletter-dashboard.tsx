@@ -128,7 +128,19 @@ const NewsletterDashboard = () => {
                     onChange={(e) => handleChange(e, question.title)}
                   />
                 )}
-                {question.type === "select" && <Select />}
+                {question.type === "select" && (
+                  <Select
+                    options={[
+                      { label: "BlueHeart", value: "blue" },
+                      { label: "Sean.gov", value: "sean" },
+                      { label: "Jude's Hosiptial", value: "jude" },
+                    ]}
+                    onChange={(selected) =>
+                      console.log("Selected category:", selected)
+                    }
+                    placeholder="Select a Recipient"
+                  />
+                )}
               </div>
             ))}
           </AlertDialogDescription>
