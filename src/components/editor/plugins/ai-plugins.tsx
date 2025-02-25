@@ -8,9 +8,6 @@ import { MarkdownPlugin } from "@udecode/plate-markdown";
 import { AIMenu } from "@/components/plate-ui/ai-menu";
 
 import { cursorOverlayPlugin } from "./cursor-overlay-plugin";
-import { useEventContext } from "@/components/newsletter/creator/context";
-
-// const { formattedEvents } = useEventContext();
 
 const systemCommon = `\
 You are an advanced AI-powered note-taking assistant, designed to enhance productivity and creativity in note management.
