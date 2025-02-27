@@ -3,7 +3,6 @@ import { Plus, Trash } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import Select from "@/components/global/select";
 import { STATUSES } from "@/data/newsletter/toolbar";
-import { Button } from "@/components/ui/button";
 import { useRouter } from "next/navigation";
 import {
   AlertDialog,
@@ -58,26 +57,6 @@ const NewsletterToolbar = ({
             newsletter.toLowerCase().includes(e.toLowerCase()),
           ),
     );
-  };
-
-  const handleStatus = async (newStatus: string) => {
-    await fetch("/api/newsletter", {
-      method: "PUT",
-      body: JSON.stringify({
-        newsletterIds: ids,
-        newStatus: newStatus,
-      }),
-    });
-    setNewsletters((prev) => {
-      const updated = prev.map((item) =>
-        checked[item.newsletterId]
-          ? { ...item, newsletterStatus: newStatus }
-          : item,
-      );
-
-      setSearch([...updated]);
-      return [...updated];
-    });
   };
 
   const handleNewletter = () => {
@@ -140,15 +119,6 @@ const NewsletterToolbar = ({
 
   return (
     <div className="flex flex-row items-center gap-2">
-      {STATUSES.map((item, index) => (
-        <Button
-          key={index}
-          onClick={() => handleStatus(item.status)}
-          className={`${item.color} font-bold textwhite`}
-        >
-          {item.status}
-        </Button>
-      ))}
       <Input
         value={value}
         onChange={(e) => handleChange(e.target.value)}

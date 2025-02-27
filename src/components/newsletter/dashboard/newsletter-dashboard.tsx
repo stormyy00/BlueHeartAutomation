@@ -1,7 +1,5 @@
 "use client";
-import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import Select from "@/components/global/select";
 import NewsletterCard from "./newsletter-card";
 import {
   AlertDialog,
@@ -12,12 +10,13 @@ import {
   AlertDialogHeader,
 } from "@/components/ui/alert-dialog";
 import { useState, ChangeEvent, useEffect } from "react";
-import { QUESTIONS } from "@/data/newsletter/newsletter";
 import { NewsletterType } from "@/types/newsletter";
 import { AlertDialogAction } from "@radix-ui/react-alert-dialog";
 import { Button } from "@/components/ui/button";
 import NewsletterToolbar from "./newsletter-toolbar";
 import { Loader2 } from "lucide-react";
+import { Popup } from "@/types/popup";
+import NewsletterModal from "./newsletter-modal";
 
 type props = {
   newsletter: string;
@@ -35,8 +34,12 @@ const NewsletterDashboard = () => {
   const [checked, setChecked] = useState<{ [key: string]: boolean }>({});
   const [loading, setLoading] = useState(true);
 
-  const [popup, setPopup] = useState({
+  const [popup, setPopup] = useState<Popup>({
+    title: "",
+    message: "",
     visible: false,
+    cancel: true,
+    submit: true,
   });
 
   const [newsletter, setNewsletter] = useState<NewsletterType>({
@@ -50,9 +53,12 @@ const NewsletterDashboard = () => {
   };
 
   const handleConfigure = () => {
-    console.log(popup);
     setPopup({
       ...popup,
+      title: "Configure Newsletter",
+      message: (
+        <NewsletterModal newsletter={newsletter} handleChange={handleChange} />
+      ),
       visible: true,
     });
   };
@@ -115,34 +121,10 @@ const NewsletterDashboard = () => {
       <AlertDialog open={popup.visible}>
         <AlertDialogContent className="flex flex-col">
           <AlertDialogHeader>
-            <AlertDialogTitle>Configure Newsletter</AlertDialogTitle>
+            <AlertDialogTitle>{popup.title}</AlertDialogTitle>
           </AlertDialogHeader>
           <AlertDialogDescription className="flex flex-col gap-4">
-            {QUESTIONS.map((question, index) => (
-              <div key={index} className="flex flex-col gap-2">
-                <Label className="font-bold">{question.title}</Label>
-                {question.type === "input" && (
-                  <Input
-                    type="text"
-                    value={newsletter[question.title as keyof NewsletterType]}
-                    onChange={(e) => handleChange(e, question.title)}
-                  />
-                )}
-                {question.type === "select" && (
-                  <Select
-                    options={[
-                      { label: "BlueHeart", value: "blue" },
-                      { label: "Sean.gov", value: "sean" },
-                      { label: "Jude's Hosiptial", value: "jude" },
-                    ]}
-                    onChange={(selected) =>
-                      console.log("Selected category:", selected)
-                    }
-                    placeholder="Select a Recipient"
-                  />
-                )}
-              </div>
-            ))}
+            {popup.message}
           </AlertDialogDescription>
 
           <div className="flex flex-row self-end gap-2">
