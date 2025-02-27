@@ -1,14 +1,10 @@
 export const STATUSES = [
   {
-    status: "approve",
+    status: "publish",
     color: "bg-ttickles-blue hover:bg-ttickles-blue",
   },
   {
     status: "revise",
     color: "bg-ttickles-orange hover:bg-ttickles-orange",
-  },
-  {
-    status: "done",
-    color: "bg-ttickles-lightblue hover:bg-ttickles-lightblue",
   },
 ];

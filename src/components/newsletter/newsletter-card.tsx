@@ -12,8 +12,7 @@ type props = {
 };
 const COLORS: Record<string, string> = {
   revise: "bg-ttickles-orange",
-  approve: "bg-ttickles-blue",
-  done: "bg-ttickles-lightblue",
+  publish: "bg-ttickles-blue",
 };
 const NewsletterCard = ({
   title,

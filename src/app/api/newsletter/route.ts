@@ -1,6 +1,7 @@
 import { db } from "@/utils/firebase";
 import { auth } from "@clerk/nextjs/server";
 import {
+  doc,
   addDoc,
   deleteDoc,
   updateDoc,
@@ -74,7 +75,6 @@ export const DELETE = async (req: NextRequest) => {
     return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
   }
   const { newsletterId } = await req.json();
-  console.log(newsletterId);
 
   try {
     const q = query(
@@ -96,6 +96,43 @@ export const DELETE = async (req: NextRequest) => {
     });
 
     await Promise.all(deletePromises);
+
+    return NextResponse.json({ status: 200 });
+  } catch (err) {
+    return NextResponse.json(
+      { message: `Internal Server Error: ${err}` },
+      { status: 500 },
+    );
+  }
+};
+
+export const PUT = async (req: NextRequest) => {
+  const { userId } = await auth();
+  if (!userId) {
+    return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
+  }
+  const { newsletterIds, newStatus } = await req.json();
+
+  try {
+    const q = query(
+      collection(db, "newsletters"),
+      where("newsletterId", "in", newsletterIds),
+    );
+    const querySnapshot = await getDocs(q);
+
+    if (querySnapshot.empty) {
+      return NextResponse.json(
+        { message: "Newsletter not found" },
+        { status: 404 },
+      );
+    }
+
+    const updatedPromises = querySnapshot.docs.map((docSnap) => {
+      const newsletterRef = doc(db, "newsletters", docSnap.id);
+      return updateDoc(newsletterRef, { newsletterStatus: newStatus });
+    });
+
+    await Promise.all(updatedPromises);
 
     return NextResponse.json({ status: 200 });
   } catch (err) {

@@ -59,13 +59,22 @@ const NewsletterToolbar = ({
     );
   };
 
-  const handleStatus = (newStatus: string) => {
+  const handleStatus = async (newStatus: string) => {
+    await fetch("/api/newsletter", {
+      method: "PUT",
+      body: JSON.stringify({
+        newsletterIds: ids,
+        newStatus: newStatus,
+      }),
+    });
     setNewsletters((prev) => {
       const updated = prev.map((item) =>
         checked[item.newsletterId]
           ? { ...item, newsletterStatus: newStatus }
           : item,
       );
+
+      setSearch([...updated]);
       return [...updated];
     });
   };
