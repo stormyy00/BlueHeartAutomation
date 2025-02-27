@@ -1,6 +1,6 @@
 "use client";
-import { Input } from "../ui/input";
-import { Label } from "../ui/label";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import Select from "@/components/global/select";
 import NewsletterCard from "./newsletter-card";
 import {
@@ -10,12 +10,12 @@ import {
   AlertDialogCancel,
   AlertDialogDescription,
   AlertDialogHeader,
-} from "../ui/alert-dialog";
+} from "@/components/ui/alert-dialog";
 import { useState, ChangeEvent, useEffect } from "react";
 import { QUESTIONS } from "@/data/newsletter/newsletter";
 import { NewsletterType } from "@/types/newsletter";
 import { AlertDialogAction } from "@radix-ui/react-alert-dialog";
-import { Button } from "../ui/button";
+import { Button } from "@/components/ui/button";
 import NewsletterToolbar from "./newsletter-toolbar";
 import { Loader2 } from "lucide-react";
 

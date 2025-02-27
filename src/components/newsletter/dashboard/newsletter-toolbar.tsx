@@ -1,9 +1,9 @@
 import { useState } from "react";
 import { Plus, Trash } from "lucide-react";
-import { Input } from "../ui/input";
+import { Input } from "@/components/ui/input";
 import Select from "@/components/global/select";
 import { STATUSES } from "@/data/newsletter/toolbar";
-import { Button } from "../ui/button";
+import { Button } from "@/components/ui/button";
 import { useRouter } from "next/navigation";
 import {
   AlertDialog,
