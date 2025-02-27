@@ -11,8 +11,8 @@ type props = {
   checked: boolean;
 };
 const COLORS: Record<string, string> = {
-  revise: "bg-ttickles-orange",
-  publish: "bg-ttickles-blue",
+  draft: "bg-ttickles-orange/50",
+  published: "bg-ttickles-blue/50",
 };
 const NewsletterCard = ({
   title,
