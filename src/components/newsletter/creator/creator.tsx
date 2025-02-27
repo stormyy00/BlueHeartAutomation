@@ -145,9 +145,26 @@ const Creator = () => {
   }
 
   return (
-    <div className="flex flex-col gap-4 h-full w-full">
-      <div className="font-extrabold text-3xl mb-8">Newsletter</div>
-      <div className="flex flex-row h-full gap-2 w-2/3 ">
+    <div className="flex flex-col gap-4 h-full w-11/12">
+      <div className="flex flex-row justify-between w-full">
+        <div className="font-extrabold text-3xl mb-8">Newsletter</div>
+
+        <div className="flex flex-row gap-3">
+          {loading ? (
+            <Button
+              disabled={!data || !data.length}
+              onClick={generateDocument}
+              className="bg-ttickles-darkblue text-white px-4 py-2 rounded disabled:opacity-50 w-fit"
+            >
+              Save
+            </Button>
+          ) : (
+            <Loader className="animate-spin" />
+          )}
+          <Button className="bg-ttickles-orange">Publish</Button>
+        </div>
+      </div>
+      <div className="flex flex-row h-full gap-2 w-3/4">
         <div className="flex flex-col bg-black/5 p-4 rounded-md border border-black/20 w-full gap-4 h-full">
           {newsletter ? (
             <PlateEditor onChange={handleChange} value={newsletter} />
@@ -157,17 +174,6 @@ const Creator = () => {
         </div>
         <Events onChange={handleEventsChange} />
       </div>
-      {loading ? (
-        <Button
-          disabled={!data || !data.length}
-          onClick={generateDocument}
-          className="bg-ttickles-darkblue text-white px-4 py-2 rounded disabled:opacity-50 w-fit"
-        >
-          Save
-        </Button>
-      ) : (
-        <Loader className="animate-spin" />
-      )}
     </div>
   );
 };
