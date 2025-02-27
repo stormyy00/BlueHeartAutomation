@@ -4,7 +4,7 @@ import { Input } from "../ui/input";
 import Select from "@/components/global/select";
 import { STATUSES } from "@/data/newsletter/toolbar";
 import { Button } from "../ui/button";
-// import { useRouter } from "next/navigation";
+import { useRouter } from "next/navigation";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -15,6 +15,7 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
+import { toast } from "sonner";
 
 interface props {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -35,7 +36,7 @@ const NewsletterToolbar = ({
   checked,
   setNewsletters,
 }: props) => {
-  //   const router = useRouter();
+  const router = useRouter();
   const [value, setValue] = useState("");
   const [popup, setPopup] = useState({
     title: "",
@@ -91,7 +92,8 @@ const NewsletterToolbar = ({
       })
       .then((data) => {
         console.log("Created newsletter:", data);
-        // router.push(`/newsletter/${data.newsletterId}`); slow loading
+
+        router.push(`newsletter/${data.newsletterId}`);
       })
       .catch((error) => {
         console.error("Error creating newsletters:", error);
@@ -100,7 +102,8 @@ const NewsletterToolbar = ({
 
   const deleteNewsletter = () => {
     const keep = data.filter((item) => !ids.includes(item.newsletterId));
-
+    console.log("keep", keep);
+    setSearch(keep);
     setNewsletters(keep);
     fetch("/api/newsletter", {
       method: "DELETE",
@@ -112,7 +115,7 @@ const NewsletterToolbar = ({
         }
       })
       .then(() => {
-        // window.location.reload();
+        toast.success("Deleted successfully");
       })
       .catch((error) => {
         console.error("Error creating newsletters:", error);

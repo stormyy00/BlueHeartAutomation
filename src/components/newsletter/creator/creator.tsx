@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Ellipsis, Loader } from "lucide-react";
 import { EventType } from "@/types/event";
 import { usePathname } from "next/navigation";
+import { toast } from "sonner";
 
 const Creator = () => {
   const [data, setData] = useState<string[] | null>(null);
@@ -130,6 +131,7 @@ const Creator = () => {
       setError(true);
     } finally {
       setIsLoading(true);
+      toast.success("Newsletter saved successfully!");
     }
   };
   const handleChange = (value: string) => {

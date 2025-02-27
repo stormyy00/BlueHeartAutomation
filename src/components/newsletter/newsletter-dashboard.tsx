@@ -93,7 +93,7 @@ const NewsletterDashboard = () => {
           {newsletterSearch.map(
             ({ newsletter, newsletterId, newsletterStatus }, index) => (
               <NewsletterCard
-                title={newsletter || "Hello word"}
+                title={newsletter === " " ? "Untitled" : newsletter}
                 id={newsletterId ?? index.toString()}
                 handleConfigure={handleConfigure}
                 status={newsletterStatus || "revise"}
