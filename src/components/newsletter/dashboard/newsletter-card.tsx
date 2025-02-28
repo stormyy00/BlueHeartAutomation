@@ -12,7 +12,7 @@ type props = {
 };
 const COLORS: Record<string, string> = {
   draft: "bg-ttickles-orange/50",
-  published: "bg-ttickles-blue/50",
+  scheduled: "bg-ttickles-blue/50",
 };
 const NewsletterCard = ({
   title,

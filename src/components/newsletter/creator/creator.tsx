@@ -8,9 +8,24 @@ import { Ellipsis, Loader } from "lucide-react";
 import { EventType } from "@/types/event";
 import { usePathname } from "next/navigation";
 import { toast } from "sonner";
-
+import { Popup } from "@/types/popup";
+import {
+  Dialog,
+  DialogClose,
+  DialogContent,
+  DialogDescription,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import ScheduleModal from "./schedule-modal";
 const Creator = () => {
   const [data, setData] = useState<string[] | null>(null);
+  const [popup, setPopup] = useState<Popup>({
+    title: "",
+    message: "",
+    cancel: true,
+    submit: true,
+    visible: false,
+  });
   const [newsletter, setNewsletter] = useState<string>("");
   const [error, setError] = useState(false);
   const [loading, setIsLoading] = useState(true);
@@ -78,10 +93,11 @@ const Creator = () => {
   //       setLoadingSelected(false);
   //     } else {
   //       setIsLoading(false);
-  //     } // Re-enable button
+  //     } // Re-enable Button
   //   }
   // };
 
+  const handleSchedule = () => {};
   const handleEventsChange = (updatedEvents: EventType[]) => {
     console.log("Updated Events List in Parent:", updatedEvents);
     // setEvents(updatedEvents);
@@ -161,7 +177,19 @@ const Creator = () => {
           ) : (
             <Loader className="animate-spin" />
           )}
-          <Button className="bg-ttickles-orange">Publish</Button>
+          <Button
+            className="bg-ttickles-orange hover:bg-ttickles-orange"
+            onClick={() => {
+              setPopup({
+                ...popup,
+                visible: true,
+                title: "Schedule Campaign",
+                message: <ScheduleModal />,
+              });
+            }}
+          >
+            Schedule
+          </Button>
         </div>
       </div>
       <div className="flex flex-row h-full gap-2 w-3/4">
@@ -174,6 +202,32 @@ const Creator = () => {
         </div>
         <Events onChange={handleEventsChange} />
       </div>
+
+      <Dialog
+        open={popup.visible}
+        onOpenChange={(open) => setPopup({ ...popup, visible: open })}
+      >
+        <DialogContent className="flex flex-col gap-3 bg-white p-4 rounded-lg shadow-xl">
+          <DialogTitle>{popup.title}</DialogTitle>
+          <DialogDescription>{popup.message}</DialogDescription>
+          <div className="flex flex-row self-end gap-2">
+            <DialogClose asChild>
+              <Button
+                className="px-3 py-1 rounded"
+                onClick={() => setPopup({ ...popup, visible: false })}
+              >
+                Exit
+              </Button>
+            </DialogClose>
+            <Button
+              className="bg-ttickles-blue text-white px-3 py-1 rounded"
+              onClick={handleSchedule}
+            >
+              Submit
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };

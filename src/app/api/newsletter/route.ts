@@ -52,7 +52,7 @@ export const POST = async () => {
     const newsletterRef = await addDoc(collection(db, "newsletters"), {
       orgId: "org_123",
       newsletter: [" "],
-      newsletterStatus: "revise",
+      newsletterStatus: "draft",
       timestamp: new Date(),
     });
     await updateDoc(newsletterRef, { newsletterId: newsletterRef.id });
