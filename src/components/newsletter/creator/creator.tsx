@@ -9,6 +9,8 @@ import { EventType } from "@/types/event";
 import { usePathname } from "next/navigation";
 import { toast } from "sonner";
 import { Popup } from "@/types/popup";
+import Select from "@/components/global/select";
+import { TIME } from "@/data/time";
 import {
   Dialog,
   DialogClose,
@@ -26,76 +28,15 @@ const Creator = () => {
     submit: true,
     visible: false,
   });
-  const [newsletter, setNewsletter] = useState<string>("");
+  const [newsletter, setNewsletter] = useState({
+    body: "",
+    status: "draft",
+  });
+  const [date, setDate] = useState<Date | undefined>(new Date());
   const [error, setError] = useState(false);
   const [loading, setIsLoading] = useState(true);
   const pathname = usePathname();
   const id = pathname.split("/")[4];
-  // const { EventsContext } = useEventContext()
-  // const [events, setEvents] = useState(EventsContext)
-  // console.log("context: ", events)
-  // const [message, setMessage] = useState("");
-  // const [prompt, setPrompt] = useState("");
-  // const [selectedPrompt, setSelectedPrompt] = useState("");
-  // const [selectedText, setSelectedText] = useState("");
-  // const [loadingSelected, setLoadingSelected] = useState(false);
-
-  // const [allEvents, setEvents] = useState<EventType[]>([]);
-  // console.log(allEvents);
-  // console.log("text selected", selectedText);
-  // console.log(message);
-
-  // const formattedEvents = allEvents
-  //   .map(
-  //     (event, index) =>
-  //       `Event ${index + 1}: ${event.name}, ${event.description}, at ${event.location} on ${event.date}`,
-  //   )
-  //   .join("\n");
-
-  // console.log(formattedEvents);
-
-  // const generateAI = async (customPrompt: string, isSelected = false) => {
-  //   if (!customPrompt.trim()) return; // prevent empty request
-
-  //   const finalPrompt =
-  //     selectedText && isSelected
-  //       ? `Context: ${selectedText}\nUser Request: ${customPrompt}`
-  //       : `${customPrompt}\nEvents: ${formattedEvents}`;
-
-  //   if (isSelected) {
-  //     setLoadingSelected(true);
-  //   } else {
-  //     setIsLoading(true);
-  //   }
-
-  //   try {
-  //     const res = await fetch("/api/ollama/", {
-  //       method: "POST",
-  //       headers: {
-  //         "Content-Type": "application/json",
-  //       },
-  //       body: JSON.stringify({ prompt: finalPrompt }),
-  //     });
-
-  //     if (!res.ok) {
-  //       throw new Error(`HTTP error! Status: ${res.status}`);
-  //     }
-
-  //     const data = await res.json();
-  //     console.log(data);
-  //     setMessage(data.items || "No response received.");
-  //   } catch (error) {
-  //     console.error("Error fetching AI response:", error);
-  //     // setMessage("Failed to fetch response.");
-  //     setError(true);
-  //   } finally {
-  //     if (isSelected) {
-  //       setLoadingSelected(false);
-  //     } else {
-  //       setIsLoading(false);
-  //     } // Re-enable Button
-  //   }
-  // };
 
   const handleSchedule = () => {};
   const handleEventsChange = (updatedEvents: EventType[]) => {
@@ -105,6 +46,7 @@ const Creator = () => {
   };
 
   useEffect(() => {
+    console.log(date);
     fetch(`/api/newsletter/${id}`, {
       method: "GET",
     })
@@ -115,9 +57,11 @@ const Creator = () => {
         return res.json();
       })
       .then((data) => {
-        const newsletter = data.newsletter.join("\n");
-        // console.log("creator", newsletter);
-        setNewsletter(newsletter);
+        const body = data.newsletterData.newsletter.join("\n");
+        setNewsletter({
+          body: body,
+          status: data.newsletterData.status,
+        });
       })
       .catch((error) => {
         console.error("Error fetching newsletters:", error);
@@ -183,8 +127,6 @@ const Creator = () => {
               setPopup({
                 ...popup,
                 visible: true,
-                title: "Schedule Campaign",
-                message: <ScheduleModal />,
               });
             }}
           >
@@ -194,8 +136,8 @@ const Creator = () => {
       </div>
       <div className="flex flex-row h-full gap-2 w-3/4">
         <div className="flex flex-col bg-black/5 p-4 rounded-md border border-black/20 w-full gap-4 h-full">
-          {newsletter ? (
-            <PlateEditor onChange={handleChange} value={newsletter} />
+          {newsletter.body.length > 0 ? (
+            <PlateEditor onChange={handleChange} value={newsletter.body} />
           ) : (
             <Ellipsis className="motion-preset-pulse-sm motion-duration-1000" />
           )}
@@ -208,13 +150,38 @@ const Creator = () => {
         onOpenChange={(open) => setPopup({ ...popup, visible: open })}
       >
         <DialogContent className="flex flex-col gap-3 bg-white p-4 rounded-lg shadow-xl">
-          <DialogTitle>{popup.title}</DialogTitle>
-          <DialogDescription>{popup.message}</DialogDescription>
+          <DialogTitle>Schedule Newsletter</DialogTitle>
+          <DialogDescription>
+            <ScheduleModal setDate={setDate} date={date} />
+
+            <Select
+              options={TIME}
+              onChange={(timeString) => {
+                const newDate = date;
+                const [hours, period] = [
+                  timeString.slice(0, -2),
+                  timeString.slice(-2),
+                ];
+
+                // Convert to 24-hour format
+                let hour = parseInt(hours);
+                if (period === "PM" && hour < 12) hour += 12;
+                if (period === "AM" && hour === 12) hour = 0;
+
+                // Set the hours, keep minutes and seconds unchanged
+                newDate?.setHours(hour);
+                setDate(newDate);
+              }}
+            />
+          </DialogDescription>
           <div className="flex flex-row self-end gap-2">
             <DialogClose asChild>
               <Button
                 className="px-3 py-1 rounded"
-                onClick={() => setPopup({ ...popup, visible: false })}
+                onClick={() => {
+                  setPopup({ ...popup, visible: false });
+                  setDate(undefined);
+                }}
               >
                 Exit
               </Button>
@@ -233,48 +200,3 @@ const Creator = () => {
 };
 
 export default Creator;
-
-// const TypingEffect = ({
-//   message,
-//   setMessage,
-// }: {
-//   message: string;
-//   setMessage: (value: string) => void;
-// }) => {
-//   const [index, setIndex] = useState(0);
-//   const [isTyping, setIsTyping] = useState(false);
-//   const prevMessage = useMemo(() => message, []);
-
-//   useEffect(() => {
-//     if (message !== prevMessage) {
-//       setIndex(0);
-//       setIsTyping(true);
-//     }
-//   }, [message, prevMessage]);
-
-//   useEffect(() => {
-//     if (isTyping && index < message.length) {
-//       const timeout = setTimeout(() => setIndex((i) => i + 1), 10);
-//       return () => clearTimeout(timeout);
-//     } else {
-//       setIsTyping(false);
-//     }
-//   }, [index, message, isTyping]);
-
-//   const displayedMessage = useMemo(
-//     () => message.slice(0, index),
-//     [message, index],
-//   );
-
-//   return (
-//     <Textarea
-//       value={isTyping ? displayedMessage : message}
-//       onChange={(e) => {
-//         setMessage(e.target.value);
-//         setIsTyping(false);
-//         setIndex(e.target.value.length);
-//       }}
-//       className="resize-none border-black/20 bg-white h-full"
-//     />
-//   );
-// };
