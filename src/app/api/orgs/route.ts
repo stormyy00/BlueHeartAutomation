@@ -5,7 +5,13 @@ import { getUser, updateUser } from "@/utils/repository/userRepository";
 import { getServerSession } from "next-auth";
 import { NextRequest, NextResponse } from "next/server";
 
-type Props = Organization;
+type Mode = "join" | "create";
+
+type Props = {
+  org?: Organization;
+  orgId?: string;
+  mode: Mode;
+};
 
 export const GET = async () => {
   const session = await getServerSession(options);
@@ -44,7 +50,10 @@ export const POST = async (request: NextRequest) => {
     request.headers.get("Content-Type")?.toLowerCase() != "application/json"
   ) {
     return NextResponse.json(
-      { message: "Please provide group data." },
+      {
+        message:
+          "Please provide a group and whether you are joining or creating ('join' or 'create').",
+      },
       { status: 400 },
     );
   }
@@ -54,19 +63,45 @@ export const POST = async (request: NextRequest) => {
     | undefined;
   if (!data) {
     return NextResponse.json(
-      { message: "Please provide group data." },
+      {
+        message:
+          "Please provide a group and whether you are joining or creating ('join' or 'create').",
+      },
       { status: 400 },
     );
   }
 
-  const result = await createOrg(data);
-  await updateUser({
-    ...session.user,
-    orgId: data.id,
-  });
+  if (data.mode === "join") {
+    const result = await getOrg(data.orgId!);
+    if (!result) {
+      return NextResponse.json(
+        { message: "This organization does not exist." },
+        { status: 400 },
+      );
+    }
+    await updateUser({
+      ...session.user,
+      orgId: data.orgId!,
+    });
+    return NextResponse.json(
+      { message: "Succesfully joined the organization." },
+      { status: 200 },
+    );
+  } else if (data.mode === "create") {
+    const result = await createOrg(data.org!);
+    await updateUser({
+      ...session.user,
+      orgId: data.org!.id,
+    });
+
+    return NextResponse.json(
+      { message: result ?? "This organization already exists." },
+      { status: result ? 200 : 400 },
+    );
+  }
 
   return NextResponse.json(
-    { message: result ?? "This organization already exists." },
-    { status: result ? 200 : 400 },
+    { message: "You did not provide a correct mode ('join' or 'create')." },
+    { status: 400 },
   );
 };

@@ -34,20 +34,33 @@ const OrganizationForm = () => {
             transition: Bounce,
           });
         } else {
-          toast("Successfully joined an organization!", {
-            position: "top-center",
-            autoClose: 1500,
-            hideProgressBar: false,
-            closeOnClick: true,
-            pauseOnHover: true,
-            draggable: true,
-            progress: undefined,
-            type: "error",
-            theme: "colored",
-            className: "w-[500px] text-center",
-            transition: Bounce,
-          });
           //TODO: have to update user object so they actually join the org
+          fetch("/api/orgs", {
+            method: "POST",
+            body: JSON.stringify({
+              mode: "join",
+              orgId: orgID,
+            }),
+            headers: {
+              "Content-Type": "application/json",
+            },
+          }).then((resp) => {
+            resp.json().then((json) => {
+              toast(json["message"], {
+                position: "top-center",
+                autoClose: 1500,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+                type: resp.status == 200 ? "success" : "error",
+                theme: "colored",
+                className: "w-[500px] text-center",
+                transition: Bounce,
+              });
+            });
+          });
         }
       });
     });
@@ -56,20 +69,23 @@ const OrganizationForm = () => {
   const createOrg = () => {
     fetch("/api/orgs", {
       body: JSON.stringify({
-        id: crypto.randomUUID(),
-        name: orgName,
-        description: "Your organization's description goes here.",
-        icon: "",
-        links: [{ name: "Home", url: "http://yourwebsite.tld" }],
-        donors: [],
-        media: [],
-        newsletters: [],
-        notes: [],
-        themes: [],
-        users: [],
-        region: "US",
-        owner: session?.user.uuid,
-      } as Organization),
+        org: {
+          id: crypto.randomUUID(),
+          name: orgName,
+          description: "Your organization's description goes here.",
+          icon: "",
+          links: [{ name: "Home", url: "http://yourwebsite.tld" }],
+          donors: [],
+          media: [],
+          newsletters: [],
+          notes: [],
+          themes: [],
+          users: [],
+          region: "US",
+          owner: session?.user.uuid,
+        } as Organization,
+        mode: "create",
+      }),
       method: "POST",
       headers: {
         "Content-Type": "application/json",

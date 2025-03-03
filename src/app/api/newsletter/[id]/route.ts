@@ -1,22 +1,23 @@
+import { options } from "@/utils/auth";
 import { db } from "@/utils/firebase";
-import { auth } from "@clerk/nextjs/server";
 import {
   addDoc,
+  collection,
   doc,
   getDocs,
-  setDoc,
-  collection,
   query,
+  setDoc,
   where,
 } from "firebase/firestore";
+import { getServerSession } from "next-auth";
 import { NextRequest, NextResponse } from "next/server";
 
 export const GET = async (
   req: NextRequest,
   { params }: { params: { id: string } },
 ) => {
-  const { userId } = await auth();
-  if (!userId) {
+  const session = await getServerSession(options);
+  if (!session) {
     return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
   }
 
@@ -49,8 +50,8 @@ export const POST = async (
   req: NextRequest,
   { params }: { params: { id: string } },
 ) => {
-  const { userId } = await auth();
-  if (!userId) {
+  const session = await getServerSession(options);
+  if (!session) {
     return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
   }
   const { document } = await req.json();
@@ -67,7 +68,7 @@ export const POST = async (
       await setDoc(
         newsletterRef,
         {
-          orgId: "org_123",
+          orgId: session.user.orgId,
           newsletter: document,
           timestamp: new Date(),
         },
@@ -75,7 +76,7 @@ export const POST = async (
       );
     } else {
       await addDoc(collection(db, "newsletters"), {
-        orgId: "org_123",
+        orgId: session.user.orgId,
         newsletterId: params.id,
         newsletter: document,
         timestamp: new Date(),
