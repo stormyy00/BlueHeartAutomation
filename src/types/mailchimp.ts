@@ -16,7 +16,7 @@ export type CreateCampaignData = {
 };
 
 export type CampaignContent = {
-  html: string;
+  text: string[];
 };
 
 export type CampaignResponse = {

@@ -38,7 +38,18 @@ const Creator = () => {
   const pathname = usePathname();
   const id = pathname.split("/")[4];
 
-  const handleSchedule = () => {};
+  const handleSchedule = async () => {
+    console.log("CLIENT:", date);
+    await fetch(`/api/newsletter/${id}/schedule`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        date: date,
+      }),
+    });
+  };
   const handleEventsChange = (updatedEvents: EventType[]) => {
     console.log("Updated Events List in Parent:", updatedEvents);
     // setEvents(updatedEvents);
