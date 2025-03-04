@@ -1,6 +1,6 @@
 import React from "react";
 import { Pen } from "lucide-react";
-import { Checkbox } from "../ui/checkbox";
+import { Checkbox } from "@/components/ui/checkbox";
 import Link from "next/link";
 
 type Props = {

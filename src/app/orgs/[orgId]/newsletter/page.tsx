@@ -1,4 +1,4 @@
-import NewsletterDashboard from "@/components/newsletter/newsletter-dashboard";
+import NewsletterDashboard from "@/components/newsletter/dashboard/newsletter-dashboard";
 const Page = () => {
   return (
     <div className="w-full flex ">

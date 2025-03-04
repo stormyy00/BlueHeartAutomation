@@ -1,9 +1,8 @@
 import { useState } from "react";
-import { Plus, Search, Trash } from "lucide-react";
-import { Input } from "../ui/input";
+import { Plus, Trash } from "lucide-react";
+import { Input } from "@/components/ui/input";
 import Select from "@/components/global/select";
 import { STATUSES } from "@/data/newsletter/toolbar";
-import { Button } from "../ui/button";
 import { useRouter } from "next/navigation";
 import {
   AlertDialog,
@@ -58,26 +57,6 @@ const NewsletterToolbar = ({
             newsletter.toLowerCase().includes(e.toLowerCase()),
           ),
     );
-  };
-
-  const handleStatus = async (newStatus: string) => {
-    await fetch("/api/newsletter", {
-      method: "PUT",
-      body: JSON.stringify({
-        newsletterIds: ids,
-        newStatus: newStatus,
-      }),
-    });
-    setNewsletters((prev) => {
-      const updated = prev.map((item) =>
-        checked[item.newsletterId]
-          ? { ...item, newsletterStatus: newStatus }
-          : item,
-      );
-
-      setSearch([...updated]);
-      return [...updated];
-    });
   };
 
   const handleNewletter = () => {
@@ -140,26 +119,11 @@ const NewsletterToolbar = ({
 
   return (
     <div className="flex flex-row items-center gap-2">
-      {STATUSES.map((item, index) => (
-        <Button
-          key={index}
-          onClick={() => handleStatus(item.status)}
-          className={`${item.color} font-bold textwhite`}
-        >
-          {item.status}
-        </Button>
-      ))}
-      <div className="relative w-full md:w-full flex-grow md:flex-grow-0">
-        <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-          <Search size={16} className="text-gray-400" />
-        </div>
-        <Input
-          value={value}
-          onChange={(e) => handleChange(e.target.value)}
-          placeholder="Search newsletters..."
-          className="pl-10 pr-4 py-2 w-full rounded-lg border border-gray-200 focus:ring-2 focus:ring-gray-200 focus:border-gray-400 text-sm"
-        />
-      </div>
+      <Input
+        value={value}
+        onChange={(e) => handleChange(e.target.value)}
+        placeholder="search"
+      />
       <Select
         options={STATUSES.map(({ status }) => ({
           label: status,
