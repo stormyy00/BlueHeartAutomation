@@ -20,7 +20,7 @@ const createCampaign = async (data: CreateCampaignData) => {
   return campaign;
 };
 
-export const addContentToCampaign = async (
+const addContentToCampaign = async (
   campaignId: string,
   content: CampaignContent,
 ) => {
@@ -43,7 +43,7 @@ export const addContentToCampaign = async (
   return result;
 };
 
-export const scheduleCampaign = async (campaignId: string, sendTime: Date) => {
+const scheduleCampaign = async (campaignId: string, sendTime: Date) => {
   const response = await fetch(
     `https://${process.env.MAILCHIMP_SERVER_PREFIX}.api.mailchimp.com/3.0/campaigns/${campaignId}/actions/schedule`,
     {
