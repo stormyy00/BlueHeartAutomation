@@ -11,6 +11,7 @@ import { toast } from "sonner";
 import { Popup } from "@/types/popup";
 import Select from "@/components/global/select";
 import { TIME } from "@/data/time";
+import { Label } from "@/components/ui/label";
 import {
   Dialog,
   DialogClose,
@@ -35,10 +36,13 @@ const Creator = () => {
   const [date, setDate] = useState<Date | undefined>(new Date());
   const [error, setError] = useState(false);
   const [loading, setIsLoading] = useState(true);
+  const [scheduleLoading, setScheduleLoading] = useState(false);
   const pathname = usePathname();
   const id = pathname.split("/")[4];
 
   const handleSchedule = async () => {
+    setScheduleLoading(true);
+    const toastId = toast.loading("Scheduling newsletter...");
     console.log("CLIENT:", date);
     await fetch(`/api/newsletter/${id}/schedule`, {
       method: "POST",
@@ -48,7 +52,17 @@ const Creator = () => {
       body: JSON.stringify({
         date: date,
       }),
+    }).catch((error) => {
+      toast.error("Failed to schedule newsletter", { id: toastId });
+      console.log(error);
+      setScheduleLoading(false);
+      return;
     });
+
+    toast.success("Newsletter scheduled successfully!", { id: toastId });
+
+    setScheduleLoading(false);
+    setPopup({ ...popup, visible: false });
   };
   const handleEventsChange = (updatedEvents: EventType[]) => {
     console.log("Updated Events List in Parent:", updatedEvents);
@@ -162,28 +176,35 @@ const Creator = () => {
       >
         <DialogContent className="flex flex-col gap-3 bg-white p-4 rounded-lg shadow-xl">
           <DialogTitle>Schedule Newsletter</DialogTitle>
-          <DialogDescription>
-            <ScheduleModal setDate={setDate} date={date} />
+          <DialogDescription className="flex flex-col gap-4">
+            <div>
+              <Label>Date</Label>
+              <ScheduleModal setDate={setDate} date={date} />
+            </div>
 
-            <Select
-              options={TIME}
-              onChange={(timeString) => {
-                const newDate = date;
-                const [hours, period] = [
-                  timeString.slice(0, -2),
-                  timeString.slice(-2),
-                ];
+            <div>
+              <Label>Time</Label>
+              <Select
+                options={TIME}
+                placeholder="Select Time"
+                onChange={(timeString) => {
+                  const newDate = date;
+                  const [hours, period] = [
+                    timeString.slice(0, -2),
+                    timeString.slice(-2),
+                  ];
 
-                // Convert to 24-hour format
-                let hour = parseInt(hours);
-                if (period === "PM" && hour < 12) hour += 12;
-                if (period === "AM" && hour === 12) hour = 0;
+                  // Convert to 24-hour format
+                  let hour = parseInt(hours);
+                  if (period === "PM" && hour < 12) hour += 12;
+                  if (period === "AM" && hour === 12) hour = 0;
 
-                // Set the hours, keep minutes and seconds unchanged
-                newDate?.setHours(hour);
-                setDate(newDate);
-              }}
-            />
+                  // Set the hours, keep minutes and seconds unchanged
+                  newDate?.setHours(hour);
+                  setDate(newDate);
+                }}
+              />
+            </div>
           </DialogDescription>
           <div className="flex flex-row self-end gap-2">
             <DialogClose asChild>
@@ -193,6 +214,7 @@ const Creator = () => {
                   setPopup({ ...popup, visible: false });
                   setDate(undefined);
                 }}
+                disabled={scheduleLoading}
               >
                 Exit
               </Button>
@@ -200,6 +222,7 @@ const Creator = () => {
             <Button
               className="bg-ttickles-blue text-white px-3 py-1 rounded"
               onClick={handleSchedule}
+              disabled={scheduleLoading}
             >
               Submit
             </Button>
