@@ -21,7 +21,6 @@ const Select = ({ options, onChange, placeholder = "Select" }: SelectProps) => {
       </SelectTrigger>
       <SelectContent className="bg-white">
         <SelectGroup>
-          <SelectItem value="All">All</SelectItem>
           {options.map(({ value, label }, index) => (
             <SelectItem key={index} value={value}>
               {label}

@@ -54,7 +54,7 @@ export const POST = async () => {
     const newsletterRef = await addDoc(collection(db, "newsletters"), {
       orgId: session.user.orgId,
       newsletter: [" "],
-      newsletterStatus: "revise",
+      newsletterStatus: "draft",
       timestamp: new Date(),
     });
     await updateDoc(newsletterRef, { newsletterId: newsletterRef.id });

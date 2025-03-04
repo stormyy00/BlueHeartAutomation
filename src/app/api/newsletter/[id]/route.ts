@@ -35,9 +35,9 @@ export const GET = async (
       );
     }
 
-    const newsletter = querySnapshot.docs[0].data().newsletter;
+    const newsletter = querySnapshot.docs[0].data();
 
-    return NextResponse.json({ newsletter });
+    return NextResponse.json({ newsletterData: newsletter });
   } catch (err) {
     return NextResponse.json(
       { message: `Internal Server Error: ${err}` },
