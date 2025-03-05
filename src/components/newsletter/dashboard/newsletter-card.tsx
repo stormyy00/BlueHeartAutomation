@@ -13,8 +13,8 @@ type Props = {
 };
 
 const STATUS_STYLES: Record<string, { bg: string; text: string }> = {
-  revise: { bg: "bg-amber-50", text: "bg-ttickles-orange" },
-  publish: { bg: "bg-blue-50", text: "text-blue-600" },
+  draft: { bg: "bg-amber-50", text: "bg-ttickles-orange" },
+  published: { bg: "bg-blue-50", text: "text-blue-600" },
 };
 
 const NewsletterCard = ({
