@@ -1,27 +1,28 @@
+import { options } from "@/utils/auth";
 import { db } from "@/utils/firebase";
-import { auth } from "@clerk/nextjs/server";
 import {
-  doc,
   addDoc,
-  deleteDoc,
-  updateDoc,
-  getDocs,
   collection,
+  deleteDoc,
+  doc,
+  getDocs,
   query,
+  updateDoc,
   where,
 } from "firebase/firestore";
+import { getServerSession } from "next-auth";
 import { NextRequest, NextResponse } from "next/server";
 
 export const GET = async () => {
-  const { userId } = await auth();
-  if (!userId) {
+  const session = await getServerSession(options);
+  if (!session) {
     return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
   }
 
   try {
     const q = query(
       collection(db, "newsletters"),
-      where("orgId", "==", "org_123"),
+      where("orgId", "==", session.user.orgId),
     );
     const querySnapshot = await getDocs(q);
 
@@ -44,16 +45,16 @@ export const GET = async () => {
 };
 
 export const POST = async () => {
-  const { userId } = await auth();
-  if (!userId) {
+  const session = await getServerSession(options);
+  if (!session) {
     return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
   }
 
   try {
     const newsletterRef = await addDoc(collection(db, "newsletters"), {
-      orgId: "org_123",
+      orgId: session.user.orgId,
       newsletter: [" "],
-      newsletterStatus: "revise",
+      newsletterStatus: "draft",
       timestamp: new Date(),
     });
     await updateDoc(newsletterRef, { newsletterId: newsletterRef.id });
@@ -71,10 +72,11 @@ export const POST = async () => {
 };
 
 export const DELETE = async (req: NextRequest) => {
-  const { userId } = await auth();
-  if (!userId) {
+  const session = await getServerSession(options);
+  if (!session) {
     return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
   }
+
   const { newsletterId } = await req.json();
 
   try {
@@ -108,10 +110,11 @@ export const DELETE = async (req: NextRequest) => {
 };
 
 export const PUT = async (req: NextRequest) => {
-  const { userId } = await auth();
-  if (!userId) {
+  const session = await getServerSession(options);
+  if (!session) {
     return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
   }
+
   const { newsletterIds, newStatus } = await req.json();
 
   try {

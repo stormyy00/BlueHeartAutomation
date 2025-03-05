@@ -8,80 +8,62 @@ import { Ellipsis, Loader } from "lucide-react";
 import { EventType } from "@/types/event";
 import { usePathname } from "next/navigation";
 import { toast } from "sonner";
-
+import { Popup } from "@/types/popup";
+import Select from "@/components/global/select";
+import { TIME } from "@/data/time";
+import { Label } from "@/components/ui/label";
+import {
+  Dialog,
+  DialogClose,
+  DialogContent,
+  DialogDescription,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import ScheduleModal from "./schedule-modal";
 const Creator = () => {
   const [data, setData] = useState<string[] | null>(null);
-  const [newsletter, setNewsletter] = useState<string>("");
+  const [popup, setPopup] = useState<Popup>({
+    title: "",
+    message: "",
+    cancel: true,
+    submit: true,
+    visible: false,
+  });
+  const [newsletter, setNewsletter] = useState({
+    body: "",
+    status: "draft",
+  });
+  const [date, setDate] = useState<Date | undefined>(new Date());
   const [error, setError] = useState(false);
   const [loading, setIsLoading] = useState(true);
+  const [scheduleLoading, setScheduleLoading] = useState(false);
   const pathname = usePathname();
   const id = pathname.split("/")[4];
-  // const { EventsContext } = useEventContext()
-  // const [events, setEvents] = useState(EventsContext)
-  // console.log("context: ", events)
-  // const [message, setMessage] = useState("");
-  // const [prompt, setPrompt] = useState("");
-  // const [selectedPrompt, setSelectedPrompt] = useState("");
-  // const [selectedText, setSelectedText] = useState("");
-  // const [loadingSelected, setLoadingSelected] = useState(false);
 
-  // const [allEvents, setEvents] = useState<EventType[]>([]);
-  // console.log(allEvents);
-  // console.log("text selected", selectedText);
-  // console.log(message);
+  const handleSchedule = async () => {
+    setScheduleLoading(true);
+    const toastId = toast.loading("Scheduling newsletter...");
+    console.log("CLIENT:", date);
+    await fetch(`/api/newsletter/${id}/schedule`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        date: date,
+      }),
+    }).catch((error) => {
+      toast.error("Failed to schedule newsletter", { id: toastId });
+      console.log(error);
+      setScheduleLoading(false);
+      return;
+    });
 
-  // const formattedEvents = allEvents
-  //   .map(
-  //     (event, index) =>
-  //       `Event ${index + 1}: ${event.name}, ${event.description}, at ${event.location} on ${event.date}`,
-  //   )
-  //   .join("\n");
+    toast.success("Newsletter scheduled successfully!", { id: toastId });
 
-  // console.log(formattedEvents);
-
-  // const generateAI = async (customPrompt: string, isSelected = false) => {
-  //   if (!customPrompt.trim()) return; // prevent empty request
-
-  //   const finalPrompt =
-  //     selectedText && isSelected
-  //       ? `Context: ${selectedText}\nUser Request: ${customPrompt}`
-  //       : `${customPrompt}\nEvents: ${formattedEvents}`;
-
-  //   if (isSelected) {
-  //     setLoadingSelected(true);
-  //   } else {
-  //     setIsLoading(true);
-  //   }
-
-  //   try {
-  //     const res = await fetch("/api/ollama/", {
-  //       method: "POST",
-  //       headers: {
-  //         "Content-Type": "application/json",
-  //       },
-  //       body: JSON.stringify({ prompt: finalPrompt }),
-  //     });
-
-  //     if (!res.ok) {
-  //       throw new Error(`HTTP error! Status: ${res.status}`);
-  //     }
-
-  //     const data = await res.json();
-  //     console.log(data);
-  //     setMessage(data.items || "No response received.");
-  //   } catch (error) {
-  //     console.error("Error fetching AI response:", error);
-  //     // setMessage("Failed to fetch response.");
-  //     setError(true);
-  //   } finally {
-  //     if (isSelected) {
-  //       setLoadingSelected(false);
-  //     } else {
-  //       setIsLoading(false);
-  //     } // Re-enable button
-  //   }
-  // };
-
+    setScheduleLoading(false);
+    setPopup({ ...popup, visible: false });
+  };
   const handleEventsChange = (updatedEvents: EventType[]) => {
     console.log("Updated Events List in Parent:", updatedEvents);
     // setEvents(updatedEvents);
@@ -89,6 +71,7 @@ const Creator = () => {
   };
 
   useEffect(() => {
+    console.log(date);
     fetch(`/api/newsletter/${id}`, {
       method: "GET",
     })
@@ -99,9 +82,11 @@ const Creator = () => {
         return res.json();
       })
       .then((data) => {
-        const newsletter = data.newsletter.join("\n");
-        // console.log("creator", newsletter);
-        setNewsletter(newsletter);
+        const body = data.newsletterData.newsletter.join("\n");
+        setNewsletter({
+          body: body,
+          status: data.newsletterData.status,
+        });
       })
       .catch((error) => {
         console.error("Error fetching newsletters:", error);
@@ -145,76 +130,107 @@ const Creator = () => {
   }
 
   return (
-    <div className="flex flex-col gap-4 h-full w-full">
-      <div className="font-extrabold text-3xl mb-8">Newsletter</div>
-      <div className="flex flex-row h-full gap-2 w-2/3 ">
+    <div className="flex flex-col gap-4 h-full w-11/12">
+      <div className="flex flex-row justify-between w-full">
+        <div className="font-extrabold text-3xl mb-8">Newsletter</div>
+
+        <div className="flex flex-row gap-3">
+          {loading ? (
+            <Button
+              disabled={!data || !data.length}
+              onClick={generateDocument}
+              className="bg-ttickles-darkblue text-white px-4 py-2 rounded disabled:opacity-50 w-fit"
+            >
+              Save
+            </Button>
+          ) : (
+            <Loader className="animate-spin" />
+          )}
+          <Button
+            className="bg-ttickles-orange hover:bg-ttickles-orange"
+            onClick={() => {
+              setPopup({
+                ...popup,
+                visible: true,
+              });
+            }}
+          >
+            Schedule
+          </Button>
+        </div>
+      </div>
+      <div className="flex flex-row h-full gap-2 w-3/4">
         <div className="flex flex-col bg-black/5 p-4 rounded-md border border-black/20 w-full gap-4 h-full">
-          {newsletter ? (
-            <PlateEditor onChange={handleChange} value={newsletter} />
+          {newsletter.body.length > 0 ? (
+            <PlateEditor onChange={handleChange} value={newsletter.body} />
           ) : (
             <Ellipsis className="motion-preset-pulse-sm motion-duration-1000" />
           )}
         </div>
         <Events onChange={handleEventsChange} />
       </div>
-      {loading ? (
-        <Button
-          disabled={!data || !data.length}
-          onClick={generateDocument}
-          className="bg-ttickles-darkblue text-white px-4 py-2 rounded disabled:opacity-50 w-fit"
-        >
-          Save
-        </Button>
-      ) : (
-        <Loader className="animate-spin" />
-      )}
+
+      <Dialog
+        open={popup.visible}
+        onOpenChange={(open) => setPopup({ ...popup, visible: open })}
+      >
+        <DialogContent className="flex flex-col gap-3 bg-white p-4 rounded-lg shadow-xl">
+          <DialogTitle>Schedule Newsletter</DialogTitle>
+          <DialogDescription className="flex flex-col gap-4">
+            <div>
+              <Label>Date</Label>
+              <ScheduleModal setDate={setDate} date={date} />
+            </div>
+
+            <div>
+              <Label>Time</Label>
+              <Select
+                options={TIME}
+                placeholder="Select Time"
+                onChange={(timeString) => {
+                  const newDate = date;
+                  const [hours, period] = [
+                    timeString.slice(0, -2),
+                    timeString.slice(-2),
+                  ];
+
+                  // Convert to 24-hour format
+                  let hour = parseInt(hours);
+                  if (period === "PM" && hour < 12) hour += 12;
+                  if (period === "AM" && hour === 12) hour = 0;
+
+                  // Set the hours, keep minutes and seconds unchanged
+                  newDate?.setHours(hour);
+                  setDate(newDate);
+                }}
+              />
+            </div>
+          </DialogDescription>
+          <div className="flex flex-row self-end gap-2">
+            <DialogClose asChild>
+              <Button
+                className="px-3 py-1 rounded"
+                onClick={() => {
+                  setPopup({ ...popup, visible: false });
+                  setDate(undefined);
+                }}
+                disabled={scheduleLoading}
+              >
+                Exit
+              </Button>
+            </DialogClose>
+            <Button
+              className="bg-ttickles-blue text-white px-3 py-1 rounded"
+              onClick={handleSchedule}
+              disabled={scheduleLoading}
+            >
+              Submit
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };
 
 export default Creator;
-
-// const TypingEffect = ({
-//   message,
-//   setMessage,
-// }: {
-//   message: string;
-//   setMessage: (value: string) => void;
-// }) => {
-//   const [index, setIndex] = useState(0);
-//   const [isTyping, setIsTyping] = useState(false);
-//   const prevMessage = useMemo(() => message, []);
-
-//   useEffect(() => {
-//     if (message !== prevMessage) {
-//       setIndex(0);
-//       setIsTyping(true);
-//     }
-//   }, [message, prevMessage]);
-
-//   useEffect(() => {
-//     if (isTyping && index < message.length) {
-//       const timeout = setTimeout(() => setIndex((i) => i + 1), 10);
-//       return () => clearTimeout(timeout);
-//     } else {
-//       setIsTyping(false);
-//     }
-//   }, [index, message, isTyping]);
-
-//   const displayedMessage = useMemo(
-//     () => message.slice(0, index),
-//     [message, index],
-//   );
-
-//   return (
-//     <Textarea
-//       value={isTyping ? displayedMessage : message}
-//       onChange={(e) => {
-//         setMessage(e.target.value);
-//         setIsTyping(false);
-//         setIndex(e.target.value.length);
-//       }}
-//       className="resize-none border-black/20 bg-white h-full"
-//     />
-//   );
-// };

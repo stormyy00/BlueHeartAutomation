@@ -1,5 +1,5 @@
-import AuthProvider from "@/components/auth/auth";
 import Navigation from "@/components/global/navigation";
+import ProtectedPage from "@/components/protected";
 import { SidebarProvider } from "@/components/ui/sidebar";
 import { Metadata } from "next";
 
@@ -11,15 +11,15 @@ export const metadata: Metadata = {
 type LayoutProps = {
   children: React.ReactNode;
 };
-const Layout = ({ children }: LayoutProps) => {
+const Layout = async ({ children }: LayoutProps) => {
   return (
     <div>
-      <AuthProvider>
+      <ProtectedPage>
         <SidebarProvider>
           <Navigation />
           {children}
         </SidebarProvider>
-      </AuthProvider>
+      </ProtectedPage>
     </div>
   );
 };

@@ -13,8 +13,6 @@ import Image from "next/image";
 import Logo from "@/public/temporarylogo.png";
 import { usePathname, useRouter } from "next/navigation";
 
-import { UserButton } from "@clerk/nextjs";
-
 const Navigation = () => {
   const path = usePathname();
   const router = useRouter();
@@ -40,7 +38,7 @@ const Navigation = () => {
         ))}
       </SidebarContent>
       <SidebarFooter>
-        <UserButton
+        {/* <UserButton
           showName
           appearance={{
             elements: {
@@ -50,7 +48,7 @@ const Navigation = () => {
               },
             },
           }}
-        />
+        /> */}
       </SidebarFooter>
     </Sidebar>
   );

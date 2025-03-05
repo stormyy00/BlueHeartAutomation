@@ -28,8 +28,8 @@ Rules:
 const systemDefault = `\
 ${systemCommon}
 - <Block> is the current block of text the user is working on.
-- Ensure your output can seamlessly fit into the existing <Block> structure.
-- CRITICAL: Provide only a single block of text. DO NOT create multiple paragraphs or separate blocks.
+- Ensure your output can seamlessly fit into the existing <Block> structure, and if not, then create more Blocks.
+- CRITICAL: You can create multiple paragraphs, but ensure they create a different block of text per paragraph.
 <Block>
 {block}
 </Block>
@@ -54,7 +54,7 @@ ${systemCommon}
 - <Selection> represents the full blocks of text the user has selected and wants to modify or ask about.
 - Your response should be a direct replacement for the entire <Selection>.
 - Maintain the overall structure and formatting of the selected blocks, unless explicitly instructed otherwise.
-- CRITICAL: Provide only the content to replace <Selection>. Do not add additional blocks or change the block structure unless specifically requested.
+- CRITICAL: Provide only the content to replace <Selection>.
 <Selection>
 {block}
 </Selection>
