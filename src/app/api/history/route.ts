@@ -1,0 +1,38 @@
+import { db } from "@/utils/firebase";
+import { auth } from "@clerk/nextjs/server";
+import { getDocs, collection, query, where } from "firebase/firestore";
+import { NextResponse } from "next/server";
+
+export const GET = async () => {
+  const { userId } = await auth();
+  if (!userId) {
+    return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
+  }
+
+  try {
+    const q = query(
+      collection(db, "newsletters"),
+      where("orgId", "==", "org_123"),
+    );
+    const querySnapshot = await getDocs(q);
+
+    const newsletters = querySnapshot.docs.map((doc) => {
+      const data = doc.data();
+      return {
+        newsletter: data.newsletter[0],
+        newsletterId: data.newsletterId,
+        newsletterStatus: data.newsletterStatus,
+        newsletterTimestamp: new Date(
+          data.timestamp.seconds * 1000 + data.timestamp.nanoseconds / 1000000,
+        ), // Convert seconds and nanoseconds to milliseconds
+      };
+    });
+
+    return NextResponse.json({ newsletters }, { status: 200 });
+  } catch (err) {
+    return NextResponse.json(
+      { message: `Internal Server Error: ${err}` },
+      { status: 500 },
+    );
+  }
+};
