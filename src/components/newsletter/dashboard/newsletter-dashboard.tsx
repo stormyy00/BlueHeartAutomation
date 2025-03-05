@@ -102,7 +102,7 @@ const NewsletterDashboard = () => {
                 title={newsletter === " " ? "Untitled" : newsletter}
                 id={newsletterId ?? index.toString()}
                 handleConfigure={handleConfigure}
-                status={newsletterStatus || "revise"}
+                status={newsletterStatus || "draft"}
                 onClick={() => {
                   setChecked({
                     ...checked,
