@@ -1,19 +1,16 @@
 export type Region = "US" | "Canada";
-
-export type User = {
-  id: string;
-  email: string;
+export type Role = "Administrator" | "User";
+export const RoleValues = ["Administrator", "User"];
+export type Link = {
   name: string;
-  icon: string;
-  role: string;
-  orgId: string;
+  url: string;
 };
 
 export type Organization = {
   id: string;
   name: string;
   description: string;
-  website: string;
+  owner: string;
   icon: string;
   media: string[];
   newsletters: string[];
@@ -21,6 +18,7 @@ export type Organization = {
   notes: string[];
   users: string[];
   donors: string[];
+  links: Link[];
   region: Region;
 };
 

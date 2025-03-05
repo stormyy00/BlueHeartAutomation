@@ -4,11 +4,114 @@ import { Button } from "./ui/button";
 // import Image from "next/image";
 import { useState } from "react";
 import { Input } from "@/components/ui/input";
+import { Organization } from "@/data/types";
+import { Bounce, toast } from "react-toastify";
+import { useSession } from "next-auth/react";
 
-export default function OrganizationForm() {
+const OrganizationForm = () => {
   const [orgID, setOrgID] = useState("");
   const [orgName, setOrgName] = useState("");
   const [activeTab, setActiveTab] = useState("join");
+
+  const { data: session } = useSession();
+
+  const joinOrg = () => {
+    fetch(`/api/orgs/${orgID}?data=false`).then((resp) => {
+      resp.json().then((json) => {
+        const exists = json["message"];
+        if (!exists) {
+          toast("This organization does not exist.", {
+            position: "top-center",
+            autoClose: 1500,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined,
+            type: "error",
+            theme: "colored",
+            className: "w-[500px] text-center",
+            transition: Bounce,
+          });
+        } else {
+          //TODO: have to update user object so they actually join the org
+          fetch("/api/orgs", {
+            method: "POST",
+            body: JSON.stringify({
+              mode: "join",
+              orgId: orgID,
+            }),
+            headers: {
+              "Content-Type": "application/json",
+            },
+          }).then((resp) => {
+            resp.json().then((json) => {
+              toast(json["message"], {
+                position: "top-center",
+                autoClose: 1500,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+                type: resp.status == 200 ? "success" : "error",
+                theme: "colored",
+                className: "w-[500px] text-center",
+                transition: Bounce,
+              });
+            });
+          });
+        }
+      });
+    });
+  };
+
+  const createOrg = () => {
+    fetch("/api/orgs", {
+      body: JSON.stringify({
+        org: {
+          id: crypto.randomUUID(),
+          name: orgName,
+          description: "Your organization's description goes here.",
+          icon: "",
+          links: [{ name: "Home", url: "http://yourwebsite.tld" }],
+          donors: [],
+          media: [],
+          newsletters: [],
+          notes: [],
+          themes: [],
+          users: [],
+          region: "US",
+          owner: session?.user.uuid,
+        } as Organization,
+        mode: "create",
+      }),
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    }).then((resp) => {
+      resp.json().then((json) => {
+        const msg = json["message"];
+        toast(
+          resp.status == 200 ? "Successfully created your organization." : msg,
+          {
+            position: "top-center",
+            autoClose: 1500,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined,
+            type: "success",
+            theme: "colored",
+            className: "w-[500px] text-center",
+            transition: Bounce,
+          },
+        );
+      });
+    });
+  };
 
   return (
     <div className="w-full">
@@ -54,7 +157,10 @@ export default function OrganizationForm() {
               value={orgID}
               className="w-full border p-2 rounded-md mt-1"
             />
-            <Button className="mt-3 w-full bg-teal-600 text-white p-2 rounded-md hover:bg-slate-600">
+            <Button
+              className="mt-3 w-full bg-teal-600 text-white p-2 rounded-md hover:bg-slate-600"
+              onClick={joinOrg}
+            >
               Submit
             </Button>
           </div>
@@ -73,7 +179,10 @@ export default function OrganizationForm() {
               value={orgName}
               className="w-full border p-2 rounded-md mt-1"
             />
-            <Button className="mt-3 w-full bg-teal-600 text-white p-2 rounded-md hover:bg-slate-600">
+            <Button
+              className="mt-3 w-full bg-teal-600 text-white p-2 rounded-md hover:bg-slate-600"
+              onClick={createOrg}
+            >
               Submit
             </Button>
           </div>
@@ -81,4 +190,6 @@ export default function OrganizationForm() {
       </div>
     </div>
   );
-}
+};
+
+export default OrganizationForm;

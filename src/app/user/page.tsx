@@ -1,23 +1,24 @@
 "use client";
-import { User } from "@clerk/nextjs/server";
-import { useEffect, useState } from "react";
-import Content from "@/components/joinorg";
+import OrganizationForm from "@/components/joinorg";
+import { useQuery } from "@tanstack/react-query";
 
 const Page = () => {
-  // const clerk = await clerkClient() // server-side method
-  // const { userId } = await auth();
-  // const user = await clerk.users.getUser(userId ?? "")
-  const [user, setUser] = useState<User>();
-  useEffect(() => {
-    fetch("/api/user").then((resp) => {
-      resp.json().then((json) => setUser(json["message"]));
-    });
-  }, []);
-  // console.log("page")
-  console.log(user);
-  <div className="w-full flex">
-    <Content />
-  </div>;
+  const orgQuery = useQuery({
+    queryKey: ["my-org"],
+    queryFn: async () => {
+      const resp = await fetch("/api/orgs");
+      return {
+        status: resp.status,
+        data: await resp.json(),
+      };
+    },
+  });
+  if (!orgQuery.data) return;
+  return (
+    <div className="w-full flex">
+      {orgQuery.data.status == 400 && <OrganizationForm />}
+    </div>
+  );
 };
 
 export default Page;
