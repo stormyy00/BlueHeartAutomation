@@ -23,7 +23,7 @@ import { AIChatEditor } from "./ai-chat-editor";
 import { AIMenuItems } from "./ai-menu-items";
 import { Command, CommandList, InputCommand } from "./command";
 import { Popover, PopoverAnchor, PopoverContent } from "./popover";
-import { useChat } from "ai/react";
+import { useChat } from "@ai-sdk/react";
 
 export function AIMenu() {
   const { api, editor } = useEditorPlugin(AIChatPlugin);
@@ -35,13 +35,13 @@ export function AIMenu() {
 
   const chat = useChat({ api: "/api/ai/command" });
 
-  const { input, isLoading, messages, setInput } = chat;
+  const { input, status, messages, setInput } = chat;
   const [anchorElement, setAnchorElement] = React.useState<HTMLElement | null>(
     null,
   );
 
-  console.log(messages);
   const content = useLastAssistantMessage()?.content;
+  // console.log("content:", content);
 
   const setOpen = (open: boolean) => {
     if (open) {
@@ -103,7 +103,7 @@ export function AIMenu() {
         onEscapeKeyDown={(e) => {
           e.preventDefault();
 
-          if (isLoading) {
+          if (status != "ready" && status != "error") {
             api.aiChat.stop();
           } else {
             api.aiChat.hide();
@@ -122,7 +122,7 @@ export function AIMenu() {
             <AIChatEditor content={content} />
           )}
 
-          {isLoading ? (
+          {status != "ready" && status != "error" ? (
             <div className="flex grow items-center gap-2 p-2 text-sm text-muted-foreground select-none">
               <Loader2Icon className="size-4 animate-spin" />
               {messages.length > 1 ? "Editing..." : "Thinking..."}
@@ -149,7 +149,7 @@ export function AIMenu() {
             />
           )}
 
-          {!isLoading && (
+          {!(status != "ready" && status != "error") && (
             <CommandList>
               <AIMenuItems setValue={setValue} />
             </CommandList>
