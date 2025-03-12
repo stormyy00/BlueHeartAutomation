@@ -21,6 +21,7 @@ import {
 import ScheduleModal from "./schedule-modal";
 import Editor from "@/components/novel/editror";
 import { JSONContent } from "novel";
+import { createEditor } from "@udecode/plate";
 
 const Creator = () => {
   const [data, setData] = useState<string[] | JSONContent | null>(null);
@@ -74,7 +75,6 @@ const Creator = () => {
   };
 
   useEffect(() => {
-    console.log(date);
     fetch(`/api/newsletter/${id}`, {
       method: "GET",
     })
@@ -85,20 +85,65 @@ const Creator = () => {
         return res.json();
       })
       .then((data) => {
-        const body = Array.isArray(data.newsletterData.newsletter)
-          ? data.newsletterData.newsletter.join("\n")
-          : data.newsletterData.newsletter;
-        console.log("Body", body);
+        let formattedContent;
+
+        if (typeof data.newsletterData.newsletter === "string") {
+          try {
+            formattedContent = JSON.parse(data.newsletterData.newsletter);
+          } catch {
+            formattedContent = createBasicJSONContent(
+              data.newsletterData.newsletter,
+            );
+          }
+        } else if (Array.isArray(data.newsletterData.newsletter)) {
+          formattedContent = createBasicJSONContent(
+            data.newsletterData.newsletter.join("\n"),
+          );
+        } else {
+          formattedContent = data.newsletterData.newsletter;
+        }
+
         setNewsletter({
-          body: body,
+          body: formattedContent,
           status: data.newsletterData.status,
         });
       })
       .catch((error) => {
-        console.error("Error fetching newsletters:", error);
-      })
-      .finally(() => console.log("done")); // toaast
+        console.error("Error fetching newsletter:", error);
+        toast.error("Failed to load newsletter content");
+      });
   }, [id]);
+
+  const createBasicJSONContent = (text: string): JSONContent => {
+    if (/\*\*|\*|__|~~/.test(text)) {
+      const tempEditor = createEditor({
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        content: text,
+        editorProps: {
+          attributes: {
+            class: "prose",
+          },
+        },
+      });
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      return tempEditor.getJSON();
+    }
+
+    return {
+      type: "doc",
+      content: [
+        {
+          type: "paragraph",
+          content: [
+            {
+              type: "text",
+              text: text,
+            },
+          ],
+        },
+      ],
+    };
+  };
 
   const generateDocument = async () => {
     if (!data) return;
@@ -138,7 +183,7 @@ const Creator = () => {
 
   console.log(textContent);
   return (
-    <div className="flex flex-col gap-4 h-full w-11/12">
+    <div className="flex flex-col gap-4 h-full w-full">
       <div className="flex flex-row justify-between w-full">
         <div className="font-extrabold text-3xl mb-8">Newsletter</div>
 
@@ -179,7 +224,9 @@ const Creator = () => {
             <Ellipsis className="motion-preset-pulse-sm motion-duration-1000" />
           )}
         </div>
-        <Events onChange={handleEventsChange} />
+        <div className="flex  gap-4 w-1/3">
+          <Events onChange={handleEventsChange} />
+        </div>
       </div>
 
       <Dialog

@@ -18,8 +18,12 @@ export const GET = async () => {
 
     const newsletters = querySnapshot.docs.map((doc) => {
       const data = doc.data();
+      const newsletterContent =
+        data?.newsletter?.content?.[0]?.content
+          ?.map(({ text }: { text: string }) => text)
+          .join("") || "";
       return {
-        newsletter: data.newsletter[0],
+        newsletter: newsletterContent || data.newsletter[0],
         newsletterId: data.newsletterId,
         newsletterStatus: data.newsletterStatus,
         newsletterTimestamp: new Date(
