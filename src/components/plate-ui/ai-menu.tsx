@@ -23,7 +23,7 @@ import { AIChatEditor } from "./ai-chat-editor";
 import { AIMenuItems } from "./ai-menu-items";
 import { Command, CommandList, InputCommand } from "./command";
 import { Popover, PopoverAnchor, PopoverContent } from "./popover";
-import { useChat } from "ai/react";
+import { useChat } from "@ai-sdk/react";
 
 export function AIMenu() {
   const { api, editor } = useEditorPlugin(AIChatPlugin);
@@ -33,7 +33,14 @@ export function AIMenu() {
 
   const [value, setValue] = React.useState("");
 
-  const chat = useChat({ api: "/api/ai/command" });
+  const chat = useChat({
+    api: "/api/ai/command",
+    onFinish: (message, { usage, finishReason }) => {
+      console.log("Finished streaming message:", message);
+      console.log("Token usage:", usage);
+      console.log("Finish reason:", finishReason);
+    },
+  });
 
   const { input, isLoading, messages, setInput } = chat;
   const [anchorElement, setAnchorElement] = React.useState<HTMLElement | null>(
@@ -41,7 +48,8 @@ export function AIMenu() {
   );
 
   console.log(messages);
-  const content = useLastAssistantMessage()?.content;
+  const content =
+    messages.length > 0 ? messages[messages.length - 1].content : "";
 
   const setOpen = (open: boolean) => {
     if (open) {
@@ -110,7 +118,7 @@ export function AIMenu() {
           }
         }}
         align="center"
-        // avoidCollisions={false}
+        avoidCollisions={false}
         side="bottom"
       >
         <Command
@@ -118,8 +126,9 @@ export function AIMenu() {
           value={value}
           onValueChange={setValue}
         >
-          {mode === "chat" && isSelecting && content && (
+          {mode === "chat" && content && (
             <AIChatEditor content={content} />
+            // <span className="text-blue-400">{content}</span>
           )}
 
           {isLoading ? (

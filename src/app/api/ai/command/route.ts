@@ -14,9 +14,9 @@ const ollama = createOllama({
 
 export async function POST(req: NextRequest) {
   const { messages, model = "llama3.2", system } = await req.json();
-
+  console.log(messages);
   try {
-    const resultStream = await streamText({
+    const resultStream = streamText({
       maxTokens: 2048,
       messages: convertToCoreMessages(messages),
       model: ollama(model),
@@ -39,7 +39,7 @@ export async function POST(req: NextRequest) {
 
     // We’ll keep a running buffer because the <think> tags
     // may be split across chunks.
-    let buffer = "";
+
     const decoder = new TextDecoder();
     const encoder = new TextEncoder();
 
@@ -51,37 +51,24 @@ export async function POST(req: NextRequest) {
 
     // Continuously read from the original stream and write filtered chunks
     async function readAndFilter() {
-      let write = true;
+      let partialBuffer = "";
       while (true) {
         const { value, done } = await reader.read();
         if (done) {
-          // Process any leftover data in buffer:
-          if (buffer.length > 0) {
-            buffer = removeThinkBlocks(buffer);
-            await writer.write(encoder.encode(buffer));
+          if (partialBuffer) {
+            await writer.write(
+              encoder.encode(removeThinkBlocks(partialBuffer)),
+            );
           }
-          // Close the writer, ending the transformed stream
           await writer.close();
           break;
         }
 
-        // Decode the current chunk and add to our buffer
         const chunkText = decoder.decode(value, { stream: true });
-        const rawText = chunkText.substring(3, chunkText.lastIndexOf('"'));
-        if (rawText.trim() == "<think>") {
-          write = false;
-          continue;
-        }
-        if (!write && rawText.trim() == "</think>") {
-          write = true;
-          continue;
-        }
-        if (!write) {
-          continue;
-        }
-        buffer += chunkText;
-        await writer.write(encoder.encode(buffer));
-        buffer = "";
+        partialBuffer += chunkText;
+        const filteredText = removeThinkBlocks(partialBuffer);
+        await writer.write(encoder.encode(filteredText));
+        partialBuffer = ""; // Clear buffer
       }
     }
 
@@ -89,6 +76,7 @@ export async function POST(req: NextRequest) {
     readAndFilter();
 
     // Return a new streamed response with the filtered text
+    console.log(readable);
     return new Response(readable, {
       status: 200,
       headers: {
