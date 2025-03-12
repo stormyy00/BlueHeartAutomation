@@ -2,7 +2,6 @@
 
 import { useState, useEffect } from "react";
 import Events from "./events";
-import { PlateEditor } from "@/components/editor/plate-editor";
 import { Button } from "@/components/ui/button";
 import { Ellipsis, Loader } from "lucide-react";
 import { EventType } from "@/types/event";
@@ -20,8 +19,12 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import ScheduleModal from "./schedule-modal";
+import Editor from "@/components/novel/editror";
+import { JSONContent } from "novel";
+
 const Creator = () => {
-  const [data, setData] = useState<string[] | null>(null);
+  const [data, setData] = useState<string[] | JSONContent | null>(null);
+  console.log("DATA", data);
   const [popup, setPopup] = useState<Popup>({
     title: "",
     message: "",
@@ -82,7 +85,10 @@ const Creator = () => {
         return res.json();
       })
       .then((data) => {
-        const body = data.newsletterData.newsletter.join("\n");
+        const body = Array.isArray(data.newsletterData.newsletter)
+          ? data.newsletterData.newsletter.join("\n")
+          : data.newsletterData.newsletter;
+        console.log("Body", body);
         setNewsletter({
           body: body,
           status: data.newsletterData.status,
@@ -95,7 +101,7 @@ const Creator = () => {
   }, [id]);
 
   const generateDocument = async () => {
-    if (!data || !data.length) return;
+    if (!data) return;
 
     setIsLoading(false);
 
@@ -119,16 +125,18 @@ const Creator = () => {
       toast.success("Newsletter saved successfully!");
     }
   };
-  const handleChange = (value: string) => {
+  const handleChange = (value: JSONContent) => {
     console.log("Updated", value);
-    setData(value.split("\n"));
+    setData(value);
   };
 
   if (error) {
     console.log("Failed");
     // replace with a toast
   }
+  const textContent = newsletter?.body || "";
 
+  console.log(textContent);
   return (
     <div className="flex flex-col gap-4 h-full w-11/12">
       <div className="flex flex-row justify-between w-full">
@@ -137,7 +145,7 @@ const Creator = () => {
         <div className="flex flex-row gap-3">
           {loading ? (
             <Button
-              disabled={!data || !data.length}
+              disabled={!data}
               onClick={generateDocument}
               className="bg-ttickles-darkblue text-white px-4 py-2 rounded disabled:opacity-50 w-fit"
             >
@@ -159,10 +167,14 @@ const Creator = () => {
           </Button>
         </div>
       </div>
-      <div className="flex flex-row h-full gap-2 w-3/4">
+      <div className="flex flex-row h-full gap-2 w-full">
         <div className="flex flex-col bg-black/5 p-4 rounded-md border border-black/20 w-full gap-4 h-full">
-          {newsletter.body.length > 0 ? (
-            <PlateEditor onChange={handleChange} value={newsletter.body} />
+          {newsletter.body ? (
+            // <PlateEditor onChange={handleChange} value={newsletter.body} />
+            <Editor
+              onChange={handleChange}
+              data={textContent as unknown as JSONContent}
+            />
           ) : (
             <Ellipsis className="motion-preset-pulse-sm motion-duration-1000" />
           )}

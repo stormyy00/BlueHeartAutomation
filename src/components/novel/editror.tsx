@@ -32,7 +32,12 @@ import hljs from "highlight.js";
 
 const extensions = [...defaultExtensions, slashCommand];
 
-const TailwindAdvancedEditor = () => {
+type EditorProps = {
+  onChange?: (json: JSONContent) => void;
+  data?: JSONContent;
+};
+
+const TailwindAdvancedEditor = ({ onChange, data }: EditorProps) => {
   const [initialContent, setInitialContent] = useState<null | JSONContent>(
     null,
   );
@@ -56,10 +61,22 @@ const TailwindAdvancedEditor = () => {
     return new XMLSerializer().serializeToString(doc);
   };
 
+  useEffect(() => {
+    if (data) {
+      setInitialContent(data);
+    } else {
+      const savedContent = window.localStorage.getItem("novel-content");
+      setInitialContent(
+        savedContent ? JSON.parse(savedContent) : defaultEditorContent,
+      );
+    }
+  }, [data]);
+
   const debouncedUpdates = useDebouncedCallback(
     async (editor: EditorInstance) => {
       const json = editor.getJSON();
       setCharsCount(editor.storage.characterCount.words());
+
       window.localStorage.setItem(
         "html-content",
         highlightCodeblocks(editor.getHTML()),
@@ -69,16 +86,13 @@ const TailwindAdvancedEditor = () => {
         "markdown",
         editor.storage.markdown.getMarkdown(),
       );
+
       setSaveStatus("Saved");
+
+      if (onChange) onChange(json);
     },
     500,
   );
-
-  useEffect(() => {
-    const content = window.localStorage.getItem("novel-content");
-    if (content) setInitialContent(JSON.parse(content));
-    else setInitialContent(defaultEditorContent);
-  }, []);
 
   if (!initialContent) return null;
 
@@ -107,7 +121,7 @@ const TailwindAdvancedEditor = () => {
             handleDOMEvents: {
               keydown: (_view, event) => handleCommandNavigation(event),
             },
-            // handlePaste: (view, event) => handleImagePaste(view, event, uploadFn),
+            // handleiPaste: (view, event) => handleImagePaste(view, event, uploadFn),
             // handleDrop: (view, event, _slice, moved) => handleImageDrop(view, event, moved, uploadFn),
             attributes: {
               class:
@@ -117,6 +131,8 @@ const TailwindAdvancedEditor = () => {
           onUpdate={({ editor }) => {
             debouncedUpdates(editor);
             setSaveStatus("Unsaved");
+            const content = editor.getJSON();
+            console.log("Editor content updated:", content);
           }}
           slotAfter={<ImageResizer />}
         >
