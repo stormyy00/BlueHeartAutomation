@@ -9,9 +9,8 @@ import { createOllama } from "ollama-ai-provider";
  * import it from environment variables, etc.
  */
 const ollama = createOllama({
-  /* your config */
+  baseURL: "https://2283-68-234-135-239.ngrok-free.app/api"
 });
-
 export async function POST(req: NextRequest) {
   const { messages, model = "llama3.2", system } = await req.json();
 
