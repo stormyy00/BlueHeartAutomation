@@ -9,7 +9,10 @@ import { createOllama } from "ollama-ai-provider";
  * import it from environment variables, etc.
  */
 const ollama = createOllama({
-  baseURL: "https://2283-68-234-135-239.ngrok-free.app/api"
+  baseURL:
+    process.env.NODE_ENV === "production"
+      ? process.env.OLLAMA_URL
+      : "http://localhost:11434",
 });
 export async function POST(req: NextRequest) {
   const { messages, model = "llama3.2", system } = await req.json();
