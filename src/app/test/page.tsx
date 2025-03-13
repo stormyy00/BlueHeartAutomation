@@ -36,7 +36,7 @@
 //   );
 // }
 
-// import EditorNovel from "../../components/novel/editror";
+import EditorNovel from "../../components/novel/editror";
 
 // const handleChange = (value: string) => {
 //   console.log("Updated", value);
@@ -44,13 +44,13 @@
 
 export default function page() {
   return (
-    <div className="flex justify-center py-10">
-      {/* <EditorNovel
+    <div className="flex justify-center py-10 bg-black">
+      <EditorNovel
         onChange={(updatedData) =>
           console.log("Editor updated FRRRRRR:", updatedData)
         }
         data={"hello bums"}
-      /> */}
+      />
     </div>
   );
 }

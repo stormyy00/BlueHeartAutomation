@@ -18,12 +18,11 @@ import { uploadFn } from "./image-upload";
 
 export const suggestionItems = createSuggestionItems([
   {
-    title: "Send Feedback",
-    description: "Let us know how we can improve.",
+    title: "Ask AI",
+    description: "Use AI for help.",
     icon: <MessageSquarePlus size={18} />,
     command: ({ editor, range }) => {
       editor.chain().focus().deleteRange(range).run();
-      window.open("/feedback", "_blank");
     },
   },
   {

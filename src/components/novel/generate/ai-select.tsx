@@ -2,7 +2,7 @@
 
 import { Command, CommandInput } from "@/components/ui/command";
 
-import { useChat, useCompletion } from "@ai-sdk/react";
+import { useCompletion } from "@ai-sdk/react";
 import { ArrowUp } from "lucide-react";
 import { useEditor } from "novel";
 import { addAIHighlight } from "novel";
@@ -10,12 +10,10 @@ import { useState } from "react";
 import Markdown from "react-markdown";
 import { toast } from "sonner";
 import { Button } from "../../ui/button";
-// import CrazySpinner from "../ui/icons/crazy-spinner";
-// import Magic from "../ui/icons/magic";
+import { LoaderCircle } from "lucide-react";
 import { ScrollArea } from "../../ui/scroll-area";
 import AICompletionCommands from "./ai-complete";
 import AISelectorCommands from "./ai-select-command.";
-//TODO: I think it makes more sense to create a custom Tiptap extension for this functionality https://tiptap.dev/docs/editor/ai/introduction
 
 interface AISelectorProps {
   open: boolean;
@@ -26,7 +24,7 @@ export function AISelector({ onOpenChange }: AISelectorProps) {
   const { editor } = useEditor();
   const [inputValue, setInputValue] = useState("");
 
-  const { completion, complete, isLoading } = useCompletion({
+  const { completion, complete, isLoading, setCompletion } = useCompletion({
     id: "novel",
     api: "/api/generate",
     onResponse: (response) => {
@@ -40,20 +38,12 @@ export function AISelector({ onOpenChange }: AISelectorProps) {
     },
   });
 
-  // const { messages, error} = useChat({
-  //   api: "/api/ai/command",
-  //   onResponse: (response) => {
-  //     if (response.status === 429) {
-  //       toast.error("You have reached your request limit for the day.");
-  //       return;
-  //     }
-  //   },
-  //   onError: (e) => {
-  //     toast.error(e.message);
-  //   },
-  // })
-
   const hasCompletion = completion.length > 0;
+
+  const resetAIState = () => {
+    setCompletion("");
+    editor?.chain().unsetHighlight().focus().run();
+  };
 
   return (
     <Command className="w-[350px]">
@@ -69,9 +59,10 @@ export function AISelector({ onOpenChange }: AISelectorProps) {
 
       {isLoading && (
         <div className="flex h-12 w-full items-center px-4 text-sm font-medium text-muted-foreground text-purple-500">
-          {/* <Magic className="mr-2 h-4 w-4 shrink-0  " /> */}
           AI is thinking
-          <div className="ml-2 mt-1">{/* <CrazySpinner /> */}</div>
+          <div className="ml-2 mt-1">
+            <LoaderCircle className="animate-spin" />
+          </div>
         </div>
       )}
       {!isLoading && (
@@ -113,8 +104,16 @@ export function AISelector({ onOpenChange }: AISelectorProps) {
           {hasCompletion ? (
             <AICompletionCommands
               onDiscard={() => {
-                editor.chain().unsetHighlight().focus().run();
+                resetAIState();
                 onOpenChange(false);
+              }}
+              onInsert={() => {
+                // Add insert logic here
+                resetAIState();
+              }}
+              onReplace={() => {
+                // Add replace logic here
+                resetAIState();
               }}
               completion={completion}
             />
