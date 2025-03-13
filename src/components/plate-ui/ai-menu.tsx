@@ -42,14 +42,13 @@ export function AIMenu() {
     },
   });
 
-  const { input, isLoading, messages, setInput } = chat;
+  const { input, status, messages, setInput } = chat;
   const [anchorElement, setAnchorElement] = React.useState<HTMLElement | null>(
     null,
   );
 
-  console.log(messages);
-  const content =
-    messages.length > 0 ? messages[messages.length - 1].content : "";
+  const content = useLastAssistantMessage()?.content;
+  // console.log("content:", content);
 
   const setOpen = (open: boolean) => {
     if (open) {
@@ -111,7 +110,7 @@ export function AIMenu() {
         onEscapeKeyDown={(e) => {
           e.preventDefault();
 
-          if (isLoading) {
+          if (status != "ready" && status != "error") {
             api.aiChat.stop();
           } else {
             api.aiChat.hide();
@@ -131,7 +130,7 @@ export function AIMenu() {
             // <span className="text-blue-400">{content}</span>
           )}
 
-          {isLoading ? (
+          {status != "ready" && status != "error" ? (
             <div className="flex grow items-center gap-2 p-2 text-sm text-muted-foreground select-none">
               <Loader2Icon className="size-4 animate-spin" />
               {messages.length > 1 ? "Editing..." : "Thinking..."}
@@ -158,7 +157,7 @@ export function AIMenu() {
             />
           )}
 
-          {!isLoading && (
+          {!(status != "ready" && status != "error") && (
             <CommandList>
               <AIMenuItems setValue={setValue} />
             </CommandList>
