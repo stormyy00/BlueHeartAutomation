@@ -24,6 +24,7 @@ import { NodeSelector } from "@/components/novel/selectors/node-selector";
 import { Separator } from "@/components/ui/separator";
 
 import GenerativeMenuSwitch from "@/components/novel/generate/menu-switch";
+import { UseCompletionHelpers } from "@ai-sdk/react";
 // import { uploadFn } from "./image-upload";
 import { TextButtons } from "@/components/novel/selectors/text-button";
 import { slashCommand, suggestionItems } from "./slash";
@@ -33,11 +34,16 @@ import hljs from "highlight.js";
 const extensions = [...defaultExtensions, slashCommand];
 
 type EditorProps = {
+  completionHelpers: UseCompletionHelpers;
   onChange?: (json: JSONContent) => void;
   data?: JSONContent;
 };
 
-const TailwindAdvancedEditor = ({ onChange, data }: EditorProps) => {
+const TailwindAdvancedEditor = ({
+  onChange,
+  data,
+  completionHelpers,
+}: EditorProps) => {
   const [initialContent, setInitialContent] = useState<null | JSONContent>(
     null,
   );
@@ -162,7 +168,11 @@ const TailwindAdvancedEditor = ({ onChange, data }: EditorProps) => {
             </EditorCommandList>
           </EditorCommand>
 
-          <GenerativeMenuSwitch open={openAI} onOpenChange={setOpenAI}>
+          <GenerativeMenuSwitch
+            open={openAI}
+            onOpenChange={setOpenAI}
+            completionHelpers={completionHelpers}
+          >
             <Separator orientation="vertical" />
             <NodeSelector open={openNode} onOpenChange={setOpenNode} />
             <Separator orientation="vertical" />

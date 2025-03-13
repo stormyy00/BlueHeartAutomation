@@ -10,49 +10,26 @@ import { useState } from "react";
 import Markdown from "react-markdown";
 import { toast } from "sonner";
 import { Button } from "../../ui/button";
-// import CrazySpinner from "../ui/icons/crazy-spinner";
-// import Magic from "../ui/icons/magic";
 import { ScrollArea } from "../../ui/scroll-area";
 import AICompletionCommands from "./ai-complete";
 import AISelectorCommands from "./ai-select-command.";
 //TODO: I think it makes more sense to create a custom Tiptap extension for this functionality https://tiptap.dev/docs/editor/ai/introduction
+import { UseCompletionHelpers } from "@ai-sdk/react";
 
 interface AISelectorProps {
   open: boolean;
+  completionHelpers: UseCompletionHelpers;
   onOpenChange: (open: boolean) => void;
 }
 
-export function AISelector({ onOpenChange }: AISelectorProps) {
+export function AISelector({
+  onOpenChange,
+  completionHelpers,
+}: AISelectorProps) {
   const { editor } = useEditor();
   const [inputValue, setInputValue] = useState("");
 
-  const { completion, complete, isLoading } = useCompletion({
-    id: "novel",
-    api: "/api/generate",
-    onResponse: (response) => {
-      if (response.status === 429) {
-        toast.error("You have reached your request limit for the day.");
-        return;
-      }
-    },
-    onError: (e) => {
-      toast.error(e.message);
-    },
-  });
-
-  // const { messages, error} = useChat({
-  //   api: "/api/ai/command",
-  //   onResponse: (response) => {
-  //     if (response.status === 429) {
-  //       toast.error("You have reached your request limit for the day.");
-  //       return;
-  //     }
-  //   },
-  //   onError: (e) => {
-  //     toast.error(e.message);
-  //   },
-  // })
-
+  const { complete, completion, isLoading } = completionHelpers;
   const hasCompletion = completion.length > 0;
 
   return (
@@ -86,7 +63,7 @@ export function AISelector({ onOpenChange }: AISelectorProps) {
                   ? "Tell AI what to do next"
                   : "Ask AI to edit or generate..."
               }
-              onFocus={() => addAIHighlight(editor)}
+              onFocus={() => addAIHighlight(editor as Editor)}
             />
             <Button
               size="icon"
@@ -97,9 +74,9 @@ export function AISelector({ onOpenChange }: AISelectorProps) {
                     body: { option: "zap", command: inputValue },
                   }).then(() => setInputValue(""));
 
-                const slice = editor.state.selection.content();
-                const text = editor.storage.markdown.serializer.serialize(
-                  slice.content,
+                const slice = editor?.state.selection.content();
+                const text = editor?.storage.markdown.serializer.serialize(
+                  slice?.content,
                 );
 
                 complete(text, {
@@ -113,7 +90,7 @@ export function AISelector({ onOpenChange }: AISelectorProps) {
           {hasCompletion ? (
             <AICompletionCommands
               onDiscard={() => {
-                editor.chain().unsetHighlight().focus().run();
+                editor?.chain().unsetHighlight().focus().run();
                 onOpenChange(false);
               }}
               completion={completion}

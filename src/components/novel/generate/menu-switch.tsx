@@ -3,15 +3,18 @@ import { Fragment, type ReactNode, useEffect } from "react";
 import { Button } from "../../ui/button";
 // import Magic from "../ui/icons/magic";
 import { AISelector } from "./ai-select";
+import { UseCompletionHelpers } from "@ai-sdk/react";
 
 interface GenerativeMenuSwitchProps {
   children: ReactNode;
   open: boolean;
+  completionHelpers: UseCompletionHelpers;
   onOpenChange: (open: boolean) => void;
 }
 const GenerativeMenuSwitch = ({
   children,
   open,
+  completionHelpers,
   onOpenChange,
 }: GenerativeMenuSwitchProps) => {
   const { editor } = useEditor();
@@ -30,7 +33,13 @@ const GenerativeMenuSwitch = ({
       }}
       className="flex w-fit max-w-[90vw] overflow-hidden rounded-md border border-muted bg-background shadow-xl"
     >
-      {open && <AISelector open={open} onOpenChange={onOpenChange} />}
+      {open && (
+        <AISelector
+          open={open}
+          onOpenChange={onOpenChange}
+          completionHelpers={completionHelpers}
+        />
+      )}
       {!open && (
         <>
           <Button
