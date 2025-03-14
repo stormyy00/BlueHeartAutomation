@@ -4,6 +4,8 @@ import { Button } from "../../ui/button";
 // import Magic from "../ui/icons/magic";
 import { Sparkle } from "lucide-react";
 import { AISelector } from "./ai-select";
+import { UseChatHelpers } from "@ai-sdk/react";
+import { type EditorInstance } from "novel";
 
 interface GenerativeMenuSwitchProps {
   children: ReactNode;
