@@ -23,6 +23,8 @@ type props = {
 };
 type EventsProps = {
   onChange: (updatedEvent: EventType[]) => void;
+  eventLoading: boolean;
+  setEventLoading: (value: boolean) => void;
 };
 const EventModal = ({ setEvent }: props) => {
   return (
@@ -57,7 +59,7 @@ const EventModal = ({ setEvent }: props) => {
   );
 };
 
-const Events = ({ onChange }: EventsProps) => {
+const Events = ({ onChange, eventLoading, setEventLoading }: EventsProps) => {
   const [events, setEvents] = useState<EventType[]>(MOCK || []);
   const [event, setEvent] = useState<EventType>(() => ({
     name: "",
@@ -122,6 +124,8 @@ const Events = ({ onChange }: EventsProps) => {
       <div className="flex flex-col gap-2">
         {events.map((event, index) => (
           <Event
+            eventLoading={eventLoading}
+            setEventLoading={setEventLoading}
             name={event.name}
             location={event.location}
             date={event.date}

@@ -2,21 +2,21 @@
 
 // import { Command, CommandInput } from "@/components/ui/command";
 
-import { useChat } from "@ai-sdk/react";
-// import { ArrowUp } from "lucide-react";
-// import { useEditor } from "novel";
-// import { useState } from "react";
-// import Markdown from "react-markdown";
-// import { toast } from "sonner";
-// import { Button } from "../../ui/button";
-// import { LoaderCircle } from "lucide-react";
-// import { ScrollArea } from "../../ui/scroll-area";
-// import AICompletionCommands from "./ai-complete";
-// import AISelectorCommands from "./ai-select-command.";
+import { useChat, UseChatHelpers } from "@ai-sdk/react";
+import { ArrowUp } from "lucide-react";
+import { useEditor } from "novel";
+import { useState } from "react";
+import Markdown from "react-markdown";
+import { Button } from "../../ui/button";
+import { LoaderCircle } from "lucide-react";
+import { ScrollArea } from "../../ui/scroll-area";
+import AICompletionCommands from "./ai-complete";
+import AISelectorCommands from "./ai-select-command.";
 
 interface AISelectorProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
+  chatHelpers: UseChatHelpers;
 }
 
 export function AIChatSelector({ onOpenChange }: AISelectorProps) {

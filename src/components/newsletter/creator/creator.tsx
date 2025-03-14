@@ -22,8 +22,10 @@ import ScheduleModal from "./schedule-modal";
 import Editor from "@/components/novel/editror";
 import { JSONContent } from "novel";
 import { createEditor } from "@udecode/plate";
-
+import { AIContext } from "@/context/ai-context";
+import { useChat } from "@ai-sdk/react";
 const Creator = () => {
+  const [ai, setAI] = useState(false);
   const [data, setData] = useState<string[] | JSONContent | null>(null);
   const [popup, setPopup] = useState<Popup>({
     title: "",
@@ -39,6 +41,7 @@ const Creator = () => {
   const [date, setDate] = useState<Date | undefined>(new Date());
   const [error, setError] = useState(false);
   const [loading, setIsLoading] = useState(true);
+  const [eventLoading, setEventLoading] = useState(false);
   const [scheduleLoading, setScheduleLoading] = useState(false);
   const pathname = usePathname();
   const id = pathname.split("/")[4];
@@ -175,114 +178,143 @@ const Creator = () => {
   }
   const textContent = newsletter?.body || "";
 
-  console.log(textContent);
+  const chatHelpers = useChat({
+    id: "novel",
+    api: "/api/ai/command",
+    onResponse: (response) => {
+      if (response.status === 429) {
+        toast.error("You have reached your request limit for the day.");
+        return;
+      }
+    },
+    onError: (e) => {
+      toast.error(e.message);
+    },
+  });
+
+  const generateFromEvents = async (content: string) => {
+    setAI(true);
+    setEventLoading(true);
+    const { append } = chatHelpers;
+    await append({ role: "user", content: content });
+    setEventLoading(false);
+  };
   return (
-    <div className="flex flex-col gap-4 h-full w-full">
-      <div className="flex flex-row justify-between w-full">
-        <div className="font-extrabold text-3xl mb-8">Newsletter</div>
+    <AIContext.Provider value={{ generateFromEvents }}>
+      <div className="flex flex-col gap-4 h-full w-full">
+        <div className="flex flex-row justify-between w-full">
+          <div className="font-extrabold text-3xl mb-8">Newsletter</div>
 
-        <div className="flex flex-row gap-3">
-          {loading ? (
-            <Button
-              disabled={!data}
-              onClick={generateDocument}
-              className="bg-ttickles-darkblue text-white px-4 py-2 rounded disabled:opacity-50 w-fit"
-            >
-              Save
-            </Button>
-          ) : (
-            <Loader className="animate-spin" />
-          )}
-          <Button
-            className="bg-ttickles-orange hover:bg-ttickles-orange"
-            onClick={() => {
-              setPopup({
-                ...popup,
-                visible: true,
-              });
-            }}
-          >
-            Schedule
-          </Button>
-        </div>
-      </div>
-      <div className="flex flex-row h-full gap-2 w-full">
-        <div className="flex flex-col bg-black/5 p-4 rounded-md border border-black/20 w-full gap-4 h-full">
-          {newsletter.body ? (
-            // <PlateEditor onChange={handleChange} value={newsletter.body} />
-            <Editor
-              onChange={handleChange}
-              data={textContent as unknown as JSONContent}
-            />
-          ) : (
-            <Ellipsis className="motion-preset-pulse-sm motion-duration-1000" />
-          )}
-        </div>
-        <div className="flex  gap-4 w-1/3">
-          <Events onChange={handleEventsChange} />
-        </div>
-      </div>
-
-      <Dialog
-        open={popup.visible}
-        onOpenChange={(open) => setPopup({ ...popup, visible: open })}
-      >
-        <DialogContent className="flex flex-col gap-3 bg-white p-4 rounded-lg shadow-xl">
-          <DialogTitle>Schedule Newsletter</DialogTitle>
-          <DialogDescription className="flex flex-col gap-4">
-            <div>
-              <Label>Date</Label>
-              <ScheduleModal setDate={setDate} date={date} />
-            </div>
-
-            <div>
-              <Label>Time</Label>
-              <Select
-                options={TIME}
-                placeholder="Select Time"
-                onChange={(timeString) => {
-                  const newDate = date;
-                  const [hours, period] = [
-                    timeString.slice(0, -2),
-                    timeString.slice(-2),
-                  ];
-
-                  // Convert to 24-hour format
-                  let hour = parseInt(hours);
-                  if (period === "PM" && hour < 12) hour += 12;
-                  if (period === "AM" && hour === 12) hour = 0;
-
-                  // Set the hours, keep minutes and seconds unchanged
-                  newDate?.setHours(hour);
-                  setDate(newDate);
-                }}
-              />
-            </div>
-          </DialogDescription>
-          <div className="flex flex-row self-end gap-2">
-            <DialogClose asChild>
+          <div className="flex flex-row gap-3">
+            {loading ? (
               <Button
-                className="px-3 py-1 rounded"
-                onClick={() => {
-                  setPopup({ ...popup, visible: false });
-                  setDate(undefined);
-                }}
-                disabled={scheduleLoading}
+                disabled={!data}
+                onClick={generateDocument}
+                className="bg-ttickles-darkblue text-white px-4 py-2 rounded disabled:opacity-50 w-fit"
               >
-                Exit
+                Save
               </Button>
-            </DialogClose>
+            ) : (
+              <Loader className="animate-spin" />
+            )}
             <Button
-              className="bg-ttickles-blue text-white px-3 py-1 rounded"
-              onClick={handleSchedule}
-              disabled={scheduleLoading}
+              className="bg-ttickles-orange hover:bg-ttickles-orange"
+              onClick={() => {
+                setPopup({
+                  ...popup,
+                  visible: true,
+                });
+              }}
             >
-              Submit
+              Schedule
             </Button>
           </div>
-        </DialogContent>
-      </Dialog>
-    </div>
+        </div>
+        <div className="flex flex-row h-full gap-2 w-full">
+          <div className="flex flex-col bg-black/5 p-4 rounded-md border border-black/20 w-full gap-4 h-full">
+            {newsletter.body ? (
+              // <PlateEditor onChange={handleChange} value={newsletter.body} />
+              <Editor
+                ai={ai}
+                setAI={setAI}
+                chatHelpers={chatHelpers}
+                onChange={handleChange}
+                data={textContent as unknown as JSONContent}
+              />
+            ) : (
+              <Ellipsis className="motion-preset-pulse-sm motion-duration-1000" />
+            )}
+          </div>
+          <div className="flex  gap-4 w-1/3">
+            <Events
+              onChange={handleEventsChange}
+              eventLoading={eventLoading}
+              setEventLoading={setEventLoading}
+            />
+          </div>
+        </div>
+
+        <Dialog
+          open={popup.visible}
+          onOpenChange={(open) => setPopup({ ...popup, visible: open })}
+        >
+          <DialogContent className="flex flex-col gap-3 bg-white p-4 rounded-lg shadow-xl">
+            <DialogTitle>Schedule Newsletter</DialogTitle>
+            <DialogDescription className="flex flex-col gap-4">
+              <div>
+                <Label>Date</Label>
+                <ScheduleModal setDate={setDate} date={date} />
+              </div>
+
+              <div>
+                <Label>Time</Label>
+                <Select
+                  options={TIME}
+                  placeholder="Select Time"
+                  onChange={(timeString) => {
+                    const newDate = date;
+                    const [hours, period] = [
+                      timeString.slice(0, -2),
+                      timeString.slice(-2),
+                    ];
+
+                    // Convert to 24-hour format
+                    let hour = parseInt(hours);
+                    if (period === "PM" && hour < 12) hour += 12;
+                    if (period === "AM" && hour === 12) hour = 0;
+
+                    // Set the hours, keep minutes and seconds unchanged
+                    newDate?.setHours(hour);
+                    setDate(newDate);
+                  }}
+                />
+              </div>
+            </DialogDescription>
+            <div className="flex flex-row self-end gap-2">
+              <DialogClose asChild>
+                <Button
+                  className="px-3 py-1 rounded"
+                  onClick={() => {
+                    setPopup({ ...popup, visible: false });
+                    setDate(undefined);
+                  }}
+                  disabled={scheduleLoading}
+                >
+                  Exit
+                </Button>
+              </DialogClose>
+              <Button
+                className="bg-ttickles-blue text-white px-3 py-1 rounded"
+                onClick={handleSchedule}
+                disabled={scheduleLoading}
+              >
+                Submit
+              </Button>
+            </div>
+          </DialogContent>
+        </Dialog>
+      </div>
+    </AIContext.Provider>
   );
 };
 

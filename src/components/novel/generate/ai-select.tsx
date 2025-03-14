@@ -8,12 +8,13 @@ import { useEditor } from "novel";
 import { addAIHighlight } from "novel";
 import { useState } from "react";
 import Markdown from "react-markdown";
-import { toast } from "sonner";
 import { Button } from "../../ui/button";
-import { LoaderCircle } from "lucide-react";
 import { ScrollArea } from "../../ui/scroll-area";
 import AICompletionCommands from "./ai-complete";
 import AISelectorCommands from "./ai-select-command.";
+import { toast } from "sonner";
+import { LoaderCircle } from "lucide-react";
+//TODO: I think it makes more sense to create a custom Tiptap extension for this functionality https://tiptap.dev/docs/editor/ai/introduction
 
 interface AISelectorProps {
   open: boolean;
@@ -88,9 +89,9 @@ export function AISelector({ onOpenChange }: AISelectorProps) {
                     body: { option: "zap", command: inputValue },
                   }).then(() => setInputValue(""));
 
-                const slice = editor.state.selection.content();
-                const text = editor.storage.markdown.serializer.serialize(
-                  slice.content,
+                const slice = editor?.state.selection.content();
+                const text = editor?.storage.markdown.serializer.serialize(
+                  slice?.content,
                 );
 
                 complete(text, {
@@ -104,6 +105,7 @@ export function AISelector({ onOpenChange }: AISelectorProps) {
           {hasCompletion ? (
             <AICompletionCommands
               onDiscard={() => {
+                editor?.chain().unsetHighlight().focus().run();
                 resetAIState();
                 onOpenChange(false);
               }}
