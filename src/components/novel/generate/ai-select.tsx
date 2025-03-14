@@ -78,7 +78,7 @@ export function AISelector({ onOpenChange }: AISelectorProps) {
                   ? "Tell AI what to do next"
                   : "Ask AI to edit or generate..."
               }
-              onFocus={() => addAIHighlight(editor)}
+              onFocus={() => editor && addAIHighlight(editor)}
             />
             <Button
               size="icon"
