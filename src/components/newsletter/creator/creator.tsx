@@ -117,15 +117,10 @@ const Creator = () => {
     if (/\*\*|\*|__|~~/.test(text)) {
       const tempEditor = createEditor({
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        content: text,
-        editorProps: {
-          attributes: {
-            class: "prose",
-          },
-        },
+        children: [{ type: "paragraph", children: [{ text }] }],
       });
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      return tempEditor.getJSON();
+      return (tempEditor as any).getJSON() as JSONContent;
     }
 
     return {

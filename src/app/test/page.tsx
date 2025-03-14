@@ -49,7 +49,7 @@ export default function page() {
         onChange={(updatedData) =>
           console.log("Editor updated FRRRRRR:", updatedData)
         }
-        data={"hello bums"}
+        // data={"hello bums"}
       />
     </div>
   );

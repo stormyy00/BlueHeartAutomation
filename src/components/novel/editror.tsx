@@ -116,6 +116,13 @@ const TailwindAdvancedEditor = ({ onChange, data }: EditorProps) => {
           {charsCount} Words
         </div>
       </div>
+
+      {ai && (
+        <div className="absolute z-50 top-12 left-0 right-0 bg-gray-100 bg-opacity-50 border border-muted rounded-md shadow-xl p-2">
+          <AIChatSelector open={ai} onOpenChange={setAI} />
+        </div>
+      )}
+
       <EditorRoot>
         <div className="flex items-center w-fit mb-1 p-2 border-b border-muted bg-background rounded-lg">
           <Button
@@ -127,12 +134,6 @@ const TailwindAdvancedEditor = ({ onChange, data }: EditorProps) => {
             <Sparkle className="h-5 w-5" />
             Ask AI
           </Button>
-
-          {ai && (
-            <div className="absolute z-50 top-12 left-0 right-0 bg-background border border-muted rounded-md shadow-xl p-2">
-              <AIChatSelector open={ai} onOpenChange={setAI} />
-            </div>
-          )}
         </div>
         <EditorContent
           initialContent={initialContent}
