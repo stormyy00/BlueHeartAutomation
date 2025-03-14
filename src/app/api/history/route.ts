@@ -1,11 +1,12 @@
+import { options } from "@/utils/auth";
 import { db } from "@/utils/firebase";
-import { auth } from "@clerk/nextjs/server";
 import { getDocs, collection, query, where } from "firebase/firestore";
+import { getServerSession } from "next-auth";
 import { NextResponse } from "next/server";
 
 export const GET = async () => {
-  const { userId } = await auth();
-  if (!userId) {
+  const session = await getServerSession(options);
+  if (!session) {
     return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
   }
 

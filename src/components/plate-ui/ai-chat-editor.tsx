@@ -100,7 +100,6 @@ export const AIChatEditor = memo(({ content }: { content: string }) => {
   const aiEditor = usePlateEditor({
     plugins,
   });
-
   useAIChatEditor(aiEditor, content);
 
   return (
