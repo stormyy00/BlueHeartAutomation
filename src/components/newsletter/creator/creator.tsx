@@ -27,7 +27,6 @@ import { useCompletion } from "@ai-sdk/react";
 
 const Creator = () => {
   const [data, setData] = useState<string[] | JSONContent | null>(null);
-  console.log("DATA", data);
   const [popup, setPopup] = useState<Popup>({
     title: "",
     message: "",

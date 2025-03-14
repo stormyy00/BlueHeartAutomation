@@ -2,7 +2,7 @@
 
 import { Command, CommandInput } from "@/components/ui/command";
 
-import { useChat, useCompletion } from "@ai-sdk/react";
+import { useCompletion } from "@ai-sdk/react";
 import { ArrowUp } from "lucide-react";
 import { useEditor } from "novel";
 import { addAIHighlight } from "novel";
@@ -32,6 +32,11 @@ export function AISelector({
   const { complete, completion, isLoading } = completionHelpers;
   const hasCompletion = completion.length > 0;
 
+  const resetAIState = () => {
+    setCompletion("");
+    editor?.chain().unsetHighlight().focus().run();
+  };
+
   return (
     <Command className="w-[350px]">
       {hasCompletion && (
@@ -46,9 +51,10 @@ export function AISelector({
 
       {isLoading && (
         <div className="flex h-12 w-full items-center px-4 text-sm font-medium text-muted-foreground text-purple-500">
-          {/* <Magic className="mr-2 h-4 w-4 shrink-0  " /> */}
           AI is thinking
-          <div className="ml-2 mt-1">{/* <CrazySpinner /> */}</div>
+          <div className="ml-2 mt-1">
+            <LoaderCircle className="animate-spin" />
+          </div>
         </div>
       )}
       {!isLoading && (
@@ -91,7 +97,16 @@ export function AISelector({
             <AICompletionCommands
               onDiscard={() => {
                 editor?.chain().unsetHighlight().focus().run();
+                resetAIState();
                 onOpenChange(false);
+              }}
+              onInsert={() => {
+                // Add insert logic here
+                resetAIState();
+              }}
+              onReplace={() => {
+                // Add replace logic here
+                resetAIState();
               }}
               completion={completion}
             />

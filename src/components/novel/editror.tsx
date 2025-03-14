@@ -30,6 +30,9 @@ import { TextButtons } from "@/components/novel/selectors/text-button";
 import { slashCommand, suggestionItems } from "./slash";
 
 import hljs from "highlight.js";
+import { Button } from "../ui/button";
+import { Sparkle } from "lucide-react";
+import { AIChatSelector } from "./generate/ai-chat";
 
 const extensions = [...defaultExtensions, slashCommand];
 
@@ -55,6 +58,7 @@ const TailwindAdvancedEditor = ({
   const [openColor, setOpenColor] = useState(false);
   const [openLink, setOpenLink] = useState(false);
   const [openAI, setOpenAI] = useState(false);
+  const [ai, setAI] = useState(false);
 
   //Apply Codeblock Highlighting on the HTML from editor.getHTML()
   const highlightCodeblocks = (content: string) => {
@@ -119,6 +123,23 @@ const TailwindAdvancedEditor = ({
         </div>
       </div>
       <EditorRoot>
+        <div className="flex items-center w-fit mb-1 p-2 border-b border-muted bg-background rounded-lg">
+          <Button
+            className="gap-1 text-purple-500"
+            variant="ghost"
+            onClick={() => setAI(!ai)}
+            size="sm"
+          >
+            <Sparkle className="h-5 w-5" />
+            Ask AI
+          </Button>
+
+          {ai && (
+            <div className="absolute z-50 top-12 left-0 right-0 bg-background border border-muted rounded-md shadow-xl p-2">
+              <AIChatSelector open={ai} onOpenChange={setAI} />
+            </div>
+          )}
+        </div>
         <EditorContent
           initialContent={initialContent}
           extensions={extensions}

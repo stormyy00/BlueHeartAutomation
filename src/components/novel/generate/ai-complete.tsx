@@ -1,65 +1,99 @@
 import { CommandGroup, CommandItem, CommandSeparator } from "../../ui/command";
 import { useEditor } from "novel";
-import { Check, TextQuote, TrashIcon } from "lucide-react";
+import { Check, TextQuote, TrashIcon, ArrowDownToLine } from "lucide-react";
+
+interface AICompletionCommandsProps {
+  completion: string;
+  onDiscard: () => void;
+  onInsert: () => void;
+  onReplace: () => void;
+}
 
 const AICompletionCommands = ({
   completion,
   onDiscard,
-}: {
-  completion: string;
-  onDiscard: () => void;
-}) => {
+  onInsert,
+  onReplace,
+}: AICompletionCommandsProps) => {
   const { editor } = useEditor();
+
   return (
-    <>
-      <CommandGroup>
-        <CommandItem
-          className="gap-2 px-4"
-          value="replace"
-          onSelect={() => {
-            const selection = editor.view.state.selection;
+    <CommandGroup heading="Apply completion">
+      <CommandItem
+        onSelect={() => {
+          if (!editor) return;
+          const { from, to } = editor.state.selection;
 
-            editor
-              .chain()
-              .focus()
-              .insertContentAt(
-                {
-                  from: selection.from,
-                  to: selection.to,
-                },
-                completion,
-              )
-              .run();
-          }}
-        >
-          <Check className="h-4 w-4 text-muted-foreground" />
-          Replace selection
-        </CommandItem>
-        <CommandItem
-          className="gap-2 px-4"
-          value="insert"
-          onSelect={() => {
-            const selection = editor.view.state.selection;
-            editor
-              .chain()
-              .focus()
-              .insertContentAt(selection.to + 1, completion)
-              .run();
-          }}
-        >
-          <TextQuote className="h-4 w-4 text-muted-foreground" />
-          Insert below
-        </CommandItem>
-      </CommandGroup>
-      <CommandSeparator />
+          // Insert the completion at cursor
+          editor
+            .chain()
+            .focus()
+            .insertContentAt({ from, to }, completion)
+            .run();
 
-      <CommandGroup>
-        <CommandItem onSelect={onDiscard} value="thrash" className="gap-2 px-4">
-          <TrashIcon className="h-4 w-4 text-muted-foreground" />
-          Discard
-        </CommandItem>
-      </CommandGroup>
-    </>
+          // Call the onInsert callback to reset the AI state
+          onInsert();
+        }}
+        value="insert"
+        className="gap-2 px-4"
+      >
+        <Check className="h-4 w-4 text-purple-500" />
+        Insert at cursor
+      </CommandItem>
+
+      <CommandItem
+        onSelect={() => {
+          if (!editor) return;
+          const { from, to } = editor.state.selection;
+
+          // Replace the selected text with the completion
+          editor
+            .chain()
+            .focus()
+            .deleteRange({ from, to })
+            .insertContentAt(from, completion)
+            .run();
+
+          // Call the onReplace callback to reset the AI state
+          onReplace();
+        }}
+        value="replace"
+        className="gap-2 px-4"
+      >
+        <TextQuote className="h-4 w-4 text-purple-500" />
+        Replace selection
+      </CommandItem>
+
+      <CommandItem
+        onSelect={() => {
+          if (!editor) return;
+
+          // Get the current position
+          const { pos } = editor.view.state.selection.$head;
+
+          // Insert the completion at the end of the document
+          const endPos = editor.state.doc.content.size;
+          editor
+            .chain()
+            .focus()
+            .insertContentAt(endPos, "\n\n" + completion)
+            .run();
+
+          // Call the onInsert callback to reset the AI state
+          onInsert();
+        }}
+        value="append"
+        className="gap-2 px-4"
+      >
+        <ArrowDownToLine className="h-4 w-4 text-purple-500" />
+        Append to document
+      </CommandItem>
+
+      <CommandItem onSelect={onDiscard} value="discard" className="gap-2 px-4">
+        <TrashIcon className="h-4 w-4 text-purple-500" />
+        Discard
+      </CommandItem>
+    </CommandGroup>
   );
 };
 
