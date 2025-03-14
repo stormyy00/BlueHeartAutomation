@@ -24,7 +24,7 @@ import { NodeSelector } from "@/components/novel/selectors/node-selector";
 import { Separator } from "@/components/ui/separator";
 
 import GenerativeMenuSwitch from "@/components/novel/generate/menu-switch";
-import { UseCompletionHelpers } from "@ai-sdk/react";
+import { UseChatHelpers } from "@ai-sdk/react";
 // import { uploadFn } from "./image-upload";
 import { TextButtons } from "@/components/novel/selectors/text-button";
 import { slashCommand, suggestionItems } from "./slash";
@@ -37,15 +37,19 @@ import { AIChatSelector } from "./generate/ai-chat";
 const extensions = [...defaultExtensions, slashCommand];
 
 type EditorProps = {
-  completionHelpers: UseCompletionHelpers;
+  chatHelpers: UseChatHelpers;
   onChange?: (json: JSONContent) => void;
   data?: JSONContent;
+  ai: boolean;
+  setAI: (value: boolean) => void;
 };
 
 const TailwindAdvancedEditor = ({
   onChange,
   data,
-  completionHelpers,
+  chatHelpers,
+  ai,
+  setAI,
 }: EditorProps) => {
   const [initialContent, setInitialContent] = useState<null | JSONContent>(
     null,
@@ -58,7 +62,6 @@ const TailwindAdvancedEditor = ({
   const [openColor, setOpenColor] = useState(false);
   const [openLink, setOpenLink] = useState(false);
   const [openAI, setOpenAI] = useState(false);
-  const [ai, setAI] = useState(false);
 
   //Apply Codeblock Highlighting on the HTML from editor.getHTML()
   const highlightCodeblocks = (content: string) => {
@@ -136,7 +139,11 @@ const TailwindAdvancedEditor = ({
 
           {ai && (
             <div className="absolute z-50 top-12 left-0 right-0 bg-background border border-muted rounded-md shadow-xl p-2">
-              <AIChatSelector open={ai} onOpenChange={setAI} />
+              <AIChatSelector
+                open={ai}
+                onOpenChange={setAI}
+                chatHelpers={chatHelpers}
+              />
             </div>
           )}
         </div>
@@ -189,11 +196,7 @@ const TailwindAdvancedEditor = ({
             </EditorCommandList>
           </EditorCommand>
 
-          <GenerativeMenuSwitch
-            open={openAI}
-            onOpenChange={setOpenAI}
-            completionHelpers={completionHelpers}
-          >
+          <GenerativeMenuSwitch open={openAI} onOpenChange={setOpenAI}>
             <Separator orientation="vertical" />
             <NodeSelector open={openNode} onOpenChange={setOpenNode} />
             <Separator orientation="vertical" />

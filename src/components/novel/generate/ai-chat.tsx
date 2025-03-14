@@ -2,12 +2,11 @@
 
 import { Command, CommandInput } from "@/components/ui/command";
 
-import { useChat } from "@ai-sdk/react";
+import { useChat, UseChatHelpers } from "@ai-sdk/react";
 import { ArrowUp } from "lucide-react";
 import { useEditor } from "novel";
 import { useState } from "react";
 import Markdown from "react-markdown";
-import { toast } from "sonner";
 import { Button } from "../../ui/button";
 import { LoaderCircle } from "lucide-react";
 import { ScrollArea } from "../../ui/scroll-area";
@@ -17,24 +16,15 @@ import AISelectorCommands from "./ai-select-command.";
 interface AISelectorProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
+  chatHelpers: UseChatHelpers;
 }
 
-export function AIChatSelector({ onOpenChange }: AISelectorProps) {
+export function AIChatSelector({ onOpenChange, chatHelpers }: AISelectorProps) {
   const { editor } = useEditor();
   const [inputValue, setInputValue] = useState("");
 
-  const { messages, append, isLoading, error, reload, setMessages } = useChat({
-    api: "/api/ai/command",
-    onResponse: (response) => {
-      if (response.status === 429) {
-        toast.error("You have reached your request limit for the day.");
-        return;
-      }
-    },
-    onError: (e) => {
-      toast.error(e.message);
-    },
-  });
+  const { messages, append, isLoading, error, reload, setMessages } =
+    chatHelpers;
 
   // Get the latest AI response
   const latestAiMessage =

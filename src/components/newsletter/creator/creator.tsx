@@ -23,9 +23,9 @@ import Editor from "@/components/novel/editror";
 import { JSONContent } from "novel";
 import { createEditor } from "@udecode/plate";
 import { AIContext } from "@/context/ai-context";
-import { useCompletion } from "@ai-sdk/react";
-
+import { useChat } from "@ai-sdk/react";
 const Creator = () => {
+  const [ai, setAI] = useState(false);
   const [data, setData] = useState<string[] | JSONContent | null>(null);
   const [popup, setPopup] = useState<Popup>({
     title: "",
@@ -183,9 +183,9 @@ const Creator = () => {
   }
   const textContent = newsletter?.body || "";
 
-  const completionHelpers = useCompletion({
+  const chatHelpers = useChat({
     id: "novel",
-    api: "/api/generate",
+    api: "/api/ai/command",
     onResponse: (response) => {
       if (response.status === 429) {
         toast.error("You have reached your request limit for the day.");
@@ -196,12 +196,12 @@ const Creator = () => {
       toast.error(e.message);
     },
   });
+
   const generateFromEvents = async (content: string) => {
+    setAI(true);
     setEventLoading(true);
-    const { complete, completion } = completionHelpers;
-    await complete(completion, {
-      body: { option: "zap", command: content },
-    });
+    const { append } = chatHelpers;
+    await append({ role: "user", content: content });
     setEventLoading(false);
   };
   return (
@@ -240,7 +240,9 @@ const Creator = () => {
             {newsletter.body ? (
               // <PlateEditor onChange={handleChange} value={newsletter.body} />
               <Editor
-                completionHelpers={completionHelpers}
+                ai={ai}
+                setAI={setAI}
+                chatHelpers={chatHelpers}
                 onChange={handleChange}
                 data={textContent as unknown as JSONContent}
               />

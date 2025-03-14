@@ -4,18 +4,17 @@ import { Button } from "../../ui/button";
 // import Magic from "../ui/icons/magic";
 import { Sparkle } from "lucide-react";
 import { AISelector } from "./ai-select";
-import { UseCompletionHelpers } from "@ai-sdk/react";
+import { UseChatHelpers } from "@ai-sdk/react";
+import { type EditorInstance } from "novel";
 
 interface GenerativeMenuSwitchProps {
   children: ReactNode;
   open: boolean;
-  completionHelpers: UseCompletionHelpers;
   onOpenChange: (open: boolean) => void;
 }
 const GenerativeMenuSwitch = ({
   children,
   open,
-  completionHelpers,
   onOpenChange,
 }: GenerativeMenuSwitchProps) => {
   const { editor } = useEditor();
@@ -34,13 +33,7 @@ const GenerativeMenuSwitch = ({
       }}
       className="flex w-fit max-w-[90vw] overflow-hidden rounded-md border border-muted bg-background shadow-xl"
     >
-      {open && (
-        <AISelector
-          open={open}
-          onOpenChange={onOpenChange}
-          completionHelpers={completionHelpers}
-        />
-      )}
+      {open && <AISelector open={open} onOpenChange={onOpenChange} />}
       {!open && (
         <>
           <Button

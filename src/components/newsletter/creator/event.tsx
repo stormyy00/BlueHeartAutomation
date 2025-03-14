@@ -26,7 +26,7 @@ const Event = ({ name, date, location, eventLoading }: props) => {
         <button
           disabled={eventLoading}
           onClick={handleClick}
-          className={`text-left ${eventLoading ? "text-black/25" : "text-black"}`}
+          className={`event-card text-left ${eventLoading ? "text-black/25" : "text-black"}`}
         >
           {name}
         </button>

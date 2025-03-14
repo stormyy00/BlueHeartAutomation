@@ -12,24 +12,33 @@ import { Button } from "../../ui/button";
 import { ScrollArea } from "../../ui/scroll-area";
 import AICompletionCommands from "./ai-complete";
 import AISelectorCommands from "./ai-select-command.";
+import { toast } from "sonner";
 import { LoaderCircle } from "lucide-react";
 //TODO: I think it makes more sense to create a custom Tiptap extension for this functionality https://tiptap.dev/docs/editor/ai/introduction
-import { UseCompletionHelpers } from "@ai-sdk/react";
 
 interface AISelectorProps {
   open: boolean;
-  completionHelpers: UseCompletionHelpers;
   onOpenChange: (open: boolean) => void;
 }
 
-export function AISelector({
-  onOpenChange,
-  completionHelpers,
-}: AISelectorProps) {
+export function AISelector({ onOpenChange }: AISelectorProps) {
   const { editor } = useEditor();
   const [inputValue, setInputValue] = useState("");
 
-  const { complete, completion, isLoading, setCompletion } = completionHelpers;
+  const { completion, complete, isLoading, setCompletion } = useCompletion({
+    id: "novel",
+    api: "/api/generate",
+    onResponse: (response) => {
+      if (response.status === 429) {
+        toast.error("You have reached your request limit for the day.");
+        return;
+      }
+    },
+    onError: (e) => {
+      toast.error(e.message);
+    },
+  });
+
   const hasCompletion = completion.length > 0;
 
   const resetAIState = () => {
