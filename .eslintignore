@@ -1,3 +1,5 @@
 src/components/plate-ui/
 src/components/editor/
 src/components/novel/
+src/components/novel/selectors/
+src/components/novel/generate/
