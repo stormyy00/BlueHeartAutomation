@@ -42,6 +42,7 @@ const Creator = () => {
   const [date, setDate] = useState<Date | undefined>(new Date());
   const [error, setError] = useState(false);
   const [loading, setIsLoading] = useState(true);
+  const [eventLoading, setEventLoading] = useState(false);
   const [scheduleLoading, setScheduleLoading] = useState(false);
   const pathname = usePathname();
   const id = pathname.split("/")[4];
@@ -197,10 +198,12 @@ const Creator = () => {
     },
   });
   const generateFromEvents = async (content: string) => {
+    setEventLoading(true);
     const { complete, completion } = completionHelpers;
     await complete(completion, {
       body: { option: "zap", command: content },
     });
+    setEventLoading(false);
   };
   return (
     <AIContext.Provider value={{ generateFromEvents }}>
@@ -247,7 +250,11 @@ const Creator = () => {
             )}
           </div>
           <div className="flex  gap-4 w-1/3">
-            <Events onChange={handleEventsChange} />
+            <Events
+              onChange={handleEventsChange}
+              eventLoading={eventLoading}
+              setEventLoading={setEventLoading}
+            />
           </div>
         </div>
 
