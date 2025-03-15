@@ -4,8 +4,12 @@ import type { NextRequest } from "next/server";
 // import { createOpenAI } from "@ai-sdk/openai";
 import { NextResponse } from "next/server";
 import { createOllama } from "ollama-ai-provider";
-const ollama = createOllama();
-
+const ollama = createOllama({
+  baseURL:
+    process.env.NODE_ENV === "production"
+      ? process.env.OLLAMA_URL
+      : "http://localhost:11434",
+});
 export async function POST(req: NextRequest) {
   const { prompt, system } = await req.json();
   console.log(prompt, system);
