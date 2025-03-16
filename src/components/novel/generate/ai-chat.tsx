@@ -54,9 +54,6 @@ const AIChatbot = ({ open, onOpenChange, chatHelpers }: AIChatbotProps) => {
     append({
       role: "user",
       content: inputValue,
-      body: {
-        documentContent: documentContent,
-      },
     });
 
     setInputValue("");
@@ -112,15 +109,15 @@ const AIChatbot = ({ open, onOpenChange, chatHelpers }: AIChatbotProps) => {
               }`}
             >
               <div className="flex items-center gap-2 mb-1">
-                <div
+                {/* <div
                   className={`h-6 w-6 rounded-full flex items-center justify-center ${
                     message.role === "user" ? "bg-ttickles-blue" : "bg-gray-500"
                   }`}
-                >
-                  {/* <span className="text-white text-xs">
+                > */}
+                {/* <span className="text-white text-xs">
                     {message.role === "user" ? "You" : "AI"}
                   </span> */}
-                </div>
+                {/* </div> */}
                 {/* <span className="text-xs font-medium">
                   {message.role === "user" ? "You" : "Assistant"}
                 </span> */}
