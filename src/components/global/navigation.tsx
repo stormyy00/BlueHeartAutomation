@@ -19,7 +19,7 @@ const Navigation = () => {
   const NAVTABS = TABS[path.split("/")[1]].tabs;
 
   return (
-    <Sidebar className="text-white">
+    <Sidebar className="text-white w-[14%]">
       <SidebarHeader className="flex flex-col items-center">
         <Link href="/">
           <Image src={Logo} alt="TTickle Logo" className="hover:scale-105" />

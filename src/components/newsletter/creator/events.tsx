@@ -88,23 +88,8 @@ const Events = ({ onChange, eventLoading, setEventLoading }: EventsProps) => {
   };
 
   return (
-    <div className="w-full flex flex-col bg-black/5 p-4 rounded-md border border-black/20">
-      <div
-        className="flex flex-col items-center bg-white border border-black/20 font-bold rounded-md p-4 cursor-pointer"
-        onClick={() =>
-          setPopup({
-            title: "Add Event",
-            visible: true,
-            message: <EventModal setEvent={setEvent} />,
-            cancel: true,
-            submit: true,
-          })
-        }
-      >
-        <Plus size={32} />
-        Add Event
-      </div>
-      <div className="flex flex-row items-center text-black/20 text-xs gap-1 self-end">
+    <div className="w-full flex flex-col bg-black/5 p-4 rounded-md border border-black/20 gap-2">
+      <div className="flex flex-row items-center text-black/60 text-xs gap-1 self-end">
         What is this?
         <Info
           size={12}
@@ -120,6 +105,21 @@ const Events = ({ onChange, eventLoading, setEventLoading }: EventsProps) => {
             })
           }
         />
+      </div>
+      <div
+        className="flex flex-col items-center bg-white border border-black/20 font-bold rounded-md p-4 cursor-pointer"
+        onClick={() =>
+          setPopup({
+            title: "Add Event",
+            visible: true,
+            message: <EventModal setEvent={setEvent} />,
+            cancel: true,
+            submit: true,
+          })
+        }
+      >
+        <Plus size={32} />
+        Add Event
       </div>
       <div className="flex flex-col gap-2">
         {events.map((event, index) => (

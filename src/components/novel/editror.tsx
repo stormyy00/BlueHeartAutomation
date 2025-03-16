@@ -128,27 +128,16 @@ const TailwindAdvancedEditor = ({
       </div>
 
       <EditorRoot>
-        <div className="flex items-center w-fit mb-1 p-2 border-b border-muted bg-background rounded-lg">
-          <Button
-            className="gap-1 text-purple-500"
-            variant="ghost"
-            onClick={() => setAI(!ai)}
-            size="sm"
-          >
-            <Sparkle className="h-4 w-4" />
-            Ask AI
-          </Button>
+        <Button
+          className="gap-1 text-ttickles-blue border-muted bg-background mb-2 p-4 hover:bg-white"
+          variant="ghost"
+          onClick={() => setAI(!ai)}
+          size="sm"
+        >
+          <Sparkle className="h-4 w-4" />
+          Ask AI
+        </Button>
 
-          {ai && (
-            <div className="absolute z-50 top-12 left-0 right-0 bg-background border border-muted rounded-md shadow-xl p-2">
-              <AIChatbot
-                open={ai}
-                onOpenChange={setAI}
-                chatHelpers={chatHelpers}
-              />
-            </div>
-          )}
-        </div>
         <EditorContent
           initialContent={initialContent}
           extensions={extensions}

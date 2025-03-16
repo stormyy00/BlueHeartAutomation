@@ -1,8 +1,19 @@
 import React from "react";
 
-const Card = ({ title, text }: { title: string; text: string }) => {
+const Card = ({
+  title,
+  text,
+  icon,
+}: {
+  title: string;
+  text: string;
+  icon: JSX.Element;
+}) => {
   return (
-    <div className="w-80 p-6 bg-white shadow-lg rounded-xl">
+    <div className="flex flex-col items-center rounded-lg bg-white w-80 p-6 shadow-lg">
+      <div className="mb-4 rounded-full bg-blue-100 p-4 text-ttickles-darkblue">
+        {icon}
+      </div>
       <div className="text-2xl font-semibold text-ttickles-darkblue">
         {title}
       </div>

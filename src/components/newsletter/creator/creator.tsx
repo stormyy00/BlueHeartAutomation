@@ -18,6 +18,13 @@ import {
   DialogDescription,
   DialogTitle,
 } from "@/components/ui/dialog";
+import {
+  Sheet,
+  SheetContent,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
+} from "@/components/ui/sheet";
 import ScheduleModal from "./schedule-modal";
 import Editor from "@/components/novel/editror";
 import { JSONContent } from "novel";
@@ -25,6 +32,7 @@ import { createEditor } from "@udecode/plate";
 import { AIContext } from "@/context/ai-context";
 import { useChat } from "@ai-sdk/react";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import AIChatbot from "@/components/novel/generate/ai-chat";
 
 const Creator = () => {
   const [ai, setAI] = useState(false);
@@ -40,6 +48,7 @@ const Creator = () => {
     body: "",
     status: "draft",
   });
+  const [sheetOpen, setSheetOpen] = useState(false);
   const [date, setDate] = useState<Date | undefined>(new Date());
   const [error, setError] = useState(false);
   const [loading, setIsLoading] = useState(true);
@@ -208,6 +217,17 @@ const Creator = () => {
           <div className="font-extrabold text-3xl mb-8">Newsletter</div>
 
           <div className="flex flex-row gap-3">
+            <Sheet open={sheetOpen} onOpenChange={setSheetOpen}>
+              <SheetTrigger asChild>
+                <Button
+                  variant="outline"
+                  className="flex items-center gap-2 bg-teal-400 hover:bg-teal-200 text-white"
+                >
+                  Add Events
+                </Button>
+              </SheetTrigger>
+            </Sheet>
+
             {loading ? (
               <Button
                 disabled={!data}
@@ -219,6 +239,7 @@ const Creator = () => {
             ) : (
               <Loader className="animate-spin" />
             )}
+
             <Button
               className="bg-ttickles-orange hover:bg-ttickles-orange"
               onClick={() => {
@@ -232,10 +253,10 @@ const Creator = () => {
             </Button>
           </div>
         </div>
-        <div className="flex flex-row h-full gap-2 w-full">
+
+        <div className="flex  h-full w-full">
           <div className="flex flex-col bg-black/5 p-4 rounded-md border border-black/20 w-full gap-4 h-full">
             {newsletter.body ? (
-              // <PlateEditor onChange={handleChange} value={newsletter.body} />
               <ScrollArea>
                 <Editor
                   ai={ai}
@@ -249,23 +270,31 @@ const Creator = () => {
               <Ellipsis className="motion-preset-pulse-sm motion-duration-1000" />
             )}
           </div>
-          <div className="flex  gap-4 w-1/3">
-            <Events
-              onChange={handleEventsChange}
-              eventLoading={eventLoading}
-              setEventLoading={setEventLoading}
-            />
-          </div>
-        </div>
-        {/* {ai && (
-            <div className="absolute z-50 top-12 left-0 right-0 bg-transparent w-fit rounded-md shadow-xl p-2">
+          {ai && (
+            <div className=" z-50 top-12 left-0 right-0 bg-background border border-muted rounded-md shadow-xl p-2">
               <AIChatbot
                 open={ai}
                 onOpenChange={setAI}
-                // chatHelpers={chatHelpers}
+                chatHelpers={chatHelpers}
               />
             </div>
-          )} */}
+          )}
+        </div>
+
+        <Sheet open={sheetOpen} onOpenChange={setSheetOpen}>
+          <SheetContent side="right" className="w-full max-w-md overflow-auto">
+            <SheetHeader>
+              <SheetTitle>Events</SheetTitle>
+            </SheetHeader>
+            <div className="mt-4">
+              <Events
+                onChange={handleEventsChange}
+                eventLoading={eventLoading}
+                setEventLoading={setEventLoading}
+              />
+            </div>
+          </SheetContent>
+        </Sheet>
 
         <Dialog
           open={popup.visible}
