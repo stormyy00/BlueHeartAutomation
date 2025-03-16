@@ -21,6 +21,25 @@ export async function POST(req: Request): Promise<Response> {
     "Never start with phrases like 'Here's' or 'Here is' or any similar phrase.";
 
   const messages = match(option)
+    .with("assist", () => [
+      {
+        role: "system",
+        content:
+          "You are an AI writing assistant for newsletter writing. " +
+          noThinkingInstruction +
+          " " +
+          "Use Markdown formatting when appropriate. " +
+          "If prompted to use events in context unless specified, use these events. " +
+          `Rules:
+        - Your response must contain ONLY the exact text to be inserted.
+        - No explanations. No introductions. No comments.
+        - CRITICAL: Begin your response with the first word of the actual content.`,
+      },
+      {
+        role: "user",
+        content: "Remember, respond with ONLY the final text I need. " + prompt,
+      },
+    ])
     .with("continue", () => [
       {
         role: "system",

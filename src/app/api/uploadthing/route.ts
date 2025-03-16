@@ -1,25 +1,33 @@
 import type { FileRouter } from "uploadthing/next";
-
 import { createRouteHandler, createUploadthing } from "uploadthing/next";
 
 const f = createUploadthing();
 
-const ourFileRouter = {
-  editorUploader: f(["image", "text", "blob", "pdf", "video", "audio"])
-    .middleware((): Record<string, never> => {
-      return {}; // Explicitly typed empty object
+export const ourFileRouter = {
+  editorUploader: f({
+    image: { maxFileSize: "4MB", maxFileCount: 10 },
+    pdf: { maxFileSize: "8MB", maxFileCount: 1 },
+    text: { maxFileSize: "1MB", maxFileCount: 1 },
+    video: { maxFileSize: "16MB", maxFileCount: 1 },
+    audio: { maxFileSize: "8MB", maxFileCount: 1 },
+    blob: { maxFileSize: "4MB", maxFileCount: 1 },
+  })
+    .middleware(async () => {
+      // You can add authentication checks here
+      // For now, we're allowing unauthenticated uploads
+      return {};
     })
-    .onUploadComplete(({ file }) => {
+    .onUploadComplete(async ({ file }) => {
       console.log("Upload complete:", file);
 
-      // Ensure file is JSON serializable
+      // Return the file data needed by client
       return {
         name: file.name,
         size: file.size,
         type: file.type,
         key: file.key,
-        customId: file.customId,
-        url: file.url, // Assuming `url` is part of the file object
+        url: file.url,
+        // Add any additional metadata you need here
       };
     }),
 } satisfies FileRouter;
