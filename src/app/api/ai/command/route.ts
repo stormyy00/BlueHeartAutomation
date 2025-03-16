@@ -16,9 +16,9 @@ const ollama = createOllama({
 });
 export async function POST(req: NextRequest) {
   const { messages, model = "llama3.2", system } = await req.json();
-
+  console.log(messages);
   try {
-    const resultStream = await streamText({
+    const resultStream = streamText({
       maxTokens: 2048,
       messages: convertToCoreMessages(messages),
       model: ollama(model),
@@ -39,9 +39,9 @@ export async function POST(req: NextRequest) {
     // const writer = writable.getWriter();
     // const reader = originalResponse.body.getReader();
 
-    // // We’ll keep a running buffer because the <think> tags
-    // // may be split across chunks.
-    // let buffer = "";
+    // We’ll keep a running buffer because the <think> tags
+    // may be split across chunks.
+
     // const decoder = new TextDecoder();
     // const encoder = new TextEncoder();
 
