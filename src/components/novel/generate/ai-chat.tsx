@@ -24,6 +24,7 @@ interface AIChatbotProps {
 const AIChatbot = ({ open, onOpenChange, chatHelpers }: AIChatbotProps) => {
   const { editor } = useEditor();
   const [inputValue, setInputValue] = useState("");
+  console.log(editor);
 
   const { messages, append, isLoading, error, reload, setMessages } = useChat({
     api: "/api/ai/command",
@@ -60,7 +61,12 @@ const AIChatbot = ({ open, onOpenChange, chatHelpers }: AIChatbotProps) => {
   };
 
   const insertIntoEditor = (content: string) => {
-    if (!editor) return;
+    if (!editor) {
+      console.log("error");
+      return;
+    }
+    console.log("Inserting into editor:", content);
+    // const range = editor.state.selection.content();
     editor.chain().focus().insertContent(content).run();
     // editor.chain().focus().deleteRange(range).insertContent("hello").run();
   };

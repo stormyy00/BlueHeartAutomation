@@ -24,6 +24,7 @@ interface AISelectorProps {
 export function AISelector({ onOpenChange }: AISelectorProps) {
   const { editor } = useEditor();
   const [inputValue, setInputValue] = useState("");
+  console.log("LOL AI SELCETION", editor);
 
   const { completion, complete, isLoading, setCompletion } = useCompletion({
     // id: "novel",

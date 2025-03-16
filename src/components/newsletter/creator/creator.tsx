@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import Events from "./events";
 import { Button } from "@/components/ui/button";
-import { Ellipsis, Loader } from "lucide-react";
+import { Loader } from "lucide-react";
 import { EventType } from "@/types/event";
 import { usePathname } from "next/navigation";
 import { toast } from "sonner";
@@ -32,7 +32,6 @@ import { createEditor } from "@udecode/plate";
 import { AIContext } from "@/context/ai-context";
 import { useChat } from "@ai-sdk/react";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import AIChatbot from "@/components/novel/generate/ai-chat";
 
 const Creator = () => {
   const [ai, setAI] = useState(false);
@@ -256,29 +255,17 @@ const Creator = () => {
 
         <div className="flex  h-full w-full">
           <div className="flex flex-col bg-black/5 p-4 rounded-md border border-black/20 w-full gap-4 h-full">
-            {newsletter.body ? (
-              <ScrollArea>
-                <Editor
-                  ai={ai}
-                  setAI={setAI}
-                  chatHelpers={chatHelpers}
-                  onChange={handleChange}
-                  data={textContent as unknown as JSONContent}
-                />
-              </ScrollArea>
-            ) : (
-              <Ellipsis className="motion-preset-pulse-sm motion-duration-1000" />
-            )}
-          </div>
-          {ai && (
-            <div className=" z-50 top-12 left-0 right-0 bg-background border border-muted rounded-md shadow-xl p-2">
-              <AIChatbot
-                open={ai}
-                onOpenChange={setAI}
+            <ScrollArea>
+              <Editor
+                ai={ai}
+                setAI={setAI}
                 chatHelpers={chatHelpers}
+                onChange={handleChange}
+                data={textContent as unknown as JSONContent}
+                loading={newsletter.body}
               />
-            </div>
-          )}
+            </ScrollArea>
+          </div>
         </div>
 
         <Sheet open={sheetOpen} onOpenChange={setSheetOpen}>
