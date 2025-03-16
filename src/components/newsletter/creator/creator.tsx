@@ -24,6 +24,8 @@ import { JSONContent } from "novel";
 import { createEditor } from "@udecode/plate";
 import { AIContext } from "@/context/ai-context";
 import { useChat } from "@ai-sdk/react";
+import { ScrollArea } from "@/components/ui/scroll-area";
+
 const Creator = () => {
   const [ai, setAI] = useState(false);
   const [data, setData] = useState<string[] | JSONContent | null>(null);
@@ -234,13 +236,15 @@ const Creator = () => {
           <div className="flex flex-col bg-black/5 p-4 rounded-md border border-black/20 w-full gap-4 h-full">
             {newsletter.body ? (
               // <PlateEditor onChange={handleChange} value={newsletter.body} />
-              <Editor
-                ai={ai}
-                setAI={setAI}
-                chatHelpers={chatHelpers}
-                onChange={handleChange}
-                data={textContent as unknown as JSONContent}
-              />
+              <ScrollArea>
+                <Editor
+                  ai={ai}
+                  setAI={setAI}
+                  chatHelpers={chatHelpers}
+                  onChange={handleChange}
+                  data={textContent as unknown as JSONContent}
+                />
+              </ScrollArea>
             ) : (
               <Ellipsis className="motion-preset-pulse-sm motion-duration-1000" />
             )}
@@ -253,6 +257,15 @@ const Creator = () => {
             />
           </div>
         </div>
+        {/* {ai && (
+            <div className="absolute z-50 top-12 left-0 right-0 bg-transparent w-fit rounded-md shadow-xl p-2">
+              <AIChatbot
+                open={ai}
+                onOpenChange={setAI}
+                // chatHelpers={chatHelpers}
+              />
+            </div>
+          )} */}
 
         <Dialog
           open={popup.visible}

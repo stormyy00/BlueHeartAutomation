@@ -32,7 +32,8 @@ import { slashCommand, suggestionItems } from "./slash";
 import hljs from "highlight.js";
 import { Button } from "../ui/button";
 import { Sparkle } from "lucide-react";
-import { AIChatSelector } from "./generate/ai-chat";
+import AIChatSelector from "./generate/ai-chat";
+import AIChatbot from "./generate/ai-chat";
 
 const extensions = [...defaultExtensions, slashCommand];
 
@@ -112,13 +113,13 @@ const TailwindAdvancedEditor = ({
   return (
     <div className="relative w-full max-w-screen-lg">
       <div className="flex absolute right-5 top-5 z-10 mb-5 gap-2">
-        <div className="rounded-lg bg-accent px-2 py-1 text-sm text-muted-foreground">
+        <div className="rounded-lg bg-accent px-2 py-1 text-sm bg-white text-muted-foreground">
           {saveStatus}
         </div>
         <div
           className={
             charsCount
-              ? "rounded-lg bg-accent px-2 py-1 text-sm text-muted-foreground"
+              ? "rounded-lg bg-accent px-2 py-1 bg-white text-sm text-muted-foreground"
               : "hidden"
           }
         >
@@ -134,13 +135,13 @@ const TailwindAdvancedEditor = ({
             onClick={() => setAI(!ai)}
             size="sm"
           >
-            <Sparkle className="h-5 w-5" />
+            <Sparkle className="h-4 w-4" />
             Ask AI
           </Button>
 
           {ai && (
             <div className="absolute z-50 top-12 left-0 right-0 bg-background border border-muted rounded-md shadow-xl p-2">
-              <AIChatSelector
+              <AIChatbot
                 open={ai}
                 onOpenChange={setAI}
                 chatHelpers={chatHelpers}

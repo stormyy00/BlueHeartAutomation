@@ -16,6 +16,7 @@ const GenerativeMenuSwitch = ({
   children,
   open,
   onOpenChange,
+  chatHelpers,
 }: GenerativeMenuSwitchProps) => {
   const { editor } = useEditor();
 
