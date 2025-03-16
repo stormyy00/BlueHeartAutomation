@@ -22,7 +22,7 @@ export const suggestionItems = createSuggestionItems([
     description: "Use AI for help.",
     icon: <MessageSquarePlus size={18} />,
     command: ({ editor, range }) => {
-      editor.chain().focus().deleteRange(range).run();
+      editor.chain().focus().deleteRange(range).insertContent("hello").run();
     },
   },
   {

@@ -26,7 +26,7 @@ export function AISelector({ onOpenChange }: AISelectorProps) {
   const [inputValue, setInputValue] = useState("");
 
   const { completion, complete, isLoading, setCompletion } = useCompletion({
-    id: "novel",
+    // id: "novel",
     api: "/api/generate",
     onResponse: (response) => {
       if (response.status === 429) {

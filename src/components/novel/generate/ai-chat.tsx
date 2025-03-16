@@ -22,7 +22,7 @@ interface AIChatbotProps {
 }
 
 const AIChatbot = ({ open, onOpenChange, chatHelpers }: AIChatbotProps) => {
-  // const { editor } = useEditor();
+  const { editor } = useEditor();
   const [inputValue, setInputValue] = useState("");
 
   const { messages, append, isLoading, error, reload, setMessages } = useChat({
@@ -64,7 +64,8 @@ const AIChatbot = ({ open, onOpenChange, chatHelpers }: AIChatbotProps) => {
 
   const insertIntoEditor = (content: string) => {
     if (!editor) return;
-    editor.commands.insertContent(content);
+    editor.chain().focus().insertContent(content).run();
+    // editor.chain().focus().deleteRange(range).insertContent("hello").run();
   };
 
   return (
