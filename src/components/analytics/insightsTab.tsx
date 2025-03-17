@@ -8,15 +8,15 @@ import {
 import Heatmap from "./heatmap";
 import MetricCard from "./metrics";
 
-interface AnalyticsData {
+type AnalyticsData = {
   pageviews: { count: number }[];
-}
+};
 
-interface HeatmapData {
+type HeatmapData = {
   grid: number[][];
   xLabels: string[];
   yLabels: string[];
-}
+};
 
 const InsightsTab = ({
   analyticsData,

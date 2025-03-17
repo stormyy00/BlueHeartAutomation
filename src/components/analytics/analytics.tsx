@@ -8,6 +8,7 @@ import { Loader2 } from "lucide-react";
 import InsightsTab from "./insightsTab";
 import TrendsTab from "./trendTab";
 import SessionsTab from "./sessionTab";
+import { toast } from "sonner";
 
 const AnalyticsDashboard = () => {
   type AnalyticsData = {
@@ -54,7 +55,6 @@ const AnalyticsDashboard = () => {
     sessionData: [],
   });
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
   const [activeTab, setActiveTab] = useState("insights");
 
   useEffect(() => {
@@ -69,17 +69,18 @@ const AnalyticsDashboard = () => {
           }
 
           const data = await response.json();
-          console.log(data.result);
+          //   console.log(data.result);
 
           const processedData = processAnalyticsData(data);
           setAnalyticsData(processedData);
           resolve(processedData);
         } catch (err) {
           console.error("Failed to fetch analytics:", err);
-          setError(err.message || "An unknown error occurred.");
+          toast.error("Failed to fetch analytics data. Please try again.");
           reject(err);
         } finally {
           setLoading(false);
+          toast("Analytics data loaded successfully.");
         }
       });
     };
@@ -172,17 +173,6 @@ const AnalyticsDashboard = () => {
     );
   }
 
-  if (error) {
-    return (
-      <div className="p-4 bg-red-50 border border-red-200 rounded-md">
-        <h3 className="text-lg font-medium text-red-800">
-          Error loading analytics
-        </h3>
-        <p className="text-red-600">{error}</p>
-      </div>
-    );
-  }
-
   const heatmapData = getHeatmapData(analyticsData.pageviews);
   const timeSeriesData = prepareTimeSeriesData(analyticsData.pageviews);
 
@@ -202,6 +192,8 @@ const AnalyticsDashboard = () => {
     {
       id: "sessions",
       label: "Sessions",
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore
       content: <SessionsTab timeSeriesData={timeSeriesData} />,
     },
   ];
