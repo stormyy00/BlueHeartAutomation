@@ -112,7 +112,7 @@ const TailwindAdvancedEditor = ({
   return (
     <div className="flex flex-col bg-black/5 p-4 rounded-md border border-black/20 w-full gap-4 h-full">
       <div className="relative w-full max-w-screen-lg">
-        <div className="flex absolute right-5 top-5 z-10 mb-5 gap-2">
+        <div className="flex absolute right-5 top-1 z-10 mb-5 gap-2">
           <div className="rounded-lg bg-accent px-2 py-1 text-sm bg-white text-muted-foreground">
             {saveStatus}
           </div>
