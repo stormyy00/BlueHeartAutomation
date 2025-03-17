@@ -6,9 +6,10 @@ type props = {
   eventLoading: boolean;
   setEventLoading: (value: boolean) => void;
   date: string;
+  description: string;
   location: string;
 };
-const Event = ({ name, date, location, eventLoading }: props) => {
+const Event = ({ name, date, location, description, eventLoading }: props) => {
   const { generateFromEvents } = useAI();
   const handleClick = () => {
     const eventContent = `
@@ -16,6 +17,7 @@ const Event = ({ name, date, location, eventLoading }: props) => {
    Write a paragraph describing the event using the following information below.
    EventName: ${name}
    EventDate: ${date}
+   EventDescription: ${description}
    EventLocation: ${location}
    `;
     generateFromEvents(eventContent);
@@ -34,6 +36,7 @@ const Event = ({ name, date, location, eventLoading }: props) => {
       </div>
       <div className="text-black/30">{date}</div>
       <div className="text-black/30">{location}</div>
+      <div className="text-black/30 mt-2">{description}</div>
     </div>
   );
 };
