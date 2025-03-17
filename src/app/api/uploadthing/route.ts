@@ -3,7 +3,7 @@ import { createRouteHandler } from "uploadthing/next";
 
 const f = createUploadthing();
 
-const ourFileRouter = {
+export const ourFileRouter = {
   editorUploader: f({
     image: { maxFileSize: "4MB", maxFileCount: 10 },
     pdf: { maxFileSize: "8MB", maxFileCount: 1 },
@@ -13,7 +13,7 @@ const ourFileRouter = {
     blob: { maxFileSize: "4MB", maxFileCount: 1 },
   })
     .middleware(async () => {
-      return {}; // Placeholder for authentication if needed
+      return {}; // Authentication logic if needed
     })
     .onUploadComplete(async ({ file }) => {
       console.log("Upload complete:", file);
@@ -29,6 +29,6 @@ const ourFileRouter = {
 
 export type OurFileRouter = typeof ourFileRouter;
 
-const handler = createRouteHandler({ router: ourFileRouter });
-
-export { handler as GET, handler as POST };
+export const { GET, POST } = createRouteHandler({
+  router: ourFileRouter,
+});
