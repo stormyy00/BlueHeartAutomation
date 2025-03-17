@@ -74,19 +74,19 @@ const SessionsTab = ({ timeSeriesData }: SessionsTabProps) => (
           ],
           color: "#ff7300",
         },
-      ].map((chart, index) => (
+      ].map(({ title, description, chartData, color }, index) => (
         <Card key={index}>
           <CardHeader>
-            <CardTitle>{chart.title}</CardTitle>
-            <CardDescription>{chart.description}</CardDescription>
+            <CardTitle>{title}</CardTitle>
+            <CardDescription>{description}</CardDescription>
           </CardHeader>
           <CardContent>
             <div className="h-60">
               <TimeSeriesChart
-                data={chart.chartData}
+                data={chartData}
                 dataKey="value"
                 name={index === 0 ? "Sessions" : "Percentage"}
-                color={chart.color}
+                color={color}
               />
             </div>
           </CardContent>

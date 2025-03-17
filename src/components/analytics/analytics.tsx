@@ -212,16 +212,16 @@ const AnalyticsDashboard = () => {
 
       <Tabs value={activeTab} onValueChange={setActiveTab} className="w-11/12">
         <TabsList className="mb-4">
-          {tabConfig.map((tab) => (
-            <TabsTrigger key={tab.id} value={tab.id}>
-              {tab.label}
+          {tabConfig.map(({ id, label }, index) => (
+            <TabsTrigger key={index} value={id}>
+              {label}
             </TabsTrigger>
           ))}
         </TabsList>
 
-        {tabConfig.map((tab) => (
-          <TabsContent key={tab.id} value={tab.id} className="space-y-4">
-            {tab.content}
+        {tabConfig.map(({ id, content }, index) => (
+          <TabsContent key={index} value={id} className="space-y-4">
+            {content}
           </TabsContent>
         ))}
       </Tabs>
