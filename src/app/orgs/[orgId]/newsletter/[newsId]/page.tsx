@@ -12,7 +12,7 @@ const Page = async ({ params }: Params) => {
   const org = await getOrg(orgId);
   return (
     <div className="flex flex-col w-10/12 m-10">
-      <Creator org={org} />
+      <Creator org={org!} />
     </div>
   );
 };
