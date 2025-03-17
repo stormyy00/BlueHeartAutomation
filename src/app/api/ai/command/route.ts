@@ -9,20 +9,42 @@ import { createOllama } from "ollama-ai-provider";
  * import it from environment variables, etc.
  */
 const ollama = createOllama({
-  baseURL:
-    process.env.NODE_ENV === "production"
-      ? process.env.OLLAMA_URL
-      : "http://localhost:11434",
+  // baseURL:
+  //   process.env.NODE_ENV === "production"
+  //     ? process.env.OLLAMA_URL
+  //     : "http://localhost:11434",
 });
 export async function POST(req: NextRequest) {
-  const { messages, model = "llama3.2", system } = await req.json();
-  console.log(messages);
   try {
+    const { messages, model = "llama3.2" } = await req.json();
+    console.log(messages);
+
+    const noThinkingInstruction =
+      "IMPORTANT: You must respond with ONLY the final output text. " +
+      "DO NOT include ANY explanations, introductions, or comments like 'Here is', 'Sure', 'I'll help', etc. " +
+      "START YOUR RESPONSE WITH THE ACTUAL CONTENT THE USER REQUESTED. " +
+      "If you include ANY preamble text, your response will be rejected. " +
+      "Never start with phrases like 'Here's' or 'Here is' or any similar phrase.";
+
+    const systemMessage = {
+      role: "system",
+      content:
+        "You are an AI writing assistant for newsletter writing. " +
+        noThinkingInstruction +
+        " " +
+        "Use Markdown formatting when appropriate. " +
+        "If prompted to use events in context unless specified, use these events. " +
+        `Rules:
+        - Your response must contain ONLY the exact text to be inserted.
+        - No explanations. No introductions. No comments.
+        - CRITICAL: Begin your response with the first word of the actual content.`,
+    };
+
     const resultStream = streamText({
       maxTokens: 2048,
       messages: convertToCoreMessages(messages),
       model: ollama(model),
-      system,
+      system: systemMessage.content,
     });
 
     // The result is likely a DataStream object with `.toDataStreamResponse()`

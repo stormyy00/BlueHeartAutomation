@@ -6,6 +6,7 @@ import {
   User,
   Building2,
   Clock,
+  ChartArea,
 } from "lucide-react";
 interface Tab {
   name: string;
@@ -72,6 +73,11 @@ export const TABS: Tabs = {
         name: "History",
         link: "/orgs/@mine/history",
         icon: <Clock />,
+      },
+      {
+        name: "Analytics",
+        link: "/orgs/@mine/analytics",
+        icon: <ChartArea />,
       },
     ],
   },

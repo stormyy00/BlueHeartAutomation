@@ -27,7 +27,7 @@ const AIChatbot = ({ open, onOpenChange, chatHelpers }: AIChatbotProps) => {
   console.log(editor);
 
   const { messages, append, isLoading, error, reload, setMessages } = useChat({
-    api: "/api/generate",
+    api: "/api/ai/command",
     onResponse: (response) => {
       if (response.status === 429) {
         toast.error("You have reached your request limit for the day.");
@@ -52,10 +52,17 @@ const AIChatbot = ({ open, onOpenChange, chatHelpers }: AIChatbotProps) => {
       ? editor.storage.markdown.serializer.serialize(editor.state.doc)
       : "";
 
-    append({
-      role: "user",
-      content: inputValue,
-    });
+    append(
+      {
+        role: "user",
+        content: inputValue,
+      },
+      {
+        data: {
+          option: "assist",
+        },
+      },
+    );
 
     setInputValue("");
   };
