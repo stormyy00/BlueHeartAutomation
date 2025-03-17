@@ -1,30 +1,17 @@
-// app/api/analytics/route.ts
 export const GET = async () => {
   try {
-    const apiKey = process.env.POSTHOG_API_KEY;
-    const projectId = process.env.PROJECT_ID;
-
-    if (!apiKey) {
-      return Response.json(
-        { error: "PostHog API key is not configured" },
-        { status: 500 },
-      );
-    }
-
-    if (!projectId) {
-      return Response.json(
-        { error: "PostHog project ID is not configured" },
-        { status: 500 },
-      );
-    }
-
     const response = await fetch(
-      `https://us.posthog.com/api/projects/${projectId}/event_definitions/`,
+      `https://us.posthog.com/api/projects/${process.env.PROJECT_ID}/insights/trend/`,
       {
+        method: "POST",
         headers: {
-          Authorization: `Bearer ${apiKey}`,
+          Authorization: `Bearer ${process.env.POSTHOG_API_KEY}`,
           "Content-Type": "application/json",
         },
+        body: JSON.stringify({
+          events: [{ id: "$pageview", name: "$pageview", type: "events" }],
+          date_from: "all",
+        }),
       },
     );
 
@@ -42,13 +29,12 @@ export const GET = async () => {
     return Response.json(data);
   } catch (error) {
     console.error("PostHog API error:", error);
-    if (error instanceof Error) {
-      return Response.json({ error: error.message }, { status: 500 });
-    } else {
-      return Response.json(
-        { error: "An unknown error occurred" },
-        { status: 500 },
-      );
-    }
+    return Response.json(
+      {
+        error:
+          error instanceof Error ? error.message : "An unknown error occurred",
+      },
+      { status: 500 },
+    );
   }
 };
