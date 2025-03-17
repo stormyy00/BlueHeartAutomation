@@ -1,5 +1,10 @@
+import dotenv from "dotenv";
 import * as nodemailer from "nodemailer";
 import SMTPTransport from "nodemailer/lib/smtp-transport";
+
+dotenv.config({
+  path: "../.env",
+});
 
 const transporter = nodemailer.createTransport({
   host: (process.env.NEXT_PUBLIC_SMTP_HOST as string) ?? "",
