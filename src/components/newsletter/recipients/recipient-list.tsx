@@ -56,7 +56,6 @@ const Recipients = ({ org }: Props) => {
       e.preventDefault();
     }
     if (e.key === "Backspace" && recipientInput === "") {
-      console.log("hmmm");
       setGroup((prev) => {
         const emails = prev[1].emails.slice(0, prev[1].emails.length - 1);
         return [prev[0], { ...prev[1], emails: emails }];
@@ -94,7 +93,7 @@ const Recipients = ({ org }: Props) => {
       <Label className="font-extrabold text-3xl flex flex-col gap-y-2">
         Recipients{" "}
         <RecipientToolbar
-          orgId={org.id}
+          org={org}
           list={list}
           setList={setList}
           setChecked={setChecked}

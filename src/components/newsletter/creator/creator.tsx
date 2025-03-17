@@ -29,14 +29,19 @@ import { createEditor } from "@udecode/plate";
 import { AIContext } from "@/context/ai-context";
 import { useChat } from "@ai-sdk/react";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { Input } from "@/components/ui/input";
+import Select from "@/components/global/select";
+import { Organization } from "@/data/types";
 
 type NewsletterData = {
   body: string;
   status: string;
+  subject: string;
+  recipientGroup: string;
   scheduledDate: string | undefined;
 };
 
-const Creator = () => {
+const Creator = ({ org }: { org: Organization }) => {
   const [ai, setAI] = useState(false);
   const [data, setData] = useState<string[] | JSONContent | null>(null);
   const [popup, setPopup] = useState<Popup>({
@@ -49,6 +54,8 @@ const Creator = () => {
   const [newsletter, setNewsletter] = useState<NewsletterData>({
     body: "",
     status: "draft",
+    subject: "",
+    recipientGroup: "",
     scheduledDate: undefined,
   });
   const [sheetOpen, setSheetOpen] = useState(false);
@@ -69,6 +76,8 @@ const Creator = () => {
       },
       body: JSON.stringify({
         date: newsletter.scheduledDate,
+        subject: newsletter.subject,
+        recipientGroup: newsletter.recipientGroup,
       }),
     }).catch((error) => {
       toast.error("Failed to schedule newsletter", { id: toastId });
@@ -121,6 +130,8 @@ const Creator = () => {
           body: formattedContent,
           status: data.newsletterData.status,
           scheduledDate: data.newsletterData.scheduledDate,
+          recipientGroup: data.newsletterData.recipientGroup ?? "",
+          subject: data.newsletterData.subject ?? "",
         });
       })
       .catch((error) => {
@@ -304,8 +315,32 @@ const Creator = () => {
             <DialogTitle>Schedule Newsletter</DialogTitle>
             <DialogDescription className="flex flex-col gap-4">
               <div className="flex flex-col gap-y-2">
+                <Label className="font-bold">Subject</Label>
+                <Input
+                  type="text"
+                  defaultValue={newsletter.subject}
+                  onChange={(value) => {
+                    const val = value.currentTarget.value;
+                    setNewsletter((prev) => {
+                      return { ...prev, subject: val };
+                    });
+                  }}
+                />
+                <Label className="font-bold">Recipient Group</Label>
+                <Select
+                  options={org.groups.map((group) => ({
+                    label: group.name,
+                    value: group.name,
+                  }))}
+                  onChange={(selected) =>
+                    setNewsletter((prev) => {
+                      return { ...prev, recipientGroup: selected };
+                    })
+                  }
+                  placeholder="Select a Recipient"
+                />
                 <Label className="font-bold">Date & Time</Label>
-                <input
+                <Input
                   type="datetime-local"
                   defaultValue={formatDate(
                     newsletter.scheduledDate ?? Date.now(),

@@ -1,6 +1,14 @@
 import dotenv from "dotenv";
 import express, { Express, Request, Response, json } from "express";
-import { collection, doc, getDoc } from "firebase/firestore";
+import {
+  collection,
+  doc,
+  getDoc,
+  getDocs,
+  limit,
+  query,
+  where,
+} from "firebase/firestore";
 import { RedisClientType } from "redis";
 import { sendEmail } from "./util/email";
 import { db } from "./util/firebase";
@@ -21,12 +29,12 @@ type Email = {
   epochSchedule: string;
 };
 
-app.get("/", (req: Request, res: Response) => {
-  res.send("Express + TypeScript Server");
-});
-
-type Newsletter = {
-  newsletter: string[];
+const getOrg = async (uuid: string) => {
+  const result = await getDocs(
+    query(collection(db, "orgs"), where("id", "==", uuid), limit(1)),
+  );
+  if (result.empty) return undefined;
+  return result.docs[0].data();
 };
 
 app.put(
@@ -40,18 +48,23 @@ app.put(
       const now = new Date();
       // console.log(date.toLocaleString(), now.toLocaleString())
       const document = await getDoc(doc(collection(db, "newsletters"), id));
-      const data = document.data() as Newsletter;
+      const data = document.data();
+      // console.log(data)
+      if (!data) return;
+      const organizationDoc = await getOrg(data.orgId);
+      // console.log(organizationDoc)
       const seconds = (date.getTime() - now.getTime()) / 1000;
+      // console.log(data)
       // console.log(seconds)
       if (date > now) {
         await put(id, seconds);
       } else {
         await sendEmail(
-          data.newsletter.length > 0 ? data.newsletter[0] : "Subject here",
-          data.newsletter.length > 1
-            ? data.newsletter.slice(1).join("<br />")
-            : "Body here",
-          ["spacerocket62@gmail.com"],
+          data.subject ?? "Subject here",
+          data.newsletter.join("<br />") ?? "Body here",
+          organizationDoc?.groups.filter(
+            (group) => group.name === data.recipientGroup,
+          )[0].emails,
         ).then(console.log);
       }
       // await put(uuid, 2);
@@ -109,14 +122,14 @@ app.listen(port, async () => {
   await redisConnector.disconnect();
 });
 
-process.on("exit", async () => {
-  console.log("EXIT: Disconnecting all open redis connections!");
-  await shutdown();
-});
-process.on("SIGINT", async () => {
-  console.log("SIGINT: Disconnecting all open redis connections!");
-  await shutdown();
-});
+// process.on("exit", async () => {
+//   console.log("EXIT: Disconnecting all open redis connections!");
+//   await shutdown();
+// });
+// process.on("SIGINT", async () => {
+//   console.log("SIGINT: Disconnecting all open redis connections!");
+//   await shutdown();
+// });
 
 const shutdown = async () => {
   if (redisConnector.client.isOpen) {
@@ -141,13 +154,15 @@ const onKeyExpired = async (expiredKey: string) => {
   // console.log(`Handling expired key: ${expiredKey}`);
   // Place your custom logic here (e.g., sending an HTTP request or updating your app state)
   const document = await getDoc(doc(collection(db, "newsletters"), expiredKey));
-  const data = document.data() as Newsletter;
+  const data = document.data();
+  const organizationDoc = await getOrg(data.orgId);
+
   //TODO: need recipients
   await sendEmail(
-    data.newsletter.length > 0 ? data.newsletter[0] : "Subject here",
-    data.newsletter.length > 1
-      ? data.newsletter.slice(1).join("<br />")
-      : "Body here",
-    [],
+    data.subject ?? "Subject here",
+    data.newsletter.join("<br />") ?? "Body here",
+    organizationDoc?.groups.filter(
+      (group) => group.name === data.recipientGroup,
+    )[0].emails,
   );
 };

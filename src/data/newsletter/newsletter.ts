@@ -7,8 +7,4 @@ export const QUESTIONS = [
     title: "Subject",
     type: "input",
   },
-  {
-    title: "Preview Text",
-    type: "input",
-  },
 ];

@@ -11,11 +11,12 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
-import { RecipientGroup } from "@/data/types";
+import { Organization, RecipientGroup } from "@/data/types";
 import { toast } from "sonner";
+import RecipientNew from "./recipient-new";
 
 type Props = {
-  orgId: string;
+  org: Organization;
   checked: number[];
   setChecked: Dispatch<SetStateAction<number[]>>;
   setList: Dispatch<SetStateAction<RecipientGroup[]>>;
@@ -27,7 +28,7 @@ const RecipientToolbar = ({
   setChecked,
   setList,
   list,
-  orgId,
+  org,
 }: Props) => {
   const [popup, setPopup] = useState({
     title: "",
@@ -37,6 +38,7 @@ const RecipientToolbar = ({
     onClick: () => {},
     button: "",
   });
+  const [adding, setAdding] = useState(false);
 
   // const ids = Object.keys(checked).filter((id) => checked[id]);
 
@@ -45,7 +47,7 @@ const RecipientToolbar = ({
     setList(newList);
     const save = async () => {
       const toastId = toast.loading("Updating organization...");
-      const response = await fetch(`/api/orgs/${orgId}`, {
+      const response = await fetch(`/api/orgs/${org.id}`, {
         method: "POST",
         body: JSON.stringify({
           groups: newList,
@@ -80,14 +82,19 @@ const RecipientToolbar = ({
   return (
     <div className="flex flex-row items-center gap-1">
       <div className="bg-ttickles-lightblue hover:bg-ttickles-darkblue duration-300 p-2 rounded-xl cursor-pointer text-white">
-        <Plus
-          size={24}
-          // onClick={handleNewletter}
-        />
+        <Plus size={24} onClick={() => setAdding(true)} />
       </div>
       <div className="bg-red-500 hover:bg-red-700 duration-300 p-2 rounded-xl cursor-pointer text-white">
         <Trash size={24} onClick={confirmDelete} />
       </div>
+
+      <RecipientNew
+        org={org}
+        setList={setList}
+        list={list}
+        open={adding}
+        setOpen={setAdding}
+      />
 
       <AlertDialog open={popup.visible}>
         <AlertDialogContent>

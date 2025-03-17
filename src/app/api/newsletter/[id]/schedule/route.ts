@@ -72,7 +72,7 @@ export const POST = async (
   req: NextRequest,
   { params }: { params: { id: string } },
 ) => {
-  const { date } = await req.json();
+  const { date, subject, recipientGroup } = await req.json();
   console.log("SERVER:", date);
   try {
     console.log(params.id);
@@ -146,6 +146,8 @@ export const POST = async (
       ...newsletter,
       scheduledDate: date,
       status: "scheduled",
+      subject,
+      recipientGroup,
     })
       .then(async () => {
         await fetch(`${process.env.BACKEND_SERVER_URL}/api/scheduler`, {
