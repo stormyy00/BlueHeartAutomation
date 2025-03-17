@@ -2,9 +2,11 @@ import type { Metadata } from "next";
 import localFont from "next/font/local";
 import "./globals.css";
 import Providers from "@/components/providers";
+import { PosHoProvider } from "./provider";
 import { getServerSession } from "next-auth";
 import { options } from "@/utils/auth";
 import { Toaster } from "sonner";
+import dynamic from "next/dynamic";
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
@@ -15,6 +17,10 @@ const geistMono = localFont({
   src: "./fonts/GeistMonoVF.woff",
   variable: "--font-geist-mono",
   weight: "100 900",
+});
+
+const PostHogPageView = dynamic(() => import("./postHogView"), {
+  ssr: false,
 });
 
 export const metadata: Metadata = {
@@ -30,21 +36,24 @@ export default async function RootLayout({
 }>) {
   const session = await getServerSession(options);
   return (
-    <html lang="en">
-      <head>
-        {/* <script
+    <PosHoProvider>
+      <html lang="en">
+        <head>
+          {/* <script
             src="https://unpkg.com/react-scan/dist/auto.global.js"
             async
-          /> */}
-      </head>
-      <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
-      >
-        <Providers session={session}>
-          <Toaster />
-          {children}
-        </Providers>
-      </body>
-    </html>
+            /> */}
+        </head>
+        <PostHogPageView />
+        <body
+          className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+        >
+          <Providers session={session}>
+            <Toaster />
+            {children}
+          </Providers>
+        </body>
+      </html>
+    </PosHoProvider>
   );
 }

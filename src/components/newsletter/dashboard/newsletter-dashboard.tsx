@@ -100,7 +100,7 @@ const NewsletterDashboard = () => {
             ({ newsletter, newsletterId, newsletterStatus }, index) => (
               <NewsletterCard
                 title={newsletter === " " ? "Untitled" : newsletter}
-                id={newsletterId ?? index.toString()}
+                id={newsletterId}
                 handleConfigure={handleConfigure}
                 status={newsletterStatus || "draft"}
                 onClick={() => {

@@ -1,4 +1,13 @@
-import { Users, Link, Mail, Users2, User, Building2 } from "lucide-react";
+import {
+  Users,
+  Link,
+  Mail,
+  Users2,
+  User,
+  Building2,
+  Clock,
+  ChartArea,
+} from "lucide-react";
 interface Tab {
   name: string;
   link: string;
@@ -59,6 +68,16 @@ export const TABS: Tabs = {
         name: "Newsletter",
         link: "/orgs/@mine/newsletter",
         icon: <Mail />,
+      },
+      {
+        name: "History",
+        link: "/orgs/@mine/history",
+        icon: <Clock />,
+      },
+      {
+        name: "Analytics",
+        link: "/orgs/@mine/analytics",
+        icon: <ChartArea />,
       },
     ],
   },

@@ -33,7 +33,14 @@ export function AIMenu() {
 
   const [value, setValue] = React.useState("");
 
-  const chat = useChat({ api: "/api/ai/command" });
+  const chat = useChat({
+    api: "/api/ai/command",
+    onFinish: (message, { usage, finishReason }) => {
+      console.log("Finished streaming message:", message);
+      console.log("Token usage:", usage);
+      console.log("Finish reason:", finishReason);
+    },
+  });
 
   const { input, status, messages, setInput } = chat;
   const [anchorElement, setAnchorElement] = React.useState<HTMLElement | null>(
@@ -110,7 +117,7 @@ export function AIMenu() {
           }
         }}
         align="center"
-        // avoidCollisions={false}
+        avoidCollisions={false}
         side="bottom"
       >
         <Command
@@ -118,8 +125,9 @@ export function AIMenu() {
           value={value}
           onValueChange={setValue}
         >
-          {mode === "chat" && isSelecting && content && (
+          {mode === "chat" && content && (
             <AIChatEditor content={content} />
+            // <span className="text-blue-400">{content}</span>
           )}
 
           {status != "ready" && status != "error" ? (

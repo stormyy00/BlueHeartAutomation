@@ -1,6 +1,6 @@
 "use client";
 
-import { signIn, useSession } from "next-auth/react";
+import { signIn, signOut, useSession } from "next-auth/react";
 import Link from "next/link";
 
 const Navigation = () => {
@@ -30,6 +30,12 @@ const Navigation = () => {
               Dashboard
               <span className="absolute -bottom-0.5 left-0 h-[2px] w-0 bg-white transition-all duration-300 group-hover:w-full"></span>
             </Link>
+            <button
+              className="px-2 py-1  bg-ttickles-blue text-white font-bold hover:scale-105 duration-300 rounded-xl"
+              onClick={() => signOut()}
+            >
+              Sign Out
+            </button>
             {/* <UserButton /> */}
           </>
         ) : (

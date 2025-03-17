@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 import { Plus, Info } from "lucide-react";
 import {
@@ -9,20 +10,23 @@ import {
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 import Event from "./event";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Popup } from "@/types/popup";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { MOCK, QUESTIONS } from "@/data/newsletter/event";
+import { QUESTIONS } from "@/data/newsletter/event";
 import { ChangeEvent } from "react";
 import { EventType } from "@/types/event";
+import { toast } from "sonner";
 
 type props = {
   setEvent: (value: (prevEvent: EventType) => EventType) => void;
 };
 type EventsProps = {
   onChange: (updatedEvent: EventType[]) => void;
+  eventLoading: boolean;
+  setEventLoading: (value: boolean) => void;
 };
 const EventModal = ({ setEvent }: props) => {
   return (
@@ -57,8 +61,8 @@ const EventModal = ({ setEvent }: props) => {
   );
 };
 
-const Events = ({ onChange }: EventsProps) => {
-  const [events, setEvents] = useState<EventType[]>(MOCK || []);
+const Events = ({ onChange, eventLoading, setEventLoading }: EventsProps) => {
+  const [events, setEvents] = useState<EventType[]>([]);
   const [event, setEvent] = useState<EventType>(() => ({
     name: "",
     description: "",
@@ -85,24 +89,40 @@ const Events = ({ onChange }: EventsProps) => {
     setPopup({ ...popup, visible: false }); // Close modal
   };
 
+  const handleFetch = async () => {
+    const { calendarId } = await fetch("/api/events", {
+      method: "GET",
+    }).then((response) => {
+      if (response.status !== 200) {
+        toast("Failed to fetch calendarId");
+      }
+      return response.json();
+    });
+
+    const response = await fetch(
+      `https://www.googleapis.com/calendar/v3/calendars/${calendarId}/events?key=${process.env.NEXT_PUBLIC_GOOGLE_CALENDAR_API_KEY}&singleEvents=true&orderBy=startTime`,
+    );
+    if (!response.ok) {
+      toast("Failed to fetch calendar events");
+      return;
+    }
+    const data = await response.json();
+    const newEvents = data.items.map((event: any) => ({
+      name: event.summary,
+      description: event.description,
+      location: event.location,
+      date: event.start.dateTime,
+    }));
+    setEvents(newEvents);
+  };
+
+  useEffect(() => {
+    handleFetch();
+  }, []);
+
   return (
-    <div className="w-full flex flex-col bg-black/5 p-4 rounded-md border border-black/20">
-      <div
-        className="flex flex-col items-center bg-white border border-black/20 font-bold rounded-md p-4 cursor-pointer"
-        onClick={() =>
-          setPopup({
-            title: "Add Event",
-            visible: true,
-            message: <EventModal setEvent={setEvent} />,
-            cancel: true,
-            submit: true,
-          })
-        }
-      >
-        <Plus size={32} />
-        Add Event
-      </div>
-      <div className="flex flex-row items-center text-black/20 text-xs gap-1 self-end">
+    <div className="w-full flex flex-col bg-black/5 p-4 rounded-md border border-black/20 gap-2">
+      <div className="flex flex-row items-center text-black/60 text-xs gap-1 self-end">
         What is this?
         <Info
           size={12}
@@ -119,10 +139,28 @@ const Events = ({ onChange }: EventsProps) => {
           }
         />
       </div>
+      <div
+        className="flex flex-col items-center bg-white border border-black/20 font-bold rounded-md p-4 cursor-pointer"
+        onClick={() =>
+          setPopup({
+            title: "Add Event",
+            visible: true,
+            message: <EventModal setEvent={setEvent} />,
+            cancel: true,
+            submit: true,
+          })
+        }
+      >
+        <Plus size={32} />
+        Add Event
+      </div>
       <div className="flex flex-col gap-2">
         {events.map((event, index) => (
           <Event
+            eventLoading={eventLoading}
+            setEventLoading={setEventLoading}
             name={event.name}
+            description={event.description}
             location={event.location}
             date={event.date}
             key={index}
