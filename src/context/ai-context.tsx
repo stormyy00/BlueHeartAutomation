@@ -2,7 +2,7 @@
 import { createContext, useContext } from "react";
 
 type AIContextType = {
-  generateFromEvents: (content: string) => Promise<void>;
+  generateFromEvents: (content: string[]) => Promise<void>;
 };
 
 export const AIContext = createContext<AIContextType | null>(null);

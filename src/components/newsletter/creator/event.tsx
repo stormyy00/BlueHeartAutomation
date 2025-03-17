@@ -6,18 +6,21 @@ type props = {
   eventLoading: boolean;
   setEventLoading: (value: boolean) => void;
   date: string;
+  description: string;
   location: string;
 };
-const Event = ({ name, date, location, eventLoading }: props) => {
+const Event = ({ name, date, location, description, eventLoading }: props) => {
   const { generateFromEvents } = useAI();
   const handleClick = () => {
-    const eventContent = `
-    You are a newsletter writer. You are writing a paragraph describing an event.
-   Write a paragraph describing the event using the following information below.
-   EventName: ${name}
-   EventDate: ${date}
-   EventLocation: ${location}
-   `;
+    const eventContent = [
+      "You are an AI writing assistant for newsletter writing. ",
+      "Write a newsletter to users and donors about the event using the following information as context to the newsletter.",
+      `Event Name: ${name}`,
+      `Event Date: ${date}`,
+      `Event Description: ${description}`,
+      `Event Location: ${location}`,
+      "CRITICAL: Begin your response with the first word of the actual content.",
+    ];
     generateFromEvents(eventContent);
   };
   return (
@@ -34,6 +37,7 @@ const Event = ({ name, date, location, eventLoading }: props) => {
       </div>
       <div className="text-black/30">{date}</div>
       <div className="text-black/30">{location}</div>
+      <div className="text-black/30 mt-2">{description}</div>
     </div>
   );
 };

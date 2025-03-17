@@ -1,6 +1,6 @@
 "use client";
 
-import { signIn, useSession } from "next-auth/react";
+import { signIn, signOut, useSession } from "next-auth/react";
 import Link from "next/link";
 import { motion } from "framer-motion";
 import { FC, ReactNode } from "react";
@@ -28,15 +28,29 @@ const Navigation: FC = () => {
         <NavLink href="/about">About Us</NavLink>
 
         {session ? (
-          <NavLink href="/orgs/test/newsletter">Dashboard</NavLink>
+          <>
+            <Link
+              href="/orgs/test/newsletter"
+              className="relative text-white text-lg font-bold group"
+            >
+              Dashboard
+              <span className="absolute -bottom-0.5 left-0 h-[2px] w-0 bg-white transition-all duration-300 group-hover:w-full"></span>
+            </Link>
+            <button
+              className="px-2 py-1  bg-ttickles-blue text-white font-bold hover:scale-105 duration-300 rounded-xl"
+              onClick={() => signOut()}
+            >
+              Sign Out
+            </button>
+            {/* <UserButton /> */}
+          </>
         ) : (
-          <motion.button
-            className="px-4 py-2 bg-white text-[#4A9085] font-semibold rounded-lg shadow-md hover:bg-gray-200 transition-transform duration-300 hover:scale-105"
-            whileHover={{ scale: 1.05 }}
+          <button
+            className="px-2 py-1  bg-ttickles-blue text-white font-bold hover:scale-105 duration-300 rounded-xl"
             onClick={() => signIn("google", { callbackUrl: "/" })}
           >
             Join Us
-          </motion.button>
+          </button>
         )}
       </div>
     </motion.nav>

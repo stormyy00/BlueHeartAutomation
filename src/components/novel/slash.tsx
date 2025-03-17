@@ -1,3 +1,4 @@
+import { uploadFn } from "@/utils/image-upload";
 import {
   CheckSquare,
   Code,
@@ -135,21 +136,21 @@ export const suggestionItems = createSuggestionItems([
     description: "Upload an image from your computer.",
     searchTerms: ["photo", "picture", "media"],
     icon: <ImageIcon size={18} />,
-    //   command: ({ editor, range }) => {
-    //     editor.chain().focus().deleteRange(range).run();
-    //     // upload image
-    //     const input = document.createElement("input");
-    //     input.type = "file";
-    //     input.accept = "image/*";
-    //     input.onchange = async () => {
-    //       if (input.files?.length) {
-    //         const file = input.files[0];
-    //         const pos = editor.view.state.selection.from;
-    //         uploadFn(file, editor.view, pos);
-    //       }
-    //     };
-    //     input.click();
-    //   },
+    command: ({ editor, range }) => {
+      editor.chain().focus().deleteRange(range).run();
+      // upload image
+      const input = document.createElement("input");
+      input.type = "file";
+      input.accept = "image/*";
+      input.onchange = async () => {
+        if (input.files?.length) {
+          const file = input.files[0];
+          const pos = editor.view.state.selection.from;
+          uploadFn(file, editor.view, pos);
+        }
+      };
+      input.click();
+    },
   },
   // {
   //   title: "Youtube",

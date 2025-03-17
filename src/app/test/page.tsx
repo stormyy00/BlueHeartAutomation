@@ -42,15 +42,48 @@
 //   console.log("Updated", value);
 // };
 
+// "use client";
+
+// import { UploadButton } from "@uploadthing/react";
+// import { useState } from "react";
 export default function page() {
+  // const [uploadedFiles, setUploadedFiles] = useState([]);
+
   return (
     <div className="flex justify-center py-10 bg-black">
-      {/* <EditorNovel
-        onChange={(updatedData) =>
-          console.log("Editor updated FRRRRRR:", updatedData)
-        }
-        data={"hello"}
-      /> */}
+      {/* <main className="flex min-h-screen flex-col items-center justify-between p-24">
+        <div className="bg-white p-8 rounded-lg shadow-md">
+          <h1 className="text-2xl font-bold mb-6 text-center">Upload Files</h1>
+
+          <UploadButton
+            endpoint="imageUploader"
+            onClientUploadComplete={(res) => {
+              // Do something with the response
+              console.log("Files: ", res);
+              setUploadedFiles(res);
+              alert("Upload Completed");
+            }}
+            onUploadError={(error) => {
+              // Do something with the error.
+              alert(`ERROR! ${error.message}`);
+            }}
+          />
+
+          {uploadedFiles.length > 0 && (
+            <div className="mt-6">
+              <h2 className="text-lg font-semibold mb-2">Uploaded Files:</h2>
+              <ul className="space-y-2">
+                {uploadedFiles.map((file) => (
+                  <li key={file.fileKey} className="flex items-center">
+                    <span className="mr-2">✅</span>
+                    <span>{file.name}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
+        </div>
+      </main> */}
     </div>
   );
 }
