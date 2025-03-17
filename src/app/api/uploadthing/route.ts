@@ -1,4 +1,4 @@
-// @typescript-eslint/ban-ts-comment
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { createUploadthing, type FileRouter } from "uploadthing/next";
 import { createRouteHandler } from "uploadthing/next";
 
