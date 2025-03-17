@@ -134,6 +134,7 @@
     "zod": "^3.24.2"
   },
   "devDependencies": {
+    "@types/dotenv": "^6.1.1",
     "@types/express": "^5.0.0",
     "@types/node": "^20",
     "@types/prismjs": "^1.26.5",
