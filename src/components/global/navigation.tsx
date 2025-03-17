@@ -8,6 +8,8 @@ import {
   SidebarMenu,
   SidebarMenuItem,
   SidebarMenuSub,
+  SidebarTrigger,
+  useSidebar,
 } from "@/components/ui/sidebar";
 
 import { TABS } from "@/data/navigation";
@@ -20,6 +22,8 @@ import {
   CollapsibleContent,
   CollapsibleTrigger,
 } from "../ui/collapsible";
+import { signOut } from "next-auth/react";
+import { LogIn } from "lucide-react";
 
 const Navigation = () => {
   const path = usePathname().split("/");
@@ -29,6 +33,7 @@ const Navigation = () => {
 
   const NAVTABS = TABS[navParent].tabs;
   const generalPath = `${path.slice(0, 2).join("/")}/@mine/${path.slice(3).join("/")}`;
+  const { open, toggleSidebar } = useSidebar();
 
   return (
     <Sidebar className="text-white w-[14%]">
@@ -75,18 +80,25 @@ const Navigation = () => {
           </SidebarMenu>
         ))}
       </SidebarContent>
-      <SidebarFooter>
-        {/* <UserButton
-          showName
-          appearance={{
-            elements: {
-              userButtonBox: {
-                flexDirection: "row-reverse",
-                color: "white",
-              },
-            },
-          }}
-        /> */}
+      <SidebarFooter className="my-1 flex flex-col p-0 pb-2 pl-1 ">
+        <span
+          onClick={() => toggleSidebar()}
+          className={`${open ? "h-7 pl-3" : "mx-auto h-6"} flex items-center text-lg hover:cursor-pointer`}
+        >
+          <span className={`${!open && "mx-auto"}`}>
+            <SidebarTrigger className="hover:bg-inherit hover:text-current" />
+          </span>
+          {open && <span className="ml-2 ">Close Sidebar</span>}
+        </span>
+        <span
+          onClick={() => signOut({ callbackUrl: "/", redirect: true })}
+          className={`${open ? "h-7 pl-3" : "mx-auto h-6"} flex items-center text-lg hover:cursor-pointer`}
+        >
+          <span className={`${!open && "mx-auto"}`}>
+            <LogIn className="mr-1 h-7 p-0.5" />
+          </span>
+          {open && <span className="ml-2">Log Out</span>}
+        </span>
       </SidebarFooter>
     </Sidebar>
   );

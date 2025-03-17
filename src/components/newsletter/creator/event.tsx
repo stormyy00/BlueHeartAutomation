@@ -13,12 +13,13 @@ const Event = ({ name, date, location, description, eventLoading }: props) => {
   const { generateFromEvents } = useAI();
   const handleClick = () => {
     const eventContent = [
-      "You are a newsletter writer. You are writing a paragraph describing an event.",
-      "Write a paragraph describing the event using the following information below.",
+      "You are an AI writing assistant for newsletter writing. ",
+      "Write a newsletter to users and donors about the event using the following information as context to the newsletter.",
       `Event Name: ${name}`,
-      ` Event Date: ${date}`,
+      `Event Date: ${date}`,
       `Event Description: ${description}`,
       `Event Location: ${location}`,
+      "CRITICAL: Begin your response with the first word of the actual content.",
     ];
     generateFromEvents(eventContent);
   };
