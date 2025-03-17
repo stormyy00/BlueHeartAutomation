@@ -14,6 +14,7 @@ interface Tab {
   icon: JSX.Element;
   requiresOrg?: boolean;
   requiresOwner?: boolean;
+  subtabs?: Tab[];
 }
 
 interface Collapsible {
@@ -68,6 +69,13 @@ export const TABS: Tabs = {
         name: "Newsletter",
         link: "/orgs/@mine/newsletter",
         icon: <Mail />,
+        subtabs: [
+          {
+            name: "Recipients",
+            link: "/orgs/@mine/newsletter/recipients",
+            icon: <Users size={20} />,
+          },
+        ],
       },
       {
         name: "History",

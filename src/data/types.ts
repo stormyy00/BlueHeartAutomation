@@ -6,6 +6,11 @@ export type Link = {
   url: string;
 };
 
+export type RecipientGroup = {
+  name: string;
+  emails: string[];
+};
+
 export type Organization = {
   id: string;
   name: string;
@@ -20,6 +25,7 @@ export type Organization = {
   donors: string[];
   links: Link[];
   region: Region;
+  groups: RecipientGroup[];
 };
 
 export type Newsletter = {
