@@ -26,18 +26,8 @@ const AIChatbot = ({ open, onOpenChange, chatHelpers }: AIChatbotProps) => {
   const [inputValue, setInputValue] = useState("");
   console.log(editor);
 
-  const { messages, append, isLoading, error, reload, setMessages } = useChat({
-    api: "/api/ai/command",
-    onResponse: (response) => {
-      if (response.status === 429) {
-        toast.error("You have reached your request limit for the day.");
-        return;
-      }
-    },
-    onError: (e) => {
-      toast.error(e.message);
-    },
-  });
+  const { messages, append, isLoading, error, reload, setMessages } =
+    chatHelpers;
 
   // Function to reset chat
   const resetChat = () => {
@@ -52,10 +42,17 @@ const AIChatbot = ({ open, onOpenChange, chatHelpers }: AIChatbotProps) => {
       ? editor.storage.markdown.serializer.serialize(editor.state.doc)
       : "";
 
-    append({
-      role: "user",
-      content: inputValue,
-    });
+    append(
+      {
+        role: "user",
+        content: inputValue,
+      },
+      {
+        data: {
+          option: "assist",
+        },
+      },
+    );
 
     setInputValue("");
   };
@@ -75,12 +72,6 @@ const AIChatbot = ({ open, onOpenChange, chatHelpers }: AIChatbotProps) => {
     <div className="flex flex-col h-[400px] w-[400px] border rounded-lg shadow-lg bg-white overflow-hidden">
       {/* Chat header */}
       <div className="p-4 border-b flex justify-between items-center bg-purple-50">
-        {/* <div className="flex items-center gap-2">
-          <div className="h-8 w-8 rounded-full bg-purple-500 flex items-center justify-center">
-            <span className="text-white text-sm font-semibold">AI</span>
-          </div>
-          <h3 className="font-medium">AI Assistant</h3>
-        </div> */}
         <Button
           variant="ghost"
           size="sm"
@@ -95,7 +86,7 @@ const AIChatbot = ({ open, onOpenChange, chatHelpers }: AIChatbotProps) => {
 
       {/* Chat messages */}
       <ScrollArea className="flex-1 p-4">
-        <div className="flex flex-col gap-4">
+        <div className="flex flex-col gap-y-4">
           {messages.length === 0 && (
             <div className="text-center text-muted-foreground py-8">
               <p className="text-lg font-medium">How can I help you today?</p>

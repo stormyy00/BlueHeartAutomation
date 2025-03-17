@@ -15,7 +15,7 @@ import { Popup } from "@/types/popup";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { MOCK, QUESTIONS } from "@/data/newsletter/event";
+import { QUESTIONS } from "@/data/newsletter/event";
 import { ChangeEvent } from "react";
 import { EventType } from "@/types/event";
 import { toast } from "sonner";
@@ -62,7 +62,7 @@ const EventModal = ({ setEvent }: props) => {
 };
 
 const Events = ({ onChange, eventLoading, setEventLoading }: EventsProps) => {
-  const [events, setEvents] = useState<EventType[]>(MOCK || []);
+  const [events, setEvents] = useState<EventType[]>([]);
   const [event, setEvent] = useState<EventType>(() => ({
     name: "",
     description: "",
@@ -102,6 +102,10 @@ const Events = ({ onChange, eventLoading, setEventLoading }: EventsProps) => {
     const response = await fetch(
       `https://www.googleapis.com/calendar/v3/calendars/${calendarId}/events?key=${process.env.NEXT_PUBLIC_GOOGLE_CALENDAR_API_KEY}&singleEvents=true&orderBy=startTime`,
     );
+    if (!response.ok) {
+      toast("Failed to fetch calendar events");
+      return;
+    }
     const data = await response.json();
     const newEvents = data.items.map((event: any) => ({
       name: event.summary,

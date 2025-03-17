@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import Events from "./events";
 import { Button } from "@/components/ui/button";
-import { Loader } from "lucide-react";
+import { Ellipsis, Loader } from "lucide-react";
 import { EventType } from "@/types/event";
 import { usePathname } from "next/navigation";
 import { toast } from "sonner";
@@ -202,11 +202,11 @@ const Creator = () => {
     },
   });
 
-  const generateFromEvents = async (content: string) => {
+  const generateFromEvents = async (content: string[]) => {
     setAI(true);
     setEventLoading(true);
     const { append } = chatHelpers;
-    await append({ role: "user", content: content });
+    await append({ role: "user", content: content.join("\n") });
     setEventLoading(false);
   };
   return (
@@ -255,16 +255,19 @@ const Creator = () => {
 
         <div className="flex  h-full w-full">
           <div className="flex flex-col bg-black/5 p-4 rounded-md border border-black/20 w-full gap-4 h-full">
-            <ScrollArea>
-              <Editor
-                ai={ai}
-                setAI={setAI}
-                chatHelpers={chatHelpers}
-                onChange={handleChange}
-                data={textContent as unknown as JSONContent}
-                loading={newsletter.body}
-              />
-            </ScrollArea>
+            {newsletter.body ? (
+              <ScrollArea>
+                <Editor
+                  ai={ai}
+                  setAI={setAI}
+                  chatHelpers={chatHelpers}
+                  onChange={handleChange}
+                  data={textContent as unknown as JSONContent}
+                />
+              </ScrollArea>
+            ) : (
+              <Ellipsis className="motion-preset-pulse-sm motion-duration-1000" />
+            )}
           </div>
         </div>
 
