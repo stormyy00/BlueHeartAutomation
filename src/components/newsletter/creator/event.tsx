@@ -12,14 +12,14 @@ type props = {
 const Event = ({ name, date, location, description, eventLoading }: props) => {
   const { generateFromEvents } = useAI();
   const handleClick = () => {
-    const eventContent = `
-    You are a newsletter writer. You are writing a paragraph describing an event.
-   Write a paragraph describing the event using the following information below.
-   EventName: ${name}
-   EventDate: ${date}
-   EventDescription: ${description}
-   EventLocation: ${location}
-   `;
+    const eventContent = [
+      "You are a newsletter writer. You are writing a paragraph describing an event.",
+      "Write a paragraph describing the event using the following information below.",
+      `Event Name: ${name}`,
+      ` Event Date: ${date}`,
+      `Event Description: ${description}`,
+      `Event Location: ${location}`,
+    ];
     generateFromEvents(eventContent);
   };
   return (

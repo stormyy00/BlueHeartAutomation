@@ -202,11 +202,11 @@ const Creator = () => {
     },
   });
 
-  const generateFromEvents = async (content: string) => {
+  const generateFromEvents = async (content: string[]) => {
     setAI(true);
     setEventLoading(true);
     const { append } = chatHelpers;
-    await append({ role: "user", content: content });
+    await append({ role: "user", content: content.join("\n") });
     setEventLoading(false);
   };
   return (
