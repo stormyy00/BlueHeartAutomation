@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import { Dispatch, SetStateAction, useState } from "react";
 import { Plus, Trash } from "lucide-react";
 import {
   AlertDialog,
@@ -11,31 +11,68 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
+import { RecipientGroup } from "@/data/types";
+import { toast } from "sonner";
 
-const RecipientToolbar = () => {
+type Props = {
+  orgId: string;
+  checked: number[];
+  setChecked: Dispatch<SetStateAction<number[]>>;
+  setList: Dispatch<SetStateAction<RecipientGroup[]>>;
+  list: RecipientGroup[];
+};
+
+const RecipientToolbar = ({
+  checked,
+  setChecked,
+  setList,
+  list,
+  orgId,
+}: Props) => {
   const [popup, setPopup] = useState({
     title: "",
     text: "",
     color: "",
     visible: false,
-    // onClick: () => { },
+    onClick: () => {},
     button: "",
   });
 
   // const ids = Object.keys(checked).filter((id) => checked[id]);
 
+  const deleteGroup = () => {
+    const newList = list.filter((val, index) => !checked.includes(index));
+    setList(newList);
+    const save = async () => {
+      const toastId = toast.loading("Updating organization...");
+      const response = await fetch(`/api/orgs/${orgId}`, {
+        method: "POST",
+        body: JSON.stringify({
+          groups: newList,
+        }),
+      });
+      if (response.ok) {
+        toast.success(`${checked.length} group(s) deleted.`, { id: toastId });
+      } else {
+        toast.error("Unable to delete group(s)", { id: toastId });
+      }
+    };
+    setChecked([]);
+    save();
+  };
+
   const confirmDelete = () => {
-    // if (ids.length === 0) {
-    //   alert("No newsletters selected for deletion.");
-    //   return;
-    // }
+    if (checked.length === 0) {
+      alert("No newsletters selected for deletion.");
+      return;
+    }
 
     setPopup({
       title: "Delete Confirmation",
-      text: "Are you sure you want to delete this group? This action is irreversible.",
+      text: `Are you sure you want to delete ${checked.length > 1 ? `${checked.length} groups` : "1 group"}? This action is irreversible.`,
       color: "red",
       visible: true,
-      // onClick: deleteNewsletter,
+      onClick: deleteGroup,
       button: "Confirm",
     });
   };
@@ -66,7 +103,7 @@ const RecipientToolbar = () => {
             </AlertDialogCancel>
             <AlertDialogAction
               onClick={() => {
-                // popup.onClick();
+                popup.onClick();
                 setPopup({ ...popup, visible: false });
               }}
             >

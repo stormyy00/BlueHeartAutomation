@@ -9,9 +9,11 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { Organization, RecipientGroup } from "@/data/types";
-import { Info, User, X } from "lucide-react";
+import { Edit, Info, User, X } from "lucide-react";
 import { KeyboardEvent, useState } from "react";
 import { toast } from "sonner";
+import RecipientToolbar from "./recipient-toolbar";
+import { Label } from "@/components/ui/label";
 
 // const MOCK_RECIPIENTS: RecipientGroup[] = [
 //   {
@@ -37,6 +39,7 @@ const Recipients = ({ org }: Props) => {
       emails: [],
     },
   ]);
+  const [checked, setChecked] = useState<number[]>([]);
   const [open, setOpen] = useState(false);
   const [recipientInput, setRecipientInput] = useState("");
   const [fetching, setFetching] = useState(false);
@@ -87,88 +90,116 @@ const Recipients = ({ org }: Props) => {
     save(newItems);
   };
   return (
-    <div className="w-full h-full flex flex-col items-center gap-y-6">
-      {list.map((group, index) => (
-        <div
-          key={index}
-          className="w-1/2 bg-white flex flex-row justify-between rounded-xl shadow-sm hover:shadow-md transition-shadow duration-300 border border-gray-200 cursor-pointer p-4"
-          onClick={() => {
-            setOpen(true);
-            setGroup([index, group]);
-          }}
-        >
-          <div className="flex flex-col">
-            <span className="text-xs font-medium text-gray-500 uppercase tracking-wide flex items-center gap-x-1">
-              <Checkbox
-                checked={false}
-                className="h-3 w-3 text-gray-900 rounded-full border-gray-300 focus:ring-gray-900"
-              />
-              RECIPIENT GROUP
-            </span>
-            <span className="font-bold">{group.name}</span>
-          </div>
-          <span className="flex items-center rounded-xl bg-ttickles-lightblue w-12 h-2/6 py-3 px-1 gap-x-1 text-sm text-white justify-center">
-            <User size={20} /> {group.emails.length}
-          </span>
-        </div>
-      ))}
-      <Dialog open={open} onOpenChange={(newOpen) => setOpen(newOpen)}>
-        <DialogContent className="flex flex-col gap-3 bg-white p-4 rounded-lg shadow-xl">
-          <DialogTitle>Edit Recipients</DialogTitle>
-          <DialogDescription className="flex items-center gap-x-1 ml-2">
-            <Info /> Edit the recipients attached to this group
-          </DialogDescription>
-          <div className="flex flex-col gap-y-4 mt-4">
-            <div className="flex flex-wrap items-center gap-2 p-2 border border-gray-300 rounded focus-within:border-blue-500 overflow-auto">
-              <ul className="flex text-xs gap-x-1">
-                {group[1].emails.map((email, index) => (
-                  <li
-                    key={index}
-                    className="px-2 py-1 bg-ttickles-darkblue text-white rounded-md flex items-center gap-x-1"
-                  >
-                    {email} <X size={20} />
-                  </li>
-                ))}
-              </ul>
-              <input
-                type="email"
-                value={recipientInput}
-                onChange={(e) => setRecipientInput(e.target.value)}
-                onKeyDown={handleKeyDown}
-                placeholder="Enter email"
-                className="flex-grow p-1 text-sm border-none focus:ring-0 focus:outline-none"
-              />
+    <div className="w-full h-full">
+      <Label className="font-extrabold text-3xl flex flex-col gap-y-2">
+        Recipients{" "}
+        <RecipientToolbar
+          orgId={org.id}
+          list={list}
+          setList={setList}
+          setChecked={setChecked}
+          checked={checked}
+        />
+      </Label>
+      <div className="w-full h-full flex flex-row flex-wrap justify-center gap-x-4">
+        {list.map((group, index) => (
+          <div
+            key={index}
+            className="w-1/6 h-1/6 bg-white flex flex-row justify-between rounded-xl shadow-sm hover:shadow-md transition-shadow duration-300 border border-gray-100 p-4"
+          >
+            <div className="flex flex-col">
+              <span className="text-xs font-medium text-gray-500 uppercase tracking-wide flex items-center gap-x-2">
+                <Checkbox
+                  checked={checked.includes(index)}
+                  onClick={() => {
+                    setChecked((old) => {
+                      if (old.includes(index)) {
+                        const newOld = [
+                          ...old.slice(0, old.indexOf(index)),
+                          ...old.slice(old.indexOf(index) + 1),
+                        ];
+                        return newOld;
+                      } else {
+                        return [...old, index];
+                      }
+                    });
+                  }}
+                  className="h-3 w-3 text-gray-900 rounded-full border-gray-300 focus:ring-gray-900"
+                />
+                RECIPIENT GROUP
+              </span>
+              <span className="font-bold">{group.name}</span>
+              <span className="mt-4 flex items-center rounded-xl bg-ttickles-lightblue w-12 h-2/6 py-3 px-1 gap-x-1 text-sm text-white justify-center">
+                <User size={20} /> {group.emails.length}
+              </span>
             </div>
+            <Edit
+              className="cursor-pointer"
+              onClick={() => {
+                setOpen(true);
+                setGroup([index, group]);
+              }}
+            />
           </div>
-          <div className="flex flex-row self-end gap-2">
-            <DialogClose asChild>
+        ))}
+        <Dialog open={open} onOpenChange={(newOpen) => setOpen(newOpen)}>
+          <DialogContent className="flex flex-col gap-3 bg-white p-4 rounded-lg shadow-xl">
+            <DialogTitle>Edit Recipients</DialogTitle>
+            <DialogDescription className="flex items-center gap-x-1 ml-2">
+              <Info /> Edit the recipients attached to this group
+            </DialogDescription>
+            <div className="flex flex-col gap-y-4 mt-4">
+              <div className="flex flex-wrap items-center gap-2 p-2 border border-gray-300 rounded focus-within:border-blue-500 overflow-auto">
+                <ul className="flex text-xs gap-x-1">
+                  {group[1].emails.map((email, index) => (
+                    <li
+                      key={index}
+                      className="px-2 py-1 bg-ttickles-darkblue text-white rounded-md flex items-center gap-x-1"
+                    >
+                      {email} <X size={20} />
+                    </li>
+                  ))}
+                </ul>
+                <input
+                  type="email"
+                  value={recipientInput}
+                  onChange={(e) => setRecipientInput(e.target.value)}
+                  onKeyDown={handleKeyDown}
+                  placeholder="Enter email"
+                  className="flex-grow p-1 text-sm border-none focus:ring-0 focus:outline-none"
+                />
+              </div>
+            </div>
+            <div className="flex flex-row self-end gap-2">
+              <DialogClose asChild>
+                <Button
+                  className="px-3 py-1 rounded"
+                  onClick={() => {
+                    setOpen(false);
+                    setGroup([
+                      -1,
+                      {
+                        name: "",
+                        emails: [],
+                      },
+                    ]);
+                  }}
+                  disabled={fetching}
+                >
+                  Exit
+                </Button>
+              </DialogClose>
               <Button
-                className="px-3 py-1 rounded"
-                onClick={() => {
-                  setOpen(false);
-                  setGroup([
-                    -1,
-                    {
-                      name: "",
-                      emails: [],
-                    },
-                  ]);
-                }}
+                className="bg-ttickles-blue text-white px-3 py-1 rounded"
+                onClick={handleSave}
                 disabled={fetching}
               >
-                Exit
+                Save
               </Button>
-            </DialogClose>
-            <Button
-              className="bg-ttickles-blue text-white px-3 py-1 rounded"
-              onClick={handleSave}
-              disabled={fetching}
-            >
-              Save
-            </Button>
-          </div>
-        </DialogContent>
-      </Dialog>
+            </div>
+          </DialogContent>
+        </Dialog>
+      </div>
     </div>
   );
 };
