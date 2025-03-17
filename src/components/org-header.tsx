@@ -22,7 +22,7 @@ const OrgHeader = ({ editable, org }: props) => {
         <div>
           <h1 className="text-3xl font-extrabold">{org.name}</h1>
           {!edit &&
-            org.links.map((link, index) => (
+            org.links?.map((link, index) => (
               <Link
                 key={index}
                 href={link.url}
@@ -33,7 +33,7 @@ const OrgHeader = ({ editable, org }: props) => {
               </Link>
             ))}
           {edit &&
-            org.links.map((link, index) => (
+            org.links?.map((link, index) => (
               <div key={index} className="flex flex-row items-center gap-2">
                 <Link2 />
                 <Input

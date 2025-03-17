@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 import { Plus, Info } from "lucide-react";
 import {
@@ -9,7 +10,7 @@ import {
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 import Event from "./event";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Popup } from "@/types/popup";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
@@ -17,6 +18,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { MOCK, QUESTIONS } from "@/data/newsletter/event";
 import { ChangeEvent } from "react";
 import { EventType } from "@/types/event";
+import { toast } from "sonner";
 
 type props = {
   setEvent: (value: (prevEvent: EventType) => EventType) => void;
@@ -87,6 +89,33 @@ const Events = ({ onChange, eventLoading, setEventLoading }: EventsProps) => {
     setPopup({ ...popup, visible: false }); // Close modal
   };
 
+  const handleFetch = async () => {
+    const { calendarId } = await fetch("/api/events", {
+      method: "GET",
+    }).then((response) => {
+      if (response.status !== 200) {
+        toast("Failed to fetch calendarId");
+      }
+      return response.json();
+    });
+
+    const response = await fetch(
+      `https://www.googleapis.com/calendar/v3/calendars/${calendarId}/events?key=${process.env.NEXT_PUBLIC_GOOGLE_CALENDAR_API_KEY}&singleEvents=true&orderBy=startTime`,
+    );
+    const data = await response.json();
+    const newEvents = data.items.map((event: any) => ({
+      name: event.summary,
+      description: event.description,
+      location: event.location,
+      date: event.start.dateTime,
+    }));
+    setEvents(newEvents);
+  };
+
+  useEffect(() => {
+    handleFetch();
+  }, []);
+
   return (
     <div className="w-full flex flex-col bg-black/5 p-4 rounded-md border border-black/20 gap-2">
       <div className="flex flex-row items-center text-black/60 text-xs gap-1 self-end">
@@ -127,6 +156,7 @@ const Events = ({ onChange, eventLoading, setEventLoading }: EventsProps) => {
             eventLoading={eventLoading}
             setEventLoading={setEventLoading}
             name={event.name}
+            description={event.description}
             location={event.location}
             date={event.date}
             key={index}

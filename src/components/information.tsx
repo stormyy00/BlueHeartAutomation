@@ -26,6 +26,11 @@ const Information = () => {
       value: "Lorem Ipsum Quia Dolor Sit Amet",
       type: "input",
     },
+    {
+      name: "Google Calendar ID",
+      value: "",
+      type: "input",
+    },
   ]);
 
   const handleChange = (e: ChangeEvent<HTMLInputs>, index: number) => {
@@ -35,7 +40,7 @@ const Information = () => {
   };
 
   return (
-    <div className="flex flex-col w-full p-5 border-black border-2 gap-y-2">
+    <div className="flex flex-col w-full p-6 bg-white shadow-md rounded-md gap-y-2 border-gray-100 border">
       <div className="flex flex-row text-black text-4xl font-bold w-full justify-between">
         Information
         {!edit && (
