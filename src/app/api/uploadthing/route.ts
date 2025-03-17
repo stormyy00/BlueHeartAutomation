@@ -3,6 +3,9 @@
 // import { createRouteHandler, createUploadthing } from "uploadthing/next";
 
 // const f = createUploadthing();
+export const GET = () => {
+  return Response.json({ message: "Hello, world!" });
+};
 
 // export const ourFileRouter = {
 //   editorUploader: f({
