@@ -2,47 +2,56 @@
 
 import { signIn, useSession } from "next-auth/react";
 import Link from "next/link";
+import { motion } from "framer-motion";
+import { FC, ReactNode } from "react"; 
 
-const Navigation = () => {
+const Navigation: FC = () => {
   const { data: session } = useSession();
+
   return (
-    <div className="flex justify-between w-full sticky top-0 bg-gradient-to-r from-ttickles-blue to-ttickles-lightblue p-4 shadow z-50">
-      <Link
-        href="/"
-        className="text-2xl font-semibold text-white hover:scale-105"
-      >
+    <motion.nav
+      className="opacity- fixed top-0 left-0 w-full bg-gradient-to-r from-[#4A9085] to-[#657787] z-50 px-6 py-3 flex justify-between items-center"
+      initial={{ opacity: 0, y: -30 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.8, ease: "easeOut" }}
+    >
+      {/* Logo */}
+      <Link href="/" className="text-xl font-semibold text-white hover:opacity-80 transition">
         TTickle
       </Link>
-      <div className="flex gap-x-4 items-center">
-        <Link
-          href="/about"
-          className="relative text-white text-lg font-bold group"
-        >
-          About Us
-          <span className="absolute -bottom-0.5 left-0 h-[2px] w-0 bg-white transition-all duration-300 group-hover:w-full"></span>
-        </Link>
+
+      {/* Navigation Links */}
+      <div className="flex gap-x-6 items-center">
+        <NavLink href="/about">About Us</NavLink>
+
         {session ? (
-          <>
-            <Link
-              href="/orgs/test/newsletter"
-              className="relative text-white text-lg font-bold group"
-            >
-              Dashboard
-              <span className="absolute -bottom-0.5 left-0 h-[2px] w-0 bg-white transition-all duration-300 group-hover:w-full"></span>
-            </Link>
-            {/* <UserButton /> */}
-          </>
+          <NavLink href="/orgs/test/newsletter">Dashboard</NavLink>
         ) : (
-          <button
-            className="px-2 py-1  bg-ttickles-blue text-white font-bold hover:scale-105 duration-300 rounded-xl"
+          <motion.button
+            className="px-4 py-2 bg-white text-[#4A9085] font-semibold rounded-lg shadow-md hover:bg-gray-200 transition-transform duration-300 hover:scale-105"
+            whileHover={{ scale: 1.05 }}
             onClick={() => signIn("google", { callbackUrl: "/" })}
           >
             Join Us
-          </button>
+          </motion.button>
         )}
       </div>
-    </div>
+    </motion.nav>
   );
 };
+
+/** TypeScript Props for NavLink */
+interface NavLinkProps {
+  href: string;
+  children: ReactNode;
+}
+
+/** Reusable NavLink Component with Hover Underline Effect **/
+const NavLink: FC<NavLinkProps> = ({ href, children }) => (
+  <Link href={href} className="relative text-white text-lg font-medium group">
+    {children}
+    <span className="absolute -bottom-1 left-0 h-[2px] w-0 bg-white transition-all duration-300 group-hover:w-full"></span>
+  </Link>
+);
 
 export default Navigation;
