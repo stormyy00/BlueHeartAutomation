@@ -3,7 +3,7 @@
 import { signIn, useSession } from "next-auth/react";
 import Link from "next/link";
 import { motion } from "framer-motion";
-import { FC, ReactNode } from "react"; 
+import { FC, ReactNode } from "react";
 
 const Navigation: FC = () => {
   const { data: session } = useSession();
@@ -16,7 +16,10 @@ const Navigation: FC = () => {
       transition={{ duration: 0.8, ease: "easeOut" }}
     >
       {/* Logo */}
-      <Link href="/" className="text-xl font-semibold text-white hover:opacity-80 transition">
+      <Link
+        href="/"
+        className="text-xl font-semibold text-white hover:opacity-80 transition"
+      >
         TTickle
       </Link>
 

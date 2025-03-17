@@ -30,7 +30,8 @@ const Features = () => {
         transition={{ duration: 1, delay: 0.4, ease: "easeOut" }}
         viewport={{ once: false }}
       >
-        Streamline your non-profit communications with our comprehensive newsletter automation tools.
+        Streamline your non-profit communications with our comprehensive
+        newsletter automation tools.
       </motion.p>
 
       {/* Feature Cards */}
@@ -39,18 +40,18 @@ const Features = () => {
           {
             icon: <Mail size={36} className="text-[#FFB81C]" />,
             title: "Easy Automation",
-            text: "Set up newsletters with just a few clicks."
+            text: "Set up newsletters with just a few clicks.",
           },
           {
             icon: <Book size={36} className="text-[#FFB81C]" />,
             title: "Custom Templates",
-            text: "Craft newsletters that fit your brand effortlessly."
+            text: "Craft newsletters that fit your brand effortlessly.",
           },
           {
             icon: <BarChart3 size={36} className="text-[#FFB81C]" />,
             title: "Analytics & Reports",
-            text: "Track engagement metrics for better decision-making."
-          }
+            text: "Track engagement metrics for better decision-making.",
+          },
         ].map((feature, index) => (
           <motion.div
             key={index}
@@ -59,7 +60,11 @@ const Features = () => {
             transition={{ duration: 1, delay: index * 0.2, ease: "easeOut" }}
             viewport={{ once: false }}
           >
-            <Card icon={feature.icon} title={feature.title} text={feature.text} />
+            <Card
+              icon={feature.icon}
+              title={feature.title}
+              text={feature.text}
+            />
           </motion.div>
         ))}
       </div>
