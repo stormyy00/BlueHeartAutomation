@@ -199,8 +199,8 @@ const AnalyticsDashboard = () => {
   ];
 
   return (
-    <div className="flex flex-col gap-y-4">
-      <div className="pb-4 text-4xl font-bold">Analytics Dashboard</div>
+    <div className="flex flex-col gap-y-4 w-11/12 m-10 mx-10">
+      <div className="pb-4 text-3xl font-bold">Analytics Dashboard</div>
 
       <Tabs value={activeTab} onValueChange={setActiveTab} className="w-11/12">
         <TabsList className="mb-4">

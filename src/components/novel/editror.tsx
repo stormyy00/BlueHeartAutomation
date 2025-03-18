@@ -110,10 +110,10 @@ const TailwindAdvancedEditor = ({
   if (!initialContent) return null;
 
   return (
-    <div className="flex flex-col bg-black/5 p-4 rounded-md border border-black/20 w-full gap-4 h-full">
-      <div className="relative w-full max-w-screen-lg">
-        <div className="flex absolute right-5 top-1 z-10 mb-5 gap-2">
-          <div className="rounded-lg bg-accent px-2 py-1 text-sm bg-white text-muted-foreground">
+    <div className="flex flex-col bg-gray-200 p-4 rounded-md border border-gray-400 w-full gap-4 h-full">
+      <div className="relative w-full">
+        <div className="flex absolute right-0 top-0 z-10 mb-5 gap-2">
+          <div className="rounded-lg bg-accent px-4 py-2 text-xs bg-white text-muted-foreground">
             {saveStatus}
           </div>
           <div
@@ -129,7 +129,7 @@ const TailwindAdvancedEditor = ({
 
         <EditorRoot>
           <Button
-            className="gap-1 text-ttickles-blue border-muted bg-background mb-2 p-4 hover:bg-white"
+            className="gap-1 text-ttickles-blue border-muted bg-background mb-2 p-4 hover:text-purple-700 transition duration-100 hover:bg-gray-100"
             variant="ghost"
             onClick={() => setAI(!ai)}
             size="sm"
@@ -141,7 +141,7 @@ const TailwindAdvancedEditor = ({
           <EditorContent
             initialContent={initialContent}
             extensions={extensions}
-            className="relative min-h-[500px] w-full p-8 border-gray-900 border-2 max-w-screen-lg border-muted bg-background sm:mb-[calc(20vh)] sm:rounded-lg sm:border sm:shadow-sm"
+            className="relative min-h-[500px] w-full p-8 border-gray-900 border-2 border-muted bg-background sm:mb-[calc(20vh)] sm:rounded-lg sm:border sm:shadow-sm"
             editorProps={{
               handleDOMEvents: {
                 keydown: (_view, event) => handleCommandNavigation(event),
