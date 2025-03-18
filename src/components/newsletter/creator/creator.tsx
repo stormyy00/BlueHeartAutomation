@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import Events from "./events";
 import { Button } from "@/components/ui/button";
-import { Ellipsis, Loader } from "lucide-react";
+import { Calendar, Clock, Ellipsis, Loader, Save } from "lucide-react";
 import { EventType } from "@/types/event";
 import { usePathname } from "next/navigation";
 import { toast } from "sonner";
@@ -220,27 +220,25 @@ const Creator = () => {
               <SheetTrigger asChild>
                 <Button
                   variant="outline"
-                  className="flex items-center gap-2 bg-teal-400 hover:bg-teal-200 text-white"
+                  className="flex items-center gap-2 bg-teal-400 hover:bg-teal-400 hover:brightness-110 hover:text-white text-white transition duration-100"
                 >
+                  <Calendar />
                   Add Events
                 </Button>
               </SheetTrigger>
             </Sheet>
 
-            {loading ? (
-              <Button
-                disabled={!data}
-                onClick={generateDocument}
-                className="bg-ttickles-darkblue text-white px-4 py-2 rounded disabled:opacity-50 w-fit"
-              >
-                Save
-              </Button>
-            ) : (
-              <Loader className="animate-spin" />
-            )}
+            <Button
+              disabled={!data}
+              onClick={generateDocument}
+              className="bg-ttickles-darkblue hover:bg-ttickles-darkblue hover:brightness-110 transition duration-100 text-white px-4 py-2 rounded disabled:opacity-50 w-fit"
+            >
+              {loading ? <Save /> : <Loader className="animate-spin" />}
+              Save
+            </Button>
 
             <Button
-              className="bg-ttickles-orange hover:bg-ttickles-orange"
+              className="bg-ttickles-orange hover:bg-ttickles-orange hover:brightness-110 transition duration-100"
               onClick={() => {
                 setPopup({
                   ...popup,
@@ -248,6 +246,7 @@ const Creator = () => {
                 });
               }}
             >
+              <Clock />
               Schedule
             </Button>
           </div>

@@ -129,7 +129,7 @@ const TailwindAdvancedEditor = ({
 
         <EditorRoot>
           <Button
-            className="gap-1 text-ttickles-blue border-muted bg-background mb-2 p-4 hover:bg-white hover:text-purple-700"
+            className="gap-1 text-ttickles-blue border-muted bg-background mb-2 p-4 hover:text-purple-700 transition duration-100 hover:bg-gray-100"
             variant="ghost"
             onClick={() => setAI(!ai)}
             size="sm"
