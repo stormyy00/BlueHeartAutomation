@@ -19,6 +19,7 @@ import { QUESTIONS } from "@/data/newsletter/event";
 import { ChangeEvent } from "react";
 import { EventType } from "@/types/event";
 import { toast } from "sonner";
+import Loading from "@/components/global/loading";
 
 type props = {
   setEvent: (value: (prevEvent: EventType) => EventType) => void;
@@ -62,6 +63,7 @@ const EventModal = ({ setEvent }: props) => {
 };
 
 const Events = ({ onChange, eventLoading, setEventLoading }: EventsProps) => {
+  const [loading, setLoading] = useState<boolean>(false);
   const [events, setEvents] = useState<EventType[]>([]);
   const [event, setEvent] = useState<EventType>(() => ({
     name: "",
@@ -90,6 +92,7 @@ const Events = ({ onChange, eventLoading, setEventLoading }: EventsProps) => {
   };
 
   const handleFetch = async () => {
+    setLoading(true);
     const { calendarId } = await fetch("/api/events", {
       method: "GET",
     }).then((response) => {
@@ -104,6 +107,7 @@ const Events = ({ onChange, eventLoading, setEventLoading }: EventsProps) => {
     );
     if (!response.ok) {
       toast("Failed to fetch calendar events");
+      setLoading(false);
       return;
     }
     const data = await response.json();
@@ -114,6 +118,7 @@ const Events = ({ onChange, eventLoading, setEventLoading }: EventsProps) => {
       date: event.start.dateTime,
     }));
     setEvents(newEvents);
+    setLoading(false);
   };
 
   useEffect(() => {
@@ -139,8 +144,8 @@ const Events = ({ onChange, eventLoading, setEventLoading }: EventsProps) => {
           }
         />
       </div>
-      <div
-        className="flex flex-col items-center bg-white border border-black/20 font-bold rounded-md p-4 cursor-pointer"
+      <button
+        className="flex flex-col items-center bg-white border border-black/20 text-black font-bold rounded-md p-4 cursor-pointer"
         onClick={() =>
           setPopup({
             title: "Add Event",
@@ -153,20 +158,23 @@ const Events = ({ onChange, eventLoading, setEventLoading }: EventsProps) => {
       >
         <Plus size={32} />
         Add Event
-      </div>
-      <div className="flex flex-col gap-2">
-        {events.map((event, index) => (
-          <Event
-            eventLoading={eventLoading}
-            setEventLoading={setEventLoading}
-            name={event.name}
-            description={event.description}
-            location={event.location}
-            date={event.date}
-            key={index}
-          />
-        ))}
-      </div>
+      </button>
+      {loading && <Loading />}
+      {!loading && (
+        <div className="flex flex-col gap-2">
+          {events.map((event, index) => (
+            <Event
+              eventLoading={eventLoading}
+              setEventLoading={setEventLoading}
+              name={event.name}
+              description={event.description}
+              location={event.location}
+              date={event.date}
+              key={index}
+            />
+          ))}
+        </div>
+      )}
       <AlertDialog open={popup.visible}>
         <AlertDialogContent className="flex flex-col gap-3">
           <AlertDialogTitle>{popup.title}</AlertDialogTitle>
