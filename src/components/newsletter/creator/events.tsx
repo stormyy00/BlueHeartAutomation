@@ -126,7 +126,7 @@ const Events = ({ onChange, eventLoading, setEventLoading }: EventsProps) => {
   }, []);
 
   return (
-    <div className="w-full flex flex-col bg-black/5 p-4 rounded-md border border-black/20 gap-2">
+    <div className="w-full flex flex-col bg-gray-50 p-4 rounded-md border border-gray-100 shadow-md gap-2">
       <div className="flex flex-row items-center text-black/60 text-xs gap-1 self-end">
         What is this?
         <Info
@@ -145,7 +145,7 @@ const Events = ({ onChange, eventLoading, setEventLoading }: EventsProps) => {
         />
       </div>
       <button
-        className="flex flex-col items-center bg-white border border-black/20 text-black font-bold rounded-md p-4 cursor-pointer"
+        className="flex flex-col items-center bg-white border border-gray-100 shadow-sm hover:shadow-md transition-shadow text-black font-bold rounded-md p-4 cursor-pointer"
         onClick={() =>
           setPopup({
             title: "Add Event",

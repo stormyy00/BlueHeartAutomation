@@ -254,7 +254,7 @@ const Creator = () => {
         </div>
 
         <div className="flex  h-full w-full">
-          <div className="flex flex-col bg-black/5 p-4 rounded-md border border-black/20 w-full gap-4 h-full">
+          <div className="flex flex-col bg-white p-4 rounded-md border border-gray-100 shadow-sm w-full gap-4 h-full">
             {newsletter.body ? (
               <ScrollArea>
                 <Editor
@@ -290,16 +290,16 @@ const Creator = () => {
           open={popup.visible}
           onOpenChange={(open) => setPopup({ ...popup, visible: open })}
         >
-          <DialogContent className="flex flex-col gap-3 bg-white p-4 rounded-lg shadow-xl">
+          <DialogContent className="flex flex-col gap-3 bg-white p-6 rounded-lg shadow-xl">
             <DialogTitle>Schedule Newsletter</DialogTitle>
             <DialogDescription className="flex flex-col gap-4">
-              <div>
-                <Label>Date</Label>
+              <div className="flex flex-col gap-2">
+                <Label className="font-bold">Date</Label>
                 <ScheduleModal setDate={setDate} date={date} />
               </div>
 
-              <div>
-                <Label>Time</Label>
+              <div className="flex flex-col gap-2">
+                <Label className="font-bold">Time</Label>
                 <Select
                   options={TIME}
                   placeholder="Select Time"
@@ -325,18 +325,18 @@ const Creator = () => {
             <div className="flex flex-row self-end gap-2">
               <DialogClose asChild>
                 <Button
-                  className="px-3 py-1 rounded"
+                  className="px-4 py-1 rounded bg-white text-black hover:text-black hover:bg-white"
                   onClick={() => {
                     setPopup({ ...popup, visible: false });
                     setDate(undefined);
                   }}
                   disabled={scheduleLoading}
                 >
-                  Exit
+                  Cancel
                 </Button>
               </DialogClose>
               <Button
-                className="bg-ttickles-blue text-white px-3 py-1 rounded"
+                className="bg-ttickles-blue hover:bg-ttickles-blue hover:text-white text-white px-3 py-1 rounded"
                 onClick={handleSchedule}
                 disabled={scheduleLoading}
               >
