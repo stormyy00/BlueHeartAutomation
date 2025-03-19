@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import Events from "./events";
 import { Button } from "@/components/ui/button";
-import { Ellipsis, Loader } from "lucide-react";
+import { Calendar, Clock, Ellipsis, Loader, Save } from "lucide-react";
 import { EventType } from "@/types/event";
 import { usePathname } from "next/navigation";
 import { toast } from "sonner";
@@ -241,27 +241,25 @@ const Creator = ({ org }: { org: Organization }) => {
               <SheetTrigger asChild>
                 <Button
                   variant="outline"
-                  className="flex items-center gap-2 bg-teal-400 hover:bg-teal-200 text-white"
+                  className="flex items-center gap-2 bg-teal-400 hover:bg-teal-400 hover:brightness-110 hover:text-white text-white transition duration-100"
                 >
+                  <Calendar />
                   Add Events
                 </Button>
               </SheetTrigger>
             </Sheet>
 
-            {loading ? (
-              <Button
-                disabled={!data}
-                onClick={generateDocument}
-                className="bg-ttickles-darkblue text-white px-4 py-2 rounded disabled:opacity-50 w-fit"
-              >
-                Save
-              </Button>
-            ) : (
-              <Loader className="animate-spin" />
-            )}
+            <Button
+              disabled={!data}
+              onClick={generateDocument}
+              className="bg-ttickles-darkblue hover:bg-ttickles-darkblue hover:brightness-110 transition duration-100 text-white px-4 py-2 rounded disabled:opacity-50 w-fit"
+            >
+              {loading ? <Save /> : <Loader className="animate-spin" />}
+              Save
+            </Button>
 
             <Button
-              className="bg-ttickles-orange hover:bg-ttickles-orange"
+              className="bg-ttickles-orange hover:bg-ttickles-orange hover:brightness-110 transition duration-100"
               onClick={() => {
                 setPopup({
                   ...popup,
@@ -269,13 +267,14 @@ const Creator = ({ org }: { org: Organization }) => {
                 });
               }}
             >
+              <Clock />
               Schedule
             </Button>
           </div>
         </div>
 
         <div className="flex  h-full w-full">
-          <div className="flex flex-col bg-black/5 p-4 rounded-md border border-black/20 w-full gap-4 h-full">
+          <div className="flex flex-col bg-white p-4 rounded-md border border-gray-100 shadow-sm w-full gap-4 h-full">
             {newsletter.body ? (
               <ScrollArea>
                 <Editor
@@ -311,7 +310,7 @@ const Creator = ({ org }: { org: Organization }) => {
           open={popup.visible}
           onOpenChange={(open) => setPopup({ ...popup, visible: open })}
         >
-          <DialogContent className="flex flex-col gap-3 bg-white p-4 rounded-lg shadow-xl">
+          <DialogContent className="flex flex-col gap-3 bg-white p-6 rounded-lg shadow-xl">
             <DialogTitle>Schedule Newsletter</DialogTitle>
             <DialogDescription className="flex flex-col gap-4">
               <div className="flex flex-col gap-y-2">
@@ -360,17 +359,17 @@ const Creator = ({ org }: { org: Organization }) => {
             <div className="flex flex-row self-end gap-2">
               <DialogClose asChild>
                 <Button
-                  className="px-3 py-1 rounded"
+                  className="px-4 py-1 rounded bg-white text-black hover:text-black hover:bg-white"
                   onClick={() => {
                     setPopup({ ...popup, visible: false });
                   }}
                   disabled={scheduleLoading}
                 >
-                  Exit
+                  Cancel
                 </Button>
               </DialogClose>
               <Button
-                className="bg-ttickles-blue text-white px-3 py-1 rounded"
+                className="bg-ttickles-blue hover:bg-ttickles-blue hover:text-white text-white px-3 py-1 rounded"
                 onClick={handleSchedule}
                 disabled={scheduleLoading}
               >

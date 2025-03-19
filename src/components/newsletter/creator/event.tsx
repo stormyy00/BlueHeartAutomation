@@ -24,12 +24,12 @@ const Event = ({ name, date, location, description, eventLoading }: props) => {
     generateFromEvents(eventContent);
   };
   return (
-    <div className="bg-white border border-black/20 p-5 rounded-md group cursor-pointer">
+    <div className="bg-white border border-gray-100 shadow-sm hover:shadow-md transition-shadow p-5 rounded-md group cursor-pointer">
       <div className="flex flex-row justify-between text-3xl font-bold">
         <button
           disabled={eventLoading}
           onClick={handleClick}
-          className={`event-card text-left ${eventLoading ? "text-black/25" : "text-black"}`}
+          className={`event-card text-left ${eventLoading ? "text-ttickles-blue/25" : "text-ttickles-blue"}`}
         >
           {name}
         </button>
@@ -37,7 +37,7 @@ const Event = ({ name, date, location, description, eventLoading }: props) => {
       </div>
       <div className="text-black/30">{date}</div>
       <div className="text-black/30">{location}</div>
-      <div className="text-black/30 mt-2">{description}</div>
+      <div className="text-black/60 mt-2">{description}</div>
     </div>
   );
 };
