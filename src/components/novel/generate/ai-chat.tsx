@@ -47,11 +47,18 @@ const AIChatbot = ({ open, onOpenChange, chatHelpers }: AIChatbotProps) => {
       ? editor.storage.markdown.serializer.serialize(editor.state.doc)
       : "";
 
-    append({
-      role: "user",
-      content: inputValue,
-      parts: documentContent,
-    });
+    append(
+      {
+        role: "user",
+        content: inputValue,
+        parts: documentContent,
+      },
+      {
+        data: {
+          messages: documentContent,
+        },
+      },
+    );
 
     setInputValue("");
   };
