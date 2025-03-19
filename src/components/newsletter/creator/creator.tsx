@@ -220,7 +220,13 @@ const Creator = ({ org }: { org: Organization }) => {
     setAI(true);
     setEventLoading(true);
     const { append } = chatHelpers;
-    await append({ role: "user", content: content.join("\n") });
+    await append({
+      role: "user",
+      content: content.join("\n"),
+      data: {
+        option: "general",
+      },
+    });
     setEventLoading(false);
   };
 

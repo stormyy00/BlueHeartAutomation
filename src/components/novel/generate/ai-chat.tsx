@@ -51,10 +51,11 @@ const AIChatbot = ({ open, onOpenChange, chatHelpers }: AIChatbotProps) => {
       {
         role: "user",
         content: inputValue,
+        parts: documentContent,
       },
       {
         data: {
-          option: "assist",
+          messages: documentContent,
         },
       },
     );

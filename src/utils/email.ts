@@ -1,5 +1,10 @@
 import * as nodemailer from "nodemailer";
 import SMTPTransport from "nodemailer/lib/smtp-transport";
+import { render } from "@react-email/render";
+import { ModernBusinessTemplate } from "@/components/email/template";
+import { MinimalistTemplate } from "@/components/email/template";
+import { VibrantTemplate } from "@/components/email/template";
+import { CorporateTemplate } from "@/components/email/template";
 
 const transporter = nodemailer.createTransport({
   host: (process.env.NEXT_PUBLIC_SMTP_HOST as string) ?? "",
@@ -15,13 +20,31 @@ export const sendEmail = async (
   subject: string,
   body: string,
   recipients: string[],
+  templateType: "modern" | "minimalist" | "vibrant" | "classic",
 ): Promise<SMTPTransport.SentMessageInfo> => {
   const fromLine = process.env.NEXT_PUBLIC_SMTP_FROM ?? "no-reply";
+  let emailHtml = "";
+  switch (templateType) {
+    case "modern":
+      emailHtml = await render(ModernBusinessTemplate({ body }));
+      break;
+    case "minimalist":
+      emailHtml = await render(MinimalistTemplate({ body }));
+      break;
+    case "vibrant":
+      emailHtml = await render(VibrantTemplate({ body }));
+      break;
+    case "classic":
+      emailHtml = await render(CorporateTemplate({ body }));
+      break;
+    default:
+      throw new Error("Invalid email template type.");
+  }
   return await transporter.sendMail({
     from: fromLine,
     to: recipients.join(", "),
     subject: subject,
     text: body,
-    html: body,
+    html: emailHtml,
   });
 };
