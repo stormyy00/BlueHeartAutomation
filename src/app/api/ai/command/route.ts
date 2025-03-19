@@ -21,7 +21,10 @@ type UserMessage = {
  * import it from environment variables, etc.
  */
 const ollama = createOllama({
-  baseURL: process.env.OLLAMA_URL ?? "http://localhost:11434",
+  // baseURL:
+  //   process.env.NODE_ENV === "production"
+  //     ? process.env.OLLAMA_URL
+  //     : "http://localhost:11434",
 });
 // export async function POST(req: NextRequest) {
 //   try {
@@ -166,9 +169,11 @@ export async function POST(req: NextRequest) {
         noThinkingInstruction +
         "\n\nCURRENT DOCUMENT CONTEXT:\n" +
         documentContent +
-        "\n\n" +
-        "WRITING STYLE REFERENCE (match this tone, vocabulary, and style):\n" +
-        training +
+        //         "\n\nTRAINING DATA\n" +
+        //         "CRITICAL: USE AS WRITING STYLE REFERENCE (match this tone, vocabulary, and style):\n" +
+        //         training +
+        //         "\nCRITICAL: Do not mention the reference text unless explicitly asked.\n" +
+        // "When explaining a document, do not reference this text. It is only meant to guide writing style."+
         "\n\n" +
         "Use Markdown formatting when appropriate. " +
         "Feel free to add color and emphasize certain points with different symbols. " +

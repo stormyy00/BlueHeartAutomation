@@ -87,6 +87,11 @@ export const TABS: Tabs = {
         link: "/orgs/@mine/analytics",
         icon: <ChartArea />,
       },
+      {
+        name: "Email",
+        link: "/orgs/@mine/email",
+        icon: <Mail />,
+      },
     ],
   },
 };

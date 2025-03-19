@@ -6,6 +6,7 @@ type Props = {
   recipients: string[];
   body: string;
   scheduled?: number;
+  templateType: string;
 };
 
 export const PUT = async (req: NextRequest) => {
@@ -19,7 +20,12 @@ export const PUT = async (req: NextRequest) => {
       { status: 400 },
     );
   }
-  const result = await sendEmail(data.subject, data.body, data.recipients);
+  const result = await sendEmail(
+    data.subject,
+    data.body,
+    data.recipients,
+    data.templateType,
+  );
   return NextResponse.json(
     { message: "Email sent!", id: result.messageId },
     { status: 200 },

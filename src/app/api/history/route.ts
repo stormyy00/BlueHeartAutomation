@@ -13,7 +13,7 @@ export const GET = async () => {
   try {
     const q = query(
       collection(db, "newsletters"),
-      where("orgId", "==", "org_123"),
+      where("orgId", "==", session.user.orgId),
     );
     const querySnapshot = await getDocs(q);
 
