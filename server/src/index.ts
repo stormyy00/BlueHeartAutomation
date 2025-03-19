@@ -63,7 +63,7 @@ app.put(
           data.subject ?? "Subject here",
           data.newsletter.join("<br />") ?? "Body here",
           organizationDoc?.groups.filter(
-            (group) => group.name === data.recipientGroup,
+            (group: any) => group.name === data.recipientGroup,
           )[0].emails,
         ).then(console.log);
       }
