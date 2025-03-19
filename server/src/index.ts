@@ -155,14 +155,14 @@ const onKeyExpired = async (expiredKey: string) => {
   // Place your custom logic here (e.g., sending an HTTP request or updating your app state)
   const document = await getDoc(doc(collection(db, "newsletters"), expiredKey));
   const data = document.data();
-  const organizationDoc = await getOrg(data.orgId);
+  const organizationDoc = await getOrg(data?.orgId);
 
   //TODO: need recipients
   await sendEmail(
-    data.subject ?? "Subject here",
-    data.newsletter.join("<br />") ?? "Body here",
+    data?.subject ?? "Subject here",
+    data?.newsletter.join("<br />") ?? "Body here",
     organizationDoc?.groups.filter(
-      (group) => group.name === data.recipientGroup,
+      (group: any) => group.name === data?.recipientGroup,
     )[0].emails,
   );
 };
