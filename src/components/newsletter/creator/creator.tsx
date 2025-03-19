@@ -8,8 +8,6 @@ import { EventType } from "@/types/event";
 import { usePathname } from "next/navigation";
 import { toast } from "sonner";
 import { Popup } from "@/types/popup";
-import Select from "@/components/global/select";
-import { TIME } from "@/data/time";
 import { Label } from "@/components/ui/label";
 import {
   Dialog,
@@ -25,15 +23,25 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet";
-import ScheduleModal from "./schedule-modal";
 import Editor from "@/components/novel/editror";
 import { JSONContent } from "novel";
 import { createEditor } from "@udecode/plate";
 import { AIContext } from "@/context/ai-context";
 import { useChat } from "@ai-sdk/react";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { Input } from "@/components/ui/input";
+import Select from "@/components/global/select";
+import { Organization } from "@/data/types";
 
-const Creator = () => {
+type NewsletterData = {
+  body: string;
+  status: string;
+  subject: string;
+  recipientGroup: string;
+  scheduledDate: string | undefined;
+};
+
+const Creator = ({ org }: { org: Organization }) => {
   const [ai, setAI] = useState(false);
   const [data, setData] = useState<string[] | JSONContent | null>(null);
   const [popup, setPopup] = useState<Popup>({
@@ -43,12 +51,14 @@ const Creator = () => {
     submit: true,
     visible: false,
   });
-  const [newsletter, setNewsletter] = useState({
+  const [newsletter, setNewsletter] = useState<NewsletterData>({
     body: "",
     status: "draft",
+    subject: "",
+    recipientGroup: "",
+    scheduledDate: undefined,
   });
   const [sheetOpen, setSheetOpen] = useState(false);
-  const [date, setDate] = useState<Date | undefined>(new Date());
   const [error, setError] = useState(false);
   const [loading, setIsLoading] = useState(true);
   const [eventLoading, setEventLoading] = useState(false);
@@ -59,14 +69,15 @@ const Creator = () => {
   const handleSchedule = async () => {
     setScheduleLoading(true);
     const toastId = toast.loading("Scheduling newsletter...");
-    console.log("CLIENT:", date);
     await fetch(`/api/newsletter/${id}/schedule`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        date: date,
+        date: newsletter.scheduledDate,
+        subject: newsletter.subject,
+        recipientGroup: newsletter.recipientGroup,
       }),
     }).catch((error) => {
       toast.error("Failed to schedule newsletter", { id: toastId });
@@ -118,6 +129,9 @@ const Creator = () => {
         setNewsletter({
           body: formattedContent,
           status: data.newsletterData.status,
+          scheduledDate: data.newsletterData.scheduledDate,
+          recipientGroup: data.newsletterData.recipientGroup ?? "",
+          subject: data.newsletterData.subject ?? "",
         });
       })
       .catch((error) => {
@@ -215,6 +229,13 @@ const Creator = () => {
     });
     setEventLoading(false);
   };
+
+  const formatDate = (date: string | number) => {
+    const obj = new Date(date);
+    obj.setMinutes(obj.getMinutes() - obj.getTimezoneOffset());
+    return obj.toISOString().slice(0, 16);
+  };
+
   return (
     <AIContext.Provider value={{ generateFromEvents }}>
       <div className="flex flex-col gap-4 h-full w-full">
@@ -298,31 +319,45 @@ const Creator = () => {
           <DialogContent className="flex flex-col gap-3 bg-white p-6 rounded-lg shadow-xl">
             <DialogTitle>Schedule Newsletter</DialogTitle>
             <DialogDescription className="flex flex-col gap-4">
-              <div className="flex flex-col gap-2">
-                <Label className="font-bold">Date</Label>
-                <ScheduleModal setDate={setDate} date={date} />
-              </div>
-
-              <div className="flex flex-col gap-2">
-                <Label className="font-bold">Time</Label>
+              <div className="flex flex-col gap-y-2">
+                <Label className="font-bold">Subject</Label>
+                <Input
+                  type="text"
+                  defaultValue={newsletter.subject}
+                  onChange={(value) => {
+                    const val = value.currentTarget.value;
+                    setNewsletter((prev) => {
+                      return { ...prev, subject: val };
+                    });
+                  }}
+                />
+                <Label className="font-bold">Recipient Group</Label>
                 <Select
-                  options={TIME}
-                  placeholder="Select Time"
-                  onChange={(timeString) => {
-                    const newDate = date;
-                    const [hours, period] = [
-                      timeString.slice(0, -2),
-                      timeString.slice(-2),
-                    ];
-
-                    // Convert to 24-hour format
-                    let hour = parseInt(hours);
-                    if (period === "PM" && hour < 12) hour += 12;
-                    if (period === "AM" && hour === 12) hour = 0;
-
-                    // Set the hours, keep minutes and seconds unchanged
-                    newDate?.setHours(hour);
-                    setDate(newDate);
+                  options={org.groups.map((group) => ({
+                    label: group.name,
+                    value: group.name,
+                  }))}
+                  onChange={(selected) =>
+                    setNewsletter((prev) => {
+                      return { ...prev, recipientGroup: selected };
+                    })
+                  }
+                  placeholder="Select a Recipient"
+                />
+                <Label className="font-bold">Date & Time</Label>
+                <Input
+                  type="datetime-local"
+                  defaultValue={formatDate(
+                    newsletter.scheduledDate ?? Date.now(),
+                  )}
+                  onChange={(value) => {
+                    const val = value.currentTarget.value;
+                    setNewsletter((old) => {
+                      return {
+                        ...old,
+                        scheduledDate: val,
+                      };
+                    });
                   }}
                 />
               </div>
@@ -333,7 +368,6 @@ const Creator = () => {
                   className="px-4 py-1 rounded bg-white text-black hover:text-black hover:bg-white"
                   onClick={() => {
                     setPopup({ ...popup, visible: false });
-                    setDate(undefined);
                   }}
                   disabled={scheduleLoading}
                 >

@@ -1,0 +1,27 @@
+version: "3"
+
+services:
+  redis:
+    image: redis:latest
+    container_name: my-redis
+    command: redis-server --requirepass "mysecretpassword"
+    ports:
+      - "6379:6379"
+
+  # nextjs:
+  #   image: node:21
+  #   container_name: my-nextjs
+  #   working_dir: /usr/src/app
+  #   volumes:
+  #     - .:/usr/src/app
+  #   command: sh -c "npm install && npm run dev"
+  #   ports:
+  #     - '3000:3000'
+  #   depends_on:
+  #     - redis
+  # ollama: disable this for rn, we local hosting
+  #   image: ollama/ollama:latest
+  #   container_name: my-ollama
+  #   ports:
+  #     - '11434:11434'
+  #   command: ollama run llama-3.2

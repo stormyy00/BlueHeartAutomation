@@ -81,6 +81,7 @@ const OrganizationForm = () => {
           notes: [],
           themes: [],
           users: [],
+          groups: [],
           region: "US",
           owner: session?.user.uuid,
         } as Organization,
