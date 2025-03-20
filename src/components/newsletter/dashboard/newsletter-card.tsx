@@ -32,7 +32,7 @@ const NewsletterCard = ({
           <div onClick={onClick} className="flex items-center gap-2">
             <Checkbox
               checked={checked}
-              className="h-5 w-5 text-gray-900 rounded-full border-gray-300 focus:ring-gray-900"
+              className="h-5 w-5 text-gray-900 rounded-full border-gray-500 focus:ring-gray-900"
             />
             <span className="text-xs font-medium text-gray-500 uppercase tracking-wide">
               Newsletter

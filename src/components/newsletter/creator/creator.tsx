@@ -238,7 +238,7 @@ const Creator = ({ org }: { org: Organization }) => {
 
   return (
     <AIContext.Provider value={{ generateFromEvents }}>
-      <div className="flex flex-col gap-4 h-full w-full">
+      <div className="flex flex-col gap-4 h-full w-11/12 m-10">
         <div className="flex flex-row justify-between w-full">
           <div className="font-extrabold text-3xl mb-8">Newsletter</div>
 
@@ -333,7 +333,7 @@ const Creator = ({ org }: { org: Organization }) => {
                 />
                 <Label className="font-bold">Recipient Group</Label>
                 <Select
-                  options={org.groups.map((group) => ({
+                  options={org?.groups.map((group) => ({
                     label: group.name,
                     value: group.name,
                   }))}

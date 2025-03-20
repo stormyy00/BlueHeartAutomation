@@ -2,7 +2,7 @@
 import mock from "@/public/user/mock.png";
 import Image from "next/image";
 import Link from "next/link";
-import { Link2, Pencil } from "lucide-react";
+import { Link2, Pen, Link as LucideLink } from "lucide-react";
 import { useState } from "react";
 import { Input } from "./ui/input";
 import { Button } from "./ui/button";
@@ -16,20 +16,28 @@ const OrgHeader = ({ editable, org }: props) => {
   const [edit, setEdit] = useState<boolean>(false);
   console.log(org);
   return (
-    <div className="flex flex-row justify-between w-full">
+    <div className="flex flex-row justify-between w-full bg-white shadow-md border border-gray-100 rounded-2xl p-4">
       <div className="flex justify-start w-full gap-4">
-        <Image src={mock} alt="logo" />
+        <Image
+          src={mock}
+          alt="logo"
+          className="border border-gray-200 rounded-2xl"
+        />
         <div>
-          <h1 className="text-3xl font-extrabold">{org.name}</h1>
+          <h1 className="text-3xl font-extrabold text-gray-900 mb-2">
+            Poor News{org.name}
+          </h1>
           {!edit &&
             org.links?.map((link, index) => (
               <Link
                 key={index}
                 href={link.url}
-                className="flex gap-2 hover:opacity-40"
+                className="flex gap-2 hover:opacity-40 text-gray-500"
               >
-                <Link2 />
-                <span className="font-bold">{link.name}</span>
+                <LucideLink size={20} />
+                <span className="font-bold tracking-wide text-sm">
+                  {link.name}
+                </span>
               </Link>
             ))}
           {edit &&
@@ -44,11 +52,17 @@ const OrgHeader = ({ editable, org }: props) => {
             ))}
         </div>
       </div>
-      {!edit && editable && <Pencil onClick={() => setEdit(!edit)} />}
+      {!edit && editable && (
+        <Pen
+          size={20}
+          className="text-gray-500"
+          onClick={() => setEdit(!edit)}
+        />
+      )}
       {edit && (
         <Button
           onClick={() => setEdit(!edit)}
-          className="bg-ttickles-blue text-white shadow-none hover:bg-ttickles-blue"
+          className="bg-ttickles-blue text-white shadow-none hover:bg-ttickles-blue hover:brightness-110 duration-100"
         >
           Save
         </Button>

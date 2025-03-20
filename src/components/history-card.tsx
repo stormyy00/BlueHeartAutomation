@@ -32,15 +32,20 @@ const HistoryCard = ({
     <div className=" flex items-center justify-between p-4 bg-white rounded-xl shadow-md hover:shadow-lg transition duration-300">
       <div className="flex items-center gap-4">
         <span onClick={onClick} className="cursor-pointer">
-          <Checkbox checked={checked} />
+          <Checkbox
+            className="rounded-full focus:ring-gray-900 border-gray-500 "
+            checked={checked}
+          />
         </span>
         <Link
           href={`newsletter/${id}`}
-          className="text-lg font-medium text-gray-900 hover:text-gray-600 transition duration-200"
+          className="text-lg font-semibold text-gray-900 hover:text-gray-600 transition duration-200"
         >
           {title}
         </Link>
-        <span className=" px-3 py-1 rounded-full text-xs font-medium text-slate-400">
+      </div>
+      <div className="flex items-center gap-3 text-gray-500">
+        <span className=" px-3 py-1 rounded-full text-xs font-medium uppercase text-slate-400">
           {new Date(timestamp).toLocaleDateString("en-US", {
             weekday: "long",
             year: "numeric",
@@ -48,8 +53,6 @@ const HistoryCard = ({
             day: "numeric",
           })}
         </span>
-      </div>
-      <div className="flex items-center gap-3 text-gray-500">
         <div
           className={`${STATUS_STYLES[status]?.bg || "bg-gray-50"} ${STATUS_STYLES[status]?.text || "text-gray-600"} 
                       px-3 py-1 rounded-full text-xs font-medium`}

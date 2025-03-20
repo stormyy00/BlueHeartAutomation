@@ -121,6 +121,7 @@ const NewsletterToolbar = ({
     <div className="flex flex-row items-center gap-2">
       <Input
         value={value}
+        className="bg-white shadow-none"
         onChange={(e) => handleChange(e.target.value)}
         placeholder="search"
       />
@@ -141,12 +142,12 @@ const NewsletterToolbar = ({
       <Plus
         size={48}
         onClick={handleNewletter}
-        className="cursor-pointer hover:text-blue-500 duration-300"
+        className="cursor-pointer text-gray-500"
       />
       <Trash
         size={48}
         onClick={confirmDelete}
-        className="cursor-pointer hover:text-red-500 duration-300"
+        className="cursor-pointer text-gray-500"
       />
       <AlertDialog open={popup.visible}>
         <AlertDialogContent>

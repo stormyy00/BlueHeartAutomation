@@ -13,10 +13,10 @@ interface SelectProps {
   placeholder?: string;
 }
 
-const Select = ({ options, onChange, placeholder = "Select" }: SelectProps) => {
+const Select = ({ options, onChange, placeholder = "select" }: SelectProps) => {
   return (
     <SelectShadCN onValueChange={onChange}>
-      <SelectTrigger>
+      <SelectTrigger className="border h-10 border-black/20 shadow-none bg-white text-muted-foreground">
         <SelectValue placeholder={placeholder} />
       </SelectTrigger>
       <SelectContent className="bg-white">
