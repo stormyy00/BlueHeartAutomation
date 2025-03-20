@@ -1,6 +1,7 @@
 "use client";
 
 import Aciton from "@/components/live/aciton";
+import Demos from "@/components/live/demos";
 import Features from "@/components/live/features";
 import Footer from "@/components/live/footer";
 import Landing from "@/components/live/landing";
@@ -12,6 +13,7 @@ const Page = () => {
       <Navigation />
       <Landing />
       <Features />
+      <Demos />
       <Aciton />
       <Footer />
     </div>
