@@ -3,7 +3,7 @@ import React from "react";
 
 const page = () => {
   return (
-    <div className="flex flex-col w-full bg-gray-100">
+    <div className="flex flex-col w-full bg-white">
       <EmailDashboard />
     </div>
   );

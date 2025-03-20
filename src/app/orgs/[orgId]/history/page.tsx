@@ -2,7 +2,7 @@ import HistoryDashboard from "@/components/history-dashboard";
 
 const page = () => {
   return (
-    <div className="w-full bg-gray-100">
+    <div className="w-full bg-white">
       <HistoryDashboard />
     </div>
   );

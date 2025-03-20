@@ -29,7 +29,7 @@ const HistoryCard = ({
 }: props) => {
   console.log(timestamp);
   return (
-    <div className=" flex items-center justify-between p-4 bg-white rounded-xl shadow-md hover:shadow-lg transition duration-300">
+    <div className=" flex items-center justify-between p-4 bg-white border border-gray-100 rounded-xl shadow-md hover:shadow-lg transition duration-300">
       <div className="flex items-center gap-4">
         <span onClick={onClick} className="cursor-pointer">
           <Checkbox
