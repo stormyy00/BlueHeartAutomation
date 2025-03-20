@@ -337,7 +337,7 @@ const Creator = ({ org }: { org: Organization }) => {
                 />
                 <Label className="font-bold">Recipient Group</Label>
                 <Select
-                  options={org?.groups.map((group) => ({
+                  options={org?.groups?.map((group) => ({
                     label: group.name,
                     value: group.name,
                   }))}
