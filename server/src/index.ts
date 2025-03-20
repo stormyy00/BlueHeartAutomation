@@ -28,6 +28,7 @@ const redisConnector = new RedisConnector(process.env.REDIS_URL ?? "");
 type Email = {
   id: string;
   epochSchedule: string;
+  template: string;
 };
 
 const getOrg = async (uuid: string) => {
@@ -160,9 +161,9 @@ const put = async (key: string, scheduled: number) => {
 const parseParagraph = (obj: any, content: any[]) => {
   let result = "";
   if (obj.content && obj.content.length > 0) {
+    let rawLine = "";
     for (const line of obj.content ?? []) {
       const finishingTags = []; // queue
-      let rawLine = "";
       if ("marks" in line) {
         const marks = line.marks.map((item) => item.type);
         marks.forEach((mark) => {
@@ -179,11 +180,11 @@ const parseParagraph = (obj: any, content: any[]) => {
       while (finishingTags.length > 0) {
         rawLine += finishingTags.pop();
       }
-      result += `<p style="color: black !important; margin: 0;">${rawLine}</p>`;
       // if (content.indexOf(obj) < content.length - 1) {
       //   result += "<br />"
       // }
     }
+    result += `<p style="color: black !important; margin: 0;">${rawLine}</p>`;
   } else {
     result += "<br />";
   }
@@ -225,7 +226,8 @@ const onKeyExpired = async (expiredKey: string) => {
     }
     body = stringBody === "" ? body : stringBody;
   }
-  const template = "vibrant";
+
+  const template = data.template ?? "vibrant";
   const recipients =
     organizationDoc?.groups.filter(
       (group: any) => group.name === data?.recipientGroup,

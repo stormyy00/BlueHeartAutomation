@@ -140,9 +140,6 @@ export const POST = async (
     //       { status: 500 },
     //     );
     //   });
-
-    console.log("updating doc?", date, new Date(date).toLocaleString());
-
     await updateDoc(doc(collection(db, "newsletters"), snapshot.docs[0].id), {
       ...newsletter,
       scheduledDate: date,

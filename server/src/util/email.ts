@@ -1,11 +1,13 @@
+import { render } from "@react-email/render";
 import dotenv from "dotenv";
 import * as nodemailer from "nodemailer";
 import SMTPTransport from "nodemailer/lib/smtp-transport";
-import { render } from "@react-email/render";
-import { ModernBusinessTemplate } from "../../../src/components/email/template";
-import { MinimalistTemplate } from "../../../src/components/email/template";
-import { VibrantTemplate } from "../../../src/components/email/template";
-import { CorporateTemplate } from "../../../src/components/email/template";
+import {
+  CorporateTemplate,
+  MinimalistTemplate,
+  ModernBusinessTemplate,
+  VibrantTemplate,
+} from "../../../src/components/email/template";
 
 dotenv.config({
   path: "../.env",

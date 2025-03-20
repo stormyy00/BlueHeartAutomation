@@ -62,6 +62,7 @@ const Creator = ({ org }: { org: Organization }) => {
     template: "modern",
   });
   const [sheetOpen, setSheetOpen] = useState(false);
+  const [sending, setSending] = useState(false);
   const [error, setError] = useState(false);
   const [loading, setIsLoading] = useState(true);
   const [eventLoading, setEventLoading] = useState(false);
@@ -71,28 +72,39 @@ const Creator = ({ org }: { org: Organization }) => {
 
   const handleSchedule = async () => {
     setScheduleLoading(true);
-    const toastId = toast.loading("Scheduling newsletter...");
+    const toastId = toast.loading(
+      sending ? "Sending newsletter..." : "Scheduling newsletter...",
+    );
     await fetch(`/api/newsletter/${id}/schedule`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        date: newsletter.scheduledDate,
+        date: sending ? 0 : newsletter.scheduledDate,
         subject: newsletter.subject,
         recipientGroup: newsletter.recipientGroup,
         template: newsletter.template,
       }),
     }).catch((error) => {
-      toast.error("Failed to schedule newsletter", { id: toastId });
+      toast.error(
+        sending ? "Failed to send newsletter" : "Failed to schedule newsletter",
+        { id: toastId },
+      );
       console.log(error);
       setScheduleLoading(false);
       return;
     });
 
-    toast.success("Newsletter scheduled successfully!", { id: toastId });
+    toast.success(
+      sending
+        ? "Newsletter sent successfully!"
+        : "Newsletter scheduled successfully!",
+      { id: toastId },
+    );
 
     setScheduleLoading(false);
+    setSending(false);
     setPopup({ ...popup, visible: false });
   };
   const handleEventsChange = (updatedEvents: EventType[]) => {
@@ -276,6 +288,7 @@ const Creator = ({ org }: { org: Organization }) => {
                   ...popup,
                   visible: true,
                 });
+                setSending(false);
               }}
             >
               <Clock />
@@ -288,6 +301,7 @@ const Creator = ({ org }: { org: Organization }) => {
                   ...popup,
                   visible: true,
                 });
+                setSending(true);
               }}
             >
               <Send />
@@ -349,18 +363,20 @@ const Creator = ({ org }: { org: Organization }) => {
                   }}
                 />
                 <Label className="font-bold">Recipient Group</Label>
-                <Select
-                  options={org?.groups?.map((group) => ({
-                    label: group.name,
-                    value: group.name,
-                  }))}
-                  onChange={(selected) =>
-                    setNewsletter((prev) => {
-                      return { ...prev, recipientGroup: selected };
-                    })
-                  }
-                  placeholder="Select a Recipient"
-                />
+                {org?.groups && (
+                  <Select
+                    options={org?.groups.map((group) => ({
+                      label: group.name,
+                      value: group.name,
+                    }))}
+                    onChange={(selected) =>
+                      setNewsletter((prev) => {
+                        return { ...prev, recipientGroup: selected };
+                      })
+                    }
+                    placeholder="Select a Recipient"
+                  />
+                )}
                 <Label className="font-bold">Newsletter Template</Label>
                 <Select
                   options={TEMPLATES.map(({ title }) => ({
@@ -374,22 +390,26 @@ const Creator = ({ org }: { org: Organization }) => {
                   }
                   placeholder="Select a Template"
                 />
-                <Label className="font-bold">Date & Time</Label>
-                <Input
-                  type="datetime-local"
-                  defaultValue={formatDate(
-                    newsletter.scheduledDate ?? Date.now(),
-                  )}
-                  onChange={(value) => {
-                    const val = value.currentTarget.value;
-                    setNewsletter((old) => {
-                      return {
-                        ...old,
-                        scheduledDate: val,
-                      };
-                    });
-                  }}
-                />
+                {!sending && (
+                  <>
+                    <Label className="font-bold">Date & Time</Label>
+                    <Input
+                      type="datetime-local"
+                      defaultValue={formatDate(
+                        newsletter.scheduledDate ?? Date.now(),
+                      )}
+                      onChange={(value) => {
+                        const val = value.currentTarget.value;
+                        setNewsletter((old) => {
+                          return {
+                            ...old,
+                            scheduledDate: val,
+                          };
+                        });
+                      }}
+                    />
+                  </>
+                )}
               </div>
             </DialogDescription>
             <div className="flex flex-row self-end gap-2">

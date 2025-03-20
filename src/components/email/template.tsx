@@ -97,11 +97,9 @@ export const ModernBusinessTemplate = ({
 
             <Section className="p-4 bg-white">
               <Text className="font-medium mb-2">{greeting}</Text>
-              <Text
+              <div
                 className="text-sm text-gray-600 mb-4"
-                dangerouslySetInnerHTML={{
-                  __html: body.replace(/<[^>]*>/g, ""),
-                }}
+                dangerouslySetInnerHTML={{ __html: body }}
               />
 
               <Hr className="border-t border-gray-200 my-4" />
@@ -184,10 +182,10 @@ export const MinimalistTemplate = ({
 
             <Section className="p-6 bg-white">
               <Text className="font-light mb-2">{greeting}</Text>
-              <Text
+              <div
                 className="text-sm text-gray-600 mb-4"
                 dangerouslySetInnerHTML={{
-                  __html: body.replace(/<[^>]*>/g, ""),
+                  __html: body,
                 }}
               />
 
@@ -269,10 +267,10 @@ export const VibrantTemplate = ({
 
             <Section className="p-4 bg-white">
               <Text className="font-medium mb-2">{greeting}</Text>
-              <Text
+              <div
                 className="text-sm text-gray-600 mb-4"
                 dangerouslySetInnerHTML={{
-                  __html: body.replace(/<[^>]*>/g, ""),
+                  __html: body,
                 }}
               />
 
@@ -357,10 +355,10 @@ export const CorporateTemplate = ({
 
             <Section className="p-4 bg-white">
               <Text className="font-medium mb-2">{greeting}</Text>
-              <Text
+              <div
                 className="text-sm text-gray-600 mb-4"
                 dangerouslySetInnerHTML={{
-                  __html: body.replace(/<[^>]*>/g, ""),
+                  __html: body,
                 }}
               />
 
