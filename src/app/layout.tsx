@@ -44,10 +44,10 @@ export default async function RootLayout({
             async
             /> */}
         </head>
-        <PostHogPageView />
         <body
           className={`${geistSans.variable} ${geistMono.variable} antialiased`}
         >
+          <PostHogPageView />
           <Providers session={session}>
             <Toaster />
             {children}
