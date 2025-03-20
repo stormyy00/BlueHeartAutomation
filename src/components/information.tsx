@@ -12,17 +12,13 @@ const Information = () => {
   const [info, setInfo] = useState([
     {
       name: "Description",
-      value: "Lorem Ipsum Quia Dolor Sit Amet",
+      value:
+        "POOR Magazine/Prensa Pobre is a grassroots, poor people-led, non-profit arts organization in San Francisco, California, United States. It is part of the greater indigenous and poor peoples-led movements around the world, such as the Landless Peoples Movements, the Homeless Workers' Movement, and Take Back the Land.",
       type: "textarea",
     },
     {
       name: "Location",
-      value: "Lorem Ipsum Quia Dolor Sit Amet",
-      type: "input",
-    },
-    {
-      name: "Theme",
-      value: "Lorem Ipsum Quia Dolor Sit Amet",
+      value: "Los Angeles",
       type: "input",
     },
     {
