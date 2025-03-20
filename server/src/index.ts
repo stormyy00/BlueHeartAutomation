@@ -165,7 +165,7 @@ const parseParagraph = (obj: any, content: any[]) => {
     for (const line of obj.content ?? []) {
       const finishingTags: string[] = []; // queue
       if ("marks" in line) {
-        const marks = line.marks.map((item) => item.type);
+        const marks = line.marks.map((item: { type: string }) => item.type);
         marks.forEach((mark) => {
           if (mark === "bold") {
             rawLine += "<b>";
