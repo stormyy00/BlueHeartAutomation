@@ -3,7 +3,7 @@ import Manage from "@/components/manage";
 
 const Page = () => {
   return (
-    <div className="flex w-full justify-center bg-gray-100">
+    <div className="flex w-full justify-center bg-white">
       <Manage />
     </div>
   );
