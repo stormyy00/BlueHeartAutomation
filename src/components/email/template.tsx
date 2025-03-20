@@ -97,7 +97,10 @@ export const ModernBusinessTemplate = ({
 
             <Section className="p-4 bg-white">
               <Text className="font-medium mb-2">{greeting}</Text>
-              <Text className="text-sm text-gray-600 mb-4">{body}</Text>
+              <div
+                className="text-sm text-gray-600 mb-4"
+                dangerouslySetInnerHTML={{ __html: body }}
+              />
 
               <Hr className="border-t border-gray-200 my-4" />
               <Section className="py-4">
@@ -140,7 +143,7 @@ export const ModernBusinessTemplate = ({
 // Template 2: Minimalist
 export const MinimalistTemplate = ({
   previewText = "Ttickle newsletter is here!",
-  // headerImage = "https://jezaktl1r2.ufs.sh/f/AdpLMvBHJtoLyy8adLJFMrTXDqJsZ7j1ocgNIG3Hv9fhWKSk",
+  headerImage = "https://jezaktl1r2.ufs.sh/f/AdpLMvBHJtoLyy8adLJFMrTXDqJsZ7j1ocgNIG3Hv9fhWKSk",
   date = new Date().toLocaleDateString("en-US", {
     month: "long",
     year: "numeric",
@@ -168,11 +171,23 @@ export const MinimalistTemplate = ({
               <Text className="text-xs text-gray-400 text-center mt-1 m-0">
                 {date}
               </Text>
+              <Img
+                src={headerImage}
+                alt="Header"
+                width="600"
+                height="200"
+                className="absolute inset-0 -z-10"
+              />
             </Section>
 
             <Section className="p-6 bg-white">
               <Text className="font-light mb-2">{greeting}</Text>
-              <Text className="text-sm text-gray-600 mb-4">{body}</Text>
+              <div
+                className="text-sm text-gray-600 mb-4"
+                dangerouslySetInnerHTML={{
+                  __html: body,
+                }}
+              />
 
               <Section className="py-4 my-4">
                 <Heading as="h3" className="font-light text-lg mb-2">
@@ -213,7 +228,7 @@ export const MinimalistTemplate = ({
 // Template 3: Vibrant
 export const VibrantTemplate = ({
   previewText = "Ttickle newsletter is here!",
-  // headerImage = "https://jezaktl1r2.ufs.sh/f/AdpLMvBHJtoLyy8adLJFMrTXDqJsZ7j1ocgNIG3Hv9fhWKSk",
+  headerImage = "https://jezaktl1r2.ufs.sh/f/AdpLMvBHJtoLyy8adLJFMrTXDqJsZ7j1ocgNIG3Hv9fhWKSk",
   date = new Date().toLocaleDateString("en-US", {
     month: "long",
     year: "numeric",
@@ -234,18 +249,30 @@ export const VibrantTemplate = ({
       <Tailwind>
         <Body className="bg-white font-sans">
           <Container className="mx-auto max-w-600 w-full border rounded-lg">
-            <Section className="bg-gradient-to-r from-purple-500 to-pink-500 text-white p-4 text-center">
+            <Section className="bg-purple-500 text-white p-4 text-center">
               <Heading className="font-bold text-xl text-center">
                 {mainHeading}
               </Heading>
               <Text className="text-xs text-white text-center opacity-75 m-0">
                 {date}
               </Text>
+              <Img
+                src={headerImage}
+                alt="Header"
+                width="600"
+                height="200"
+                className="absolute inset-0 -z-10"
+              />
             </Section>
 
             <Section className="p-4 bg-white">
               <Text className="font-medium mb-2">{greeting}</Text>
-              <Text className="text-sm text-gray-600 mb-4">{body}</Text>
+              <div
+                className="text-sm text-gray-600 mb-4"
+                dangerouslySetInnerHTML={{
+                  __html: body,
+                }}
+              />
 
               <Section className="bg-gradient-to-r from-yellow-50 to-red-50 p-4 rounded-lg my-4">
                 <Heading
@@ -289,7 +316,7 @@ export const VibrantTemplate = ({
 // Template 4: Corporate
 export const CorporateTemplate = ({
   previewText = "Ttickle newsletter is here!",
-  // headerImage = "https://jezaktl1r2.ufs.sh/f/AdpLMvBHJtoLyy8adLJFMrTXDqJsZ7j1ocgNIG3Hv9fhWKSk",
+  headerImage = "https://jezaktl1r2.ufs.sh/f/AdpLMvBHJtoLyy8adLJFMrTXDqJsZ7j1ocgNIG3Hv9fhWKSk",
   date = new Date().toLocaleDateString("en-US", {
     month: "long",
     year: "numeric",
@@ -317,11 +344,23 @@ export const CorporateTemplate = ({
               <Text className="text-xs text-gray-300 text-center m-0">
                 {date}
               </Text>
+              <Img
+                src={headerImage}
+                alt="Header"
+                width="600"
+                height="200"
+                className="absolute inset-0 -z-10"
+              />
             </Section>
 
             <Section className="p-4 bg-white">
               <Text className="font-medium mb-2">{greeting}</Text>
-              <Text className="text-sm text-gray-600 mb-4">{body}</Text>
+              <div
+                className="text-sm text-gray-600 mb-4"
+                dangerouslySetInnerHTML={{
+                  __html: body,
+                }}
+              />
 
               <Hr className="border-t border-gray-200 my-4" />
               <Section className="py-4">

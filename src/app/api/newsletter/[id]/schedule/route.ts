@@ -72,8 +72,9 @@ export const POST = async (
   req: NextRequest,
   { params }: { params: { id: string } },
 ) => {
-  const { date, subject, recipientGroup } = await req.json();
+  const { date, subject, recipientGroup, template } = await req.json();
   console.log("SERVER:", date);
+  console.log("template", template);
   try {
     console.log(params.id);
     const snapshotQuery = query(
@@ -139,15 +140,13 @@ export const POST = async (
     //       { status: 500 },
     //     );
     //   });
-
-    console.log("updating doc?", date, new Date(date).toLocaleString());
-
     await updateDoc(doc(collection(db, "newsletters"), snapshot.docs[0].id), {
       ...newsletter,
       scheduledDate: date,
       status: "scheduled",
       subject,
       recipientGroup,
+      template,
     })
       .then(async () => {
         await fetch(`${process.env.BACKEND_SERVER_URL}/api/scheduler`, {

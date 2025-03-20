@@ -7,6 +7,7 @@ import {
   getDocs,
   limit,
   query,
+  updateDoc,
   where,
 } from "firebase/firestore";
 import { RedisClientType } from "redis";
@@ -27,6 +28,7 @@ const redisConnector = new RedisConnector(process.env.REDIS_URL ?? "");
 type Email = {
   id: string;
   epochSchedule: string;
+  template: string;
 };
 
 const getOrg = async (uuid: string) => {
@@ -59,13 +61,7 @@ app.put(
       if (date > now) {
         await put(id, seconds);
       } else {
-        await sendEmail(
-          data.subject ?? "Subject here",
-          data.newsletter.join("<br />") ?? "Body here",
-          organizationDoc?.groups.filter(
-            (group: any) => group.name === data.recipientGroup,
-          )[0].emails,
-        ).then(console.log);
+        onKeyExpired(id);
       }
       // await put(uuid, 2);
       res.status(200).send("hi");
@@ -119,6 +115,19 @@ app.listen(port, async () => {
       await onKeyExpired(expiredKey);
     },
   );
+
+  const newsletters = await getDocs(collection(db, "newsletters"));
+  const now = new Date();
+  for (const doc of newsletters.docs) {
+    const data = doc.data();
+    if (
+      (data.status ?? "") === "scheduled" &&
+      new Date(data.scheduledDate ?? Date.now()) <= now
+    ) {
+      onKeyExpired(doc.id);
+    }
+  }
+
   await redisConnector.disconnect();
 });
 
@@ -149,6 +158,39 @@ const put = async (key: string, scheduled: number) => {
   await redisConnector.disconnect();
 };
 
+const parseParagraph = (obj: any, content: any[]) => {
+  let result = "";
+  if (obj.content && obj.content.length > 0) {
+    let rawLine = "";
+    for (const line of obj.content ?? []) {
+      const finishingTags = []; // queue
+      if ("marks" in line) {
+        const marks = line.marks.map((item) => item.type);
+        marks.forEach((mark) => {
+          if (mark === "bold") {
+            rawLine += "<b>";
+            finishingTags.push("</b>");
+          } else if (mark === "italic") {
+            rawLine += "<i>";
+            finishingTags.push("</i>");
+          }
+        });
+      }
+      rawLine += line.text.replace("\n", "<br />");
+      while (finishingTags.length > 0) {
+        rawLine += finishingTags.pop();
+      }
+      // if (content.indexOf(obj) < content.length - 1) {
+      //   result += "<br />"
+      // }
+    }
+    result += `<p style="color: black !important; margin: 0;">${rawLine}</p>`;
+  } else {
+    result += "<br />";
+  }
+  return result;
+};
+
 const onKeyExpired = async (expiredKey: string) => {
   // This function will be triggered when a key expires
   // console.log(`Handling expired key: ${expiredKey}`);
@@ -157,12 +199,49 @@ const onKeyExpired = async (expiredKey: string) => {
   const data = document.data();
   const organizationDoc = await getOrg(data?.orgId);
 
-  //TODO: need recipients
-  await sendEmail(
-    data?.subject ?? "Subject here",
-    data?.newsletter.join("<br />") ?? "Body here",
+  const newsletterBody = data.newsletter;
+  let body = "Body here";
+  if (newsletterBody instanceof Array) {
+    // old format
+    body = newsletterBody.join("<br />");
+  } else {
+    // new format
+    const content = newsletterBody.content ?? [];
+    let stringBody = "";
+    for (const obj of content) {
+      if (obj.type === "paragraph") {
+        stringBody += parseParagraph(obj, content);
+      } else if (obj.type === "bulletList") {
+        for (const bullet of obj.content ?? []) {
+          const bulletContent = bullet.content[0];
+          if (bulletContent.type === "paragraph") {
+            const body = parseParagraph(bulletContent, obj.content);
+            stringBody += `<ul>${body
+              .replace("<br />", "")
+              .split("\n")
+              .map((text) => `<li>${text}</li>`)}</ul>`;
+          }
+        }
+      }
+    }
+    body = stringBody === "" ? body : stringBody;
+  }
+
+  const template = data.template ?? "vibrant";
+  const recipients =
     organizationDoc?.groups.filter(
       (group: any) => group.name === data?.recipientGroup,
-    )[0].emails,
-  );
+    )[0]?.emails ?? [];
+  if (recipients.length > 0) {
+    await sendEmail(
+      data?.subject ?? "Subject here",
+      `<p style="color: black !important; margin: 0;">${body}</p>`,
+      recipients,
+      template,
+    ).then(async (res) => {
+      await updateDoc(doc(collection(db, "newsletters"), expiredKey), {
+        status: "sent",
+      });
+    });
+  }
 };

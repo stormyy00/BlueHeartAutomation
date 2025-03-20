@@ -12,6 +12,7 @@
   "license": "ISC",
   "description": "",
   "dependencies": {
+    "@tiptap/react": "^2.11.5",
     "@types/dotenv": "^6.1.1",
     "@types/nodemailer": "^6.4.17",
     "dotenv": "^16.4.7",

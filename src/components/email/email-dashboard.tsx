@@ -1,4 +1,5 @@
 "use client";
+
 import React, { useState } from "react";
 import {
   Card,
@@ -18,6 +19,7 @@ import {
 import { toast } from "sonner";
 
 const EmailDashboard = ({ body = "example body" }) => {
+  console.log("Email Body", body);
   const [formData, setFormData] = useState({
     templateStyle: "modern",
     previewText: "Ttickle newsletter is here!",
@@ -40,7 +42,7 @@ const EmailDashboard = ({ body = "example body" }) => {
   });
 
   const handleTemplate = () => {
-    fetch(`/api/template`, {
+    fetch(`/api/user`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -54,7 +56,7 @@ const EmailDashboard = ({ body = "example body" }) => {
         return response.json();
       })
       .then(() => {
-        toast("Email Template Sucessfully Saved");
+        toast.success("Email Template Sucessfully Saved");
       })
       .catch((error) => {
         toast.error("Email Template Save Failed", error);
@@ -93,15 +95,17 @@ const EmailDashboard = ({ body = "example body" }) => {
 
     return (
       <Card
-        className={`cursor-pointer transition-all duration-200 ${active ? "ring-2 ring-primary" : "hover:shadow-md"}`}
+        className={`cursor-pointer transition-all duration-200 ${active ? "ring-2 ring-ttickles-blue" : "hover:shadow-md"}`}
         onClick={() => setFormData({ ...formData, templateStyle: type })}
       >
         <CardHeader className="p-3">
-          <CardTitle className="text-sm font-medium">{title}</CardTitle>
-          {active && <Badge className="ml-auto">Selected</Badge>}
+          <div className="flex justify-between items-center">
+            <CardTitle className="text-sm font-medium">{title}</CardTitle>
+            {active && <Badge className="ml-auto">Selected</Badge>}
+          </div>
         </CardHeader>
-        <CardContent className="p-2 overflow-hidden">
-          <div className="transform scale-50 origin-top-left h-64 w-full">
+        <CardContent className="p-0 flex overflow-hidden">
+          <div className="transform scale-50 origin-top h-64 w-full">
             {type === "modern" && <ModernBusinessPreview {...templateProps} />}
             {type === "minimalist" && <MinimalistPreview {...templateProps} />}
             {type === "vibrant" && <VibrantPreview {...templateProps} />}
@@ -156,7 +160,10 @@ const EmailDashboard = ({ body = "example body" }) => {
                 </CardDescription>
               </>
             </CardHeader>
-            <Button className="m-4" onClick={handleTemplate}>
+            <Button
+              className="m-4 bg-ttickles-blue text-white hover:bg-opacity-70"
+              onClick={handleTemplate}
+            >
               Save
             </Button>
           </div>

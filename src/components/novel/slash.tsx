@@ -27,6 +27,44 @@ export const suggestionItems = createSuggestionItems([
     },
   },
   {
+    title: "Wrapped Image",
+    description: "Insert an image with text wrapping around it",
+    searchTerms: ["wrappedimage", "float", "wrap", "align"],
+    icon: <ImageIcon className="h-4 w-4" />,
+    command: ({ editor, range }) => {
+      editor.chain().focus().deleteRange(range).run();
+      // Show a file input dialog
+      const input = document.createElement("input");
+      input.type = "file";
+      input.accept = "image/*";
+      input.onchange = () => {
+        if (input.files?.length) {
+          const file = input.files[0];
+          const reader = new FileReader();
+          reader.onload = () => {
+            // Use insertContent directly instead of setWrappedImage
+            editor
+              .chain()
+              .focus()
+              .insertContent({
+                type: "wrappedImage",
+                attrs: {
+                  src: reader.result,
+                  alt: file.name,
+                  title: file.name,
+                  alignment: "left", // Default alignment
+                },
+              })
+              .run();
+          };
+          reader.readAsDataURL(file);
+          console.log(file);
+        }
+      };
+      input.click();
+    },
+  },
+  {
     title: "Text",
     description: "Just start typing with plain text.",
     searchTerms: ["p", "paragraph"],
