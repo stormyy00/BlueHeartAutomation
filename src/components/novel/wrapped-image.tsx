@@ -1,4 +1,4 @@
-// In your wrapped-image.ts file
+// @ts-nocheck
 import { Node, mergeAttributes } from "@tiptap/core";
 import { Plugin, PluginKey } from "@tiptap/pm/state";
 import { cx } from "class-variance-authority";

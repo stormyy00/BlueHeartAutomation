@@ -163,10 +163,10 @@ const parseParagraph = (obj: any, content: any[]) => {
   if (obj.content && obj.content.length > 0) {
     let rawLine = "";
     for (const line of obj.content ?? []) {
-      const finishingTags = []; // queue
+      const finishingTags: string[] = []; // queue
       if ("marks" in line) {
-        const marks = line.marks.map((item) => item.type);
-        marks.forEach((mark) => {
+        const marks = line.marks.map((item: { type: string }) => item.type);
+        marks.forEach((mark: string) => {
           if (mark === "bold") {
             rawLine += "<b>";
             finishingTags.push("</b>");
@@ -197,7 +197,8 @@ const onKeyExpired = async (expiredKey: string) => {
   // Place your custom logic here (e.g., sending an HTTP request or updating your app state)
   const document = await getDoc(doc(collection(db, "newsletters"), expiredKey));
   const data = document.data();
-  const organizationDoc = await getOrg(data?.orgId);
+  if (!data) return;
+  const organizationDoc = await getOrg(data.orgId);
 
   const newsletterBody = data.newsletter;
   let body = "Body here";

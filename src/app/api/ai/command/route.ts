@@ -169,11 +169,10 @@ export async function POST(req: NextRequest) {
         noThinkingInstruction +
         "\n\nCURRENT DOCUMENT CONTEXT:\n" +
         documentContent +
-        //         "\n\nTRAINING DATA\n" +
-        //         "CRITICAL: USE AS WRITING STYLE REFERENCE (match this tone, vocabulary, and style):\n" +
-        //         training +
-        //         "\nCRITICAL: Do not mention the reference text unless explicitly asked.\n" +
-        // "When explaining a document, do not reference this text. It is only meant to guide writing style."+
+        "\n\nTRAINING DATA\n" +
+        "CRITICAL: USE AS WRITING STYLE REFERENCE (match this tone, vocabulary, and style):\n" +
+        training +
+        "When explaining a document, do not reference this text. It is only meant to guide writing style." +
         "\n\n" +
         "Use Markdown formatting when appropriate. " +
         "Feel free to add color and emphasize certain points with different symbols. " +
