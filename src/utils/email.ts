@@ -20,11 +20,11 @@ export const sendEmail = async (
   subject: string,
   body: string,
   recipients: string[],
-  templateType: "modern" | "minimalist" | "vibrant" | "classic",
+  template: "modern" | "minimalist" | "vibrant" | "classic",
 ): Promise<SMTPTransport.SentMessageInfo> => {
   const fromLine = process.env.NEXT_PUBLIC_SMTP_FROM ?? "no-reply";
   let emailHtml = "";
-  switch (templateType) {
+  switch (template) {
     case "modern":
       emailHtml = await render(ModernBusinessTemplate({ body }));
       break;
@@ -38,7 +38,7 @@ export const sendEmail = async (
       emailHtml = await render(CorporateTemplate({ body }));
       break;
     default:
-      throw new Error("Invalid email template type.");
+      emailHtml = body;
   }
   return await transporter.sendMail({
     from: fromLine,

@@ -6,7 +6,7 @@ type Props = {
   recipients: string[];
   body: string;
   scheduled?: number;
-  templateType: string;
+  template: string;
 };
 
 export const PUT = async (req: NextRequest) => {
@@ -24,7 +24,9 @@ export const PUT = async (req: NextRequest) => {
     data.subject,
     data.body,
     data.recipients,
-    data.templateType,
+    ["modern", "minimalist", "vibrant", "classic"].includes(data.template)
+      ? (data.template as "modern" | "minimalist" | "vibrant" | "classic")
+      : "modern",
   );
   return NextResponse.json(
     { message: "Email sent!", id: result.messageId },

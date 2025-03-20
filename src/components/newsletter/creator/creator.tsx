@@ -32,6 +32,7 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { Input } from "@/components/ui/input";
 import Select from "@/components/global/select";
 import { Organization } from "@/data/types";
+import { TEMPLATES } from "@/data/newsletter/newsletter";
 
 type NewsletterData = {
   body: string;
@@ -39,6 +40,7 @@ type NewsletterData = {
   subject: string;
   recipientGroup: string;
   scheduledDate: string | undefined;
+  template: string;
 };
 
 const Creator = ({ org }: { org: Organization }) => {
@@ -57,6 +59,7 @@ const Creator = ({ org }: { org: Organization }) => {
     subject: "",
     recipientGroup: "",
     scheduledDate: undefined,
+    template: "modern",
   });
   const [sheetOpen, setSheetOpen] = useState(false);
   const [error, setError] = useState(false);
@@ -132,6 +135,7 @@ const Creator = ({ org }: { org: Organization }) => {
           scheduledDate: data.newsletterData.scheduledDate,
           recipientGroup: data.newsletterData.recipientGroup ?? "",
           subject: data.newsletterData.subject ?? "",
+          template: data.template,
         });
       })
       .catch((error) => {
@@ -343,6 +347,19 @@ const Creator = ({ org }: { org: Organization }) => {
                     })
                   }
                   placeholder="Select a Recipient"
+                />
+                <Label className="font-bold">Newsletter Template</Label>
+                <Select
+                  options={TEMPLATES.map(({ title }) => ({
+                    label: title,
+                    value: title,
+                  }))}
+                  onChange={(selected) =>
+                    setNewsletter((prev) => {
+                      return { ...prev, template: selected };
+                    })
+                  }
+                  placeholder="Select a Template"
                 />
                 <Label className="font-bold">Date & Time</Label>
                 <Input

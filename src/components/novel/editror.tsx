@@ -33,6 +33,7 @@ import hljs from "highlight.js";
 import { Button } from "../ui/button";
 import { Ellipsis, Sparkle } from "lucide-react";
 import AIChatbot from "./generate/ai-chat";
+import { WrappedImageSelector } from "./image-selector";
 
 const extensions = [...defaultExtensions, slashCommand];
 
@@ -201,6 +202,7 @@ const TailwindAdvancedEditor = ({
               <TextButtons />
               <Separator orientation="vertical" />
               <ColorSelector open={openColor} onOpenChange={setOpenColor} />
+              <WrappedImageSelector />
             </GenerativeMenuSwitch>
 
             {ai && (

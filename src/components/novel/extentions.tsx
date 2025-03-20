@@ -23,7 +23,7 @@ import {
 } from "novel";
 
 import { Markdown } from "tiptap-markdown";
-
+import { WrappedImage } from "./wrapped-image";
 import { cx } from "class-variance-authority";
 import { common, createLowlight } from "lowlight";
 
