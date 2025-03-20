@@ -9,7 +9,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { Organization, RecipientGroup } from "@/data/types";
-import { Edit, Info, User, X } from "lucide-react";
+import { Pen, Info, User, X } from "lucide-react";
 import { KeyboardEvent, useState } from "react";
 import { toast } from "sonner";
 import RecipientToolbar from "./recipient-toolbar";
@@ -89,24 +89,24 @@ const Recipients = ({ org }: Props) => {
     save(newItems);
   };
   return (
-    <div className="w-full h-full">
+    <div className="w-10/12 h-full flex flex-col m-10 gap-4">
       <Label className="font-extrabold text-3xl flex flex-col gap-y-2">
-        Recipients{" "}
-        <RecipientToolbar
-          org={org}
-          list={list}
-          setList={setList}
-          setChecked={setChecked}
-          checked={checked}
-        />
+        Recipients
       </Label>
-      <div className="w-full h-full flex flex-row flex-wrap justify-center gap-x-4">
+      <RecipientToolbar
+        org={org}
+        list={list}
+        setList={setList}
+        setChecked={setChecked}
+        checked={checked}
+      />
+      <div className="grid grid-cols-3 gap-3">
         {list.map((group, index) => (
           <div
             key={index}
-            className="w-1/6 h-1/6 bg-white flex flex-row justify-between rounded-xl shadow-sm hover:shadow-md transition-shadow duration-300 border border-gray-100 p-4"
+            className="h-fit bg-white flex flex-row justify-between rounded-xl shadow-sm hover:shadow-md transition-shadow duration-300 border border-gray-100 p-6"
           >
-            <div className="flex flex-col">
+            <div className="flex flex-col gap-4">
               <span className="text-xs font-medium text-gray-500 uppercase tracking-wide flex items-center gap-x-2">
                 <Checkbox
                   checked={checked.includes(index)}
@@ -123,17 +123,20 @@ const Recipients = ({ org }: Props) => {
                       }
                     });
                   }}
-                  className="h-3 w-3 text-gray-900 rounded-full border-gray-300 focus:ring-gray-900"
+                  className="h-5 w-5 text-gray-900 rounded-full border-gray-300 focus:ring-gray-900"
                 />
                 RECIPIENT GROUP
               </span>
-              <span className="font-bold">{group.name}</span>
-              <span className="mt-4 flex items-center rounded-xl bg-ttickles-lightblue w-12 h-2/6 py-3 px-1 gap-x-1 text-sm text-white justify-center">
+              <span className="font-bold text-gray-900 text-2xl">
+                {group.name}
+              </span>
+              <span className="mt-4 flex items-center rounded-xl bg-ttickles-lightblue w-14 h-8 py-4 px-1 gap-x-1 text-sm text-white justify-center">
                 <User size={20} /> {group.emails.length}
               </span>
             </div>
-            <Edit
-              className="cursor-pointer"
+            <Pen
+              className="cursor-pointer text-gray-500"
+              size={20}
               onClick={() => {
                 setOpen(true);
                 setGroup([index, group]);
@@ -172,7 +175,7 @@ const Recipients = ({ org }: Props) => {
             <div className="flex flex-row self-end gap-2">
               <DialogClose asChild>
                 <Button
-                  className="px-3 py-1 rounded"
+                  className="px-3 py-1 rounded bg-white text-black border-black hover:bg-white hover:text-black"
                   onClick={() => {
                     setOpen(false);
                     setGroup([

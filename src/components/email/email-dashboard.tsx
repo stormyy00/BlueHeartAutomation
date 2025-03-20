@@ -143,7 +143,7 @@ const EmailDashboard = ({ body = "example body" }) => {
   };
 
   return (
-    <div className="w-full  mx-auto py-6 px-10">
+    <div className="flex flex-col gap-y-4 w-11/12 m-10 mx-10">
       <h1 className="text-3xl font-bold mb-6">Email Newsletter Dashboard</h1>
       <div className="flex flex-col justify-center items-center gap-6">
         <Card className="col-span-1 lg:col-span-2">

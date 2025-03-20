@@ -3,6 +3,7 @@ import { useParams, useRouter } from "next/navigation";
 import Information from "./information";
 import OrgHeader from "./org-header";
 import { useQuery } from "@tanstack/react-query";
+import { Label } from "./ui/label";
 
 const Manage = () => {
   const router = useRouter();
@@ -23,7 +24,8 @@ const Manage = () => {
     return;
   }
   return (
-    <div className="flex flex-col items-center w-10/12 m-10 gap-8">
+    <div className="flex flex-col w-11/12 m-10 gap-8">
+      <Label className="font-extrabold text-3xl self-start">Manage</Label>
       <OrgHeader editable org={orgQuery.data.data} />
       <Information />
     </div>

@@ -1,9 +1,8 @@
 "use client";
 import { Button } from "./ui/button";
 import { Input } from "./ui/input";
-import { Label } from "./ui/label";
 import { Textarea } from "./ui/textarea";
-import { Pencil } from "lucide-react";
+import { Pen } from "lucide-react";
 import { useState } from "react";
 import { ChangeEvent } from "react";
 import { HTMLInputs } from "@/types/inputs";
@@ -40,29 +39,38 @@ const Information = () => {
   };
 
   return (
-    <div className="flex flex-col w-full p-6 bg-white shadow-md rounded-md gap-y-2 border-gray-100 border">
-      <div className="flex flex-row text-black text-4xl font-bold w-full justify-between">
-        Information
+    <div className="flex flex-col w-full p-6 bg-white shadow-md rounded-2xl text-lg gap-y-2 border-gray-100 border">
+      <div className="flex flex-row text-gray-900 font-semibold w-full justify-between mb-4">
+        <div>
+          Information
+          <div className="text-gray-500 text-sm font-medium">
+            Edit your organization&apos;s information
+          </div>
+        </div>
         {!edit && (
-          <Pencil
-            size={24}
-            className="cursor-pointer"
+          <Pen
+            size={20}
+            className="cursor-pointer text-gray-500"
             onClick={() => setEdit(!edit)}
           />
         )}
       </div>
-      <div className="flex flex-col gap-y-4">
+      <div className="flex flex-col gap-y-8">
         {!edit &&
           info.map((value, index) => (
-            <div key={index} className="flex flex-col">
-              <Label className="font-bold">{value.name}</Label>
-              <span>{value.value}</span>
+            <div key={index} className="flex flex-col gap-1">
+              <span className="text-xs font-medium text-gray-500 uppercase tracking-wide">
+                {value.name}
+              </span>
+              <span className="text-gray-900 text-sm">{value.value}</span>
             </div>
           ))}
         {edit &&
           info.map((question, index) => (
             <div key={index}>
-              <Label className="font-bold">{question.name}</Label>
+              <span className="text-xs font-medium text-gray-500 uppercase tracking-wide">
+                {question.name}
+              </span>
               {question.type === "textarea" && (
                 <Textarea
                   value={question.value}
@@ -83,7 +91,7 @@ const Information = () => {
         {edit && (
           <Button
             onClick={() => setEdit(!edit)}
-            className="bg-ttickles-blue text-white shadow-none hover:bg-ttickles-blue"
+            className="bg-ttickles-blue text-white shadow-none hover:bg-ttickles-blue hover:brightness-110 duration-100"
           >
             Submit
           </Button>
