@@ -163,7 +163,7 @@ const parseParagraph = (obj: any, content: any[]) => {
   if (obj.content && obj.content.length > 0) {
     let rawLine = "";
     for (const line of obj.content ?? []) {
-      const finishingTags = []; // queue
+      const finishingTags: string[] = []; // queue
       if ("marks" in line) {
         const marks = line.marks.map((item) => item.type);
         marks.forEach((mark) => {
