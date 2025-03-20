@@ -72,8 +72,9 @@ export const POST = async (
   req: NextRequest,
   { params }: { params: { id: string } },
 ) => {
-  const { date, subject, recipientGroup } = await req.json();
+  const { date, subject, recipientGroup, template } = await req.json();
   console.log("SERVER:", date);
+  console.log("template", template);
   try {
     console.log(params.id);
     const snapshotQuery = query(
@@ -148,6 +149,7 @@ export const POST = async (
       status: "scheduled",
       subject,
       recipientGroup,
+      template,
     })
       .then(async () => {
         await fetch(`${process.env.BACKEND_SERVER_URL}/api/scheduler`, {

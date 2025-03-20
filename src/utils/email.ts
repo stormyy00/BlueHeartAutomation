@@ -23,6 +23,7 @@ export const sendEmail = async (
   template: "modern" | "minimalist" | "vibrant" | "classic",
 ): Promise<SMTPTransport.SentMessageInfo> => {
   const fromLine = process.env.NEXT_PUBLIC_SMTP_FROM ?? "no-reply";
+  console.log(body);
   let emailHtml = "";
   switch (template) {
     case "modern":

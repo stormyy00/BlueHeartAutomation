@@ -20,6 +20,8 @@ export const PUT = async (req: NextRequest) => {
       { status: 400 },
     );
   }
+
+  console.log("email", data);
   const result = await sendEmail(
     data.subject,
     data.body,

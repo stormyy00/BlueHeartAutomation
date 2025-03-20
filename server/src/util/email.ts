@@ -1,6 +1,11 @@
 import dotenv from "dotenv";
 import * as nodemailer from "nodemailer";
 import SMTPTransport from "nodemailer/lib/smtp-transport";
+import { render } from "@react-email/render";
+import { ModernBusinessTemplate } from "../../../src/components/email/template";
+import { MinimalistTemplate } from "../../../src/components/email/template";
+import { VibrantTemplate } from "../../../src/components/email/template";
+import { CorporateTemplate } from "../../../src/components/email/template";
 
 dotenv.config({
   path: "../.env",
@@ -20,13 +25,32 @@ export const sendEmail = async (
   subject: string,
   body: string,
   recipients: string[],
+  template: "modern" | "minimalist" | "vibrant" | "classic",
 ): Promise<SMTPTransport.SentMessageInfo> => {
   const fromLine = process.env.NEXT_PUBLIC_SMTP_FROM ?? "no-reply";
+  let emailHtml = "";
+  switch (template) {
+    case "modern":
+      emailHtml = await render(ModernBusinessTemplate({ body }));
+      break;
+    case "minimalist":
+      emailHtml = await render(MinimalistTemplate({ body }));
+      break;
+    case "vibrant":
+      emailHtml = await render(VibrantTemplate({ body }));
+      break;
+    case "classic":
+      emailHtml = await render(CorporateTemplate({ body }));
+      break;
+    default:
+      emailHtml = body;
+  }
+
   return await transporter.sendMail({
     from: fromLine,
     to: recipients.join(", "),
     subject: subject,
     text: body,
-    html: body,
+    html: emailHtml,
   });
 };

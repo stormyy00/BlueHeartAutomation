@@ -225,6 +225,7 @@ const onKeyExpired = async (expiredKey: string) => {
     }
     body = stringBody === "" ? body : stringBody;
   }
+  const template = "vibrant";
   const recipients =
     organizationDoc?.groups.filter(
       (group: any) => group.name === data?.recipientGroup,
@@ -234,6 +235,7 @@ const onKeyExpired = async (expiredKey: string) => {
       data?.subject ?? "Subject here",
       `<p style="color: black !important; margin: 0;">${body}</p>`,
       recipients,
+      template,
     ).then(async (res) => {
       await updateDoc(doc(collection(db, "newsletters"), expiredKey), {
         status: "sent",

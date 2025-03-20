@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import Events from "./events";
 import { Button } from "@/components/ui/button";
-import { Calendar, Clock, Ellipsis, Loader, Save } from "lucide-react";
+import { Calendar, Clock, Ellipsis, Loader, Save, Send } from "lucide-react";
 import { EventType } from "@/types/event";
 import { usePathname } from "next/navigation";
 import { toast } from "sonner";
@@ -81,6 +81,7 @@ const Creator = ({ org }: { org: Organization }) => {
         date: newsletter.scheduledDate,
         subject: newsletter.subject,
         recipientGroup: newsletter.recipientGroup,
+        template: newsletter.template,
       }),
     }).catch((error) => {
       toast.error("Failed to schedule newsletter", { id: toastId });
@@ -279,6 +280,18 @@ const Creator = ({ org }: { org: Organization }) => {
             >
               <Clock />
               Schedule
+            </Button>
+            <Button
+              className="bg-ttickles-orange hover:bg-ttickles-orange hover:brightness-110 transition duration-100"
+              onClick={() => {
+                setPopup({
+                  ...popup,
+                  visible: true,
+                });
+              }}
+            >
+              <Send />
+              Send
             </Button>
           </div>
         </div>

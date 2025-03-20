@@ -19,6 +19,7 @@ import {
 import { toast } from "sonner";
 
 const EmailDashboard = ({ body = "example body" }) => {
+  console.log("Email Body", body);
   const [formData, setFormData] = useState({
     templateStyle: "modern",
     previewText: "Ttickle newsletter is here!",
