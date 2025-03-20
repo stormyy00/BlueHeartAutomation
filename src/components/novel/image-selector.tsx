@@ -16,9 +16,9 @@ export const WrappedImageSelector = () => {
   const currentAlignment =
     editor.getAttributes("wrappedImage").alignment || "left";
 
-  const setAlignment = (alignment: "left" | "center" | "right") => {
-    editor.commands.updateWrappedImageAlignment(alignment);
-  };
+  // const setAlignment = (alignment: "left" | "center" | "right") => {
+  //   editor.commands.updateWrappedImageAlignment(alignment);
+  // };
 
   return (
     <div className="flex items-center gap-1">
@@ -29,7 +29,7 @@ export const WrappedImageSelector = () => {
           "p-1 text-muted-foreground hover:text-foreground",
           currentAlignment === "left" && "bg-accent text-foreground",
         )}
-        onClick={() => setAlignment("left")}
+        // onClick={() => setAlignment("left")}
       >
         <AlignLeft className="h-4 w-4" />
       </Button>
@@ -41,7 +41,7 @@ export const WrappedImageSelector = () => {
           "p-1 text-muted-foreground hover:text-foreground",
           currentAlignment === "center" && "bg-accent text-foreground",
         )}
-        onClick={() => setAlignment("center")}
+        // onClick={() => setAlignment("center")}
       >
         <AlignCenter className="h-4 w-4" />
       </Button>
@@ -53,7 +53,7 @@ export const WrappedImageSelector = () => {
           "p-1 text-muted-foreground hover:text-foreground",
           currentAlignment === "right" && "bg-accent text-foreground",
         )}
-        onClick={() => setAlignment("right")}
+        // onClick={() => setAlignment("right")}
       >
         <AlignRight className="h-4 w-4" />
       </Button>
