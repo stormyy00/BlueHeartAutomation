@@ -5,7 +5,6 @@ import { NextResponse } from "next/server";
 const ollama = createOllama({
   /* your config */
 });
-
 // IMPORTANT! Set the runtime to edge: https://vercel.com/docs/functions/edge-functions/edge-runtime
 export const runtime = "edge";
 

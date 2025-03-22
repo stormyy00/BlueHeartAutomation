@@ -25,7 +25,7 @@ const OrgHeader = ({ editable, org }: props) => {
         />
         <div>
           <h1 className="text-3xl font-extrabold text-gray-900 mb-2">
-            Poor News{org.name}
+            {org.name}
           </h1>
           {!edit &&
             org.links?.map((link, index) => (

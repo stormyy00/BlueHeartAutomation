@@ -104,7 +104,7 @@
     "next-auth": "^4.24.7",
     "nodemailer": "^6.10.0",
     "novel": "^1.0.2",
-    "ollama": "^0.5.12",
+    "ollama": "^0.5.14",
     "ollama-ai-provider": "^1.2.0",
     "pdf-lib": "^1.17.1",
     "pino": "^9.6.0",

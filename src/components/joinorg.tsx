@@ -84,6 +84,7 @@ const OrganizationForm = () => {
           groups: [],
           region: "US",
           owner: session?.user.uuid,
+          calendarId: "",
         } as Organization,
         mode: "create",
       }),

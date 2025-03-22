@@ -1,13 +1,4 @@
-import {
-  Users,
-  Link,
-  Mail,
-  Users2,
-  User,
-  Building2,
-  Clock,
-  ChartArea,
-} from "lucide-react";
+import { Users, Link, Mail, Users2, Clock, ChartArea } from "lucide-react";
 interface Tab {
   name: string;
   link: string;
@@ -24,33 +15,12 @@ interface Collapsible {
 type Tabs = Record<string, Collapsible>;
 
 export const TABS: Tabs = {
-  admin: {
-    expand: true,
-    tabs: [
-      //TODO: Needs to be updated
-      {
-        name: "Organizations",
-        link: "/admin/orgs",
-        icon: <Building2 />,
-      },
-      {
-        name: "Users",
-        link: "/admin/users",
-        icon: <Users />,
-      },
-    ],
-  },
   user: {
     expand: true,
     tabs: [
       {
-        name: "Profile",
-        link: "/user/profile",
-        icon: <User />,
-      },
-      {
         name: "My Organization",
-        link: "/orgs/@mine",
+        link: "/orgs/@mine/manage",
         icon: <Users2 />,
         requiresOrg: true,
       },
