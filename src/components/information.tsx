@@ -41,7 +41,7 @@ const Information = ({ orgId }: props) => {
   };
 
   const handleUpdate = async () => {
-    toast.loading("Updating Organization Information");
+    const toastId = toast.loading("Updating Organization Information");
     const updatedData = info.reduce(
       (acc, { key, value }) => {
         acc[key] = value;
@@ -57,10 +57,10 @@ const Information = ({ orgId }: props) => {
       }),
     });
     if (response.status !== 200) {
-      toast.error("Error updating event.");
+      toast.error("Error updating event.", { id: toastId });
       return;
     }
-    toast.success("Successfully updated organization!");
+    toast.success("Successfully updated organization!", { id: toastId });
     setEdit(!edit);
   };
 
