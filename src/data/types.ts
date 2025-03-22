@@ -26,6 +26,7 @@ export type Organization = {
   links: Link[];
   region: Region;
   groups: RecipientGroup[];
+  calendarId: string;
 };
 
 export type Newsletter = {

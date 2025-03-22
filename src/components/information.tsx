@@ -6,23 +6,29 @@ import { Pen } from "lucide-react";
 import { useState } from "react";
 import { ChangeEvent } from "react";
 import { HTMLInputs } from "@/types/inputs";
-
-const Information = () => {
+import { toast } from "sonner";
+type props = {
+  orgId: string | string[];
+};
+const Information = ({ orgId }: props) => {
   const [edit, setEdit] = useState<boolean>(false);
   const [info, setInfo] = useState([
     {
       name: "Description",
+      key: "description",
       value:
         "POOR Magazine/Prensa Pobre is a grassroots, poor people-led, non-profit arts organization in San Francisco, California, United States. It is part of the greater indigenous and poor peoples-led movements around the world, such as the Landless Peoples Movements, the Homeless Workers' Movement, and Take Back the Land.",
       type: "textarea",
     },
     {
       name: "Location",
+      key: "location",
       value: "Los Angeles",
       type: "input",
     },
     {
       name: "Google Calendar ID",
+      key: "calendarId",
       value: "",
       type: "input",
     },
@@ -32,6 +38,30 @@ const Information = () => {
     const updated = [...info];
     updated[index].value = e.target.value;
     setInfo(updated);
+  };
+
+  const handleUpdate = async () => {
+    toast.loading("Updating Organization Information");
+    const updatedData = info.reduce(
+      (acc, { key, value }) => {
+        acc[key] = value;
+        return acc;
+      },
+      {} as { [key: string]: string },
+    );
+    const response = await fetch("/api/manage", {
+      method: "PUT",
+      body: JSON.stringify({
+        orgId: orgId,
+        updatedData: updatedData,
+      }),
+    });
+    if (response.status !== 200) {
+      toast.error("Error updating event.");
+      return;
+    }
+    toast.success("Successfully updated organization!");
+    setEdit(!edit);
   };
 
   return (
@@ -86,7 +116,7 @@ const Information = () => {
       <div className="self-end">
         {edit && (
           <Button
-            onClick={() => setEdit(!edit)}
+            onClick={() => handleUpdate()}
             className="bg-ttickles-blue text-white shadow-none hover:bg-ttickles-blue hover:brightness-110 duration-100"
           >
             Submit

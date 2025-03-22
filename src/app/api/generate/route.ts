@@ -3,7 +3,7 @@ import { match } from "ts-pattern";
 import { createOllama } from "ollama-ai-provider";
 import { NextResponse } from "next/server";
 const ollama = createOllama({
-  /* your config */
+  baseURL: process.env.OLLAMA_URL ?? "http://localhost:11434",
 });
 
 // IMPORTANT! Set the runtime to edge: https://vercel.com/docs/functions/edge-functions/edge-runtime
