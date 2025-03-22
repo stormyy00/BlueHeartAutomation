@@ -30,7 +30,7 @@ const Information = ({ orgId, orgData }: props) => {
     {
       name: "Google Calendar ID",
       key: "calendarId",
-      value: "",
+      value: orgData.calendarId,
       type: "input",
     },
   ]);

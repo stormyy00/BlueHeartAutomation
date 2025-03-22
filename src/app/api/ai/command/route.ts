@@ -21,7 +21,10 @@ type UserMessage = {
  * import it from environment variables, etc.
  */
 const ollama = createOllama({
-  baseURL: process.env.OLLAMA_URL ?? "http://localhost:11434",
+  // baseURL:
+  //   process.env.NODE_ENV === "production"
+  //     ? process.env.OLLAMA_URL
+  //     : "http://localhost:11434",
 });
 // export async function POST(req: NextRequest) {
 //   try {
