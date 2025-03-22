@@ -81,12 +81,18 @@ const RecipientToolbar = ({
 
   return (
     <div className="flex flex-row items-center gap-1">
-      <div className=" bg-ttickles-blue hover:bg-ttickles-blue hover:brightness-110 duration-300 p-2 rounded-xl cursor-pointer text-white flex flex-row items-center text-sm gap-2">
-        <Plus size={20} onClick={() => setAdding(true)} />
+      <div
+        onClick={() => setAdding(true)}
+        className=" bg-ttickles-blue hover:bg-ttickles-blue hover:brightness-110 duration-300 p-2 rounded-xl cursor-pointer text-white flex flex-row items-center text-sm gap-2"
+      >
+        <Plus size={20} />
         Add Group
       </div>
-      <div className="bg-red-500 hover:bg-red-500 hover:brightness-110 duration-300 p-2 rounded-xl cursor-pointer text-white flex flex-row items-center text-sm gap-2">
-        <Trash size={20} onClick={confirmDelete} />
+      <div
+        onClick={confirmDelete}
+        className="bg-red-500 hover:bg-red-500 hover:brightness-110 duration-300 p-2 rounded-xl cursor-pointer text-white flex flex-row items-center text-sm gap-2"
+      >
+        <Trash size={20} />
         Delete Groups
       </div>
 

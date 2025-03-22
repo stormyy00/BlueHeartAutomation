@@ -8,7 +8,7 @@ import {
 } from "@/components/ui/dialog";
 import { Label } from "@/components/ui/label";
 import { Organization, RecipientGroup } from "@/data/types";
-import { Info, X } from "lucide-react";
+import { X } from "lucide-react";
 import { Dispatch, KeyboardEvent, SetStateAction, useState } from "react";
 import { toast } from "sonner";
 type Props = {
@@ -76,8 +76,8 @@ const RecipientNew = ({ open, setOpen, setList, list, org }: Props) => {
     <Dialog open={open} onOpenChange={(newOpen) => setOpen(newOpen)}>
       <DialogContent className="flex flex-col gap-3 bg-white p-4 rounded-lg shadow-xl">
         <DialogTitle>Add Recipient Group</DialogTitle>
-        <DialogDescription className="flex items-center gap-x-1 ml-2">
-          <Info /> Create a new recipient group
+        <DialogDescription className="flex items-center gap-x-1">
+          Create a new recipient group
         </DialogDescription>
         <div className="flex flex-col gap-y-4 mt-4">
           <Label>Group Name</Label>
@@ -114,7 +114,7 @@ const RecipientNew = ({ open, setOpen, setList, list, org }: Props) => {
         <div className="flex flex-row self-end gap-2">
           <DialogClose asChild>
             <Button
-              className="px-3 py-1 rounded"
+              className="px-3 py-1 rounded bg-white text-black hover:bg-white border border-black"
               onClick={() => {
                 setOpen(false);
                 setEmails([]);
