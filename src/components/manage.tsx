@@ -27,7 +27,7 @@ const Manage = () => {
     <div className="flex flex-col w-11/12 m-10 gap-8">
       <Label className="font-extrabold text-3xl self-start">Manage</Label>
       <OrgHeader editable org={orgQuery.data.data} />
-      <Information orgId={orgId} />
+      <Information orgId={orgId} orgData={orgQuery.data.data} />
     </div>
   );
 };

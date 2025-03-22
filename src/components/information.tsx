@@ -7,17 +7,18 @@ import { useState } from "react";
 import { ChangeEvent } from "react";
 import { HTMLInputs } from "@/types/inputs";
 import { toast } from "sonner";
+import { Organization } from "@/data/types";
 type props = {
   orgId: string | string[];
+  orgData: Organization;
 };
-const Information = ({ orgId }: props) => {
+const Information = ({ orgId, orgData }: props) => {
   const [edit, setEdit] = useState<boolean>(false);
   const [info, setInfo] = useState([
     {
       name: "Description",
       key: "description",
-      value:
-        "POOR Magazine/Prensa Pobre is a grassroots, poor people-led, non-profit arts organization in San Francisco, California, United States. It is part of the greater indigenous and poor peoples-led movements around the world, such as the Landless Peoples Movements, the Homeless Workers' Movement, and Take Back the Land.",
+      value: orgData.description,
       type: "textarea",
     },
     {
