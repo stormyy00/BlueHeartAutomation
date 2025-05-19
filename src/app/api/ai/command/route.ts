@@ -190,7 +190,7 @@ export async function POST(req: NextRequest) {
       ),
     );
 
-    const resultStream = streamText({
+    const resultStream = await streamText({
       maxTokens: 2048,
       temperature: 0.7,
       topP: 1,
