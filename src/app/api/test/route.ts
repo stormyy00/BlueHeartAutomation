@@ -1,36 +1,35 @@
-import { NextRequest, NextResponse } from "next/server";
-import { google } from "@ai-sdk/google";
-import { streamText } from "ai";
+import { GoogleGenerativeAI } from "@google/generative-ai";
+import { NextResponse } from "next/server";
 
-export const runtime = "edge";
+const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY as string);
+const model = genAI.getGenerativeModel({
+  model: "gemini-2.0-flash",
+  tools: [
+    {
+      codeExecution: {},
+    },
+  ],
+});
 
-export async function POST(req: NextRequest) {
-  const { messages } = await req.json();
-
-  const prompt = messages
-    .map(
-      ({ role, content }: { role: string; content: string }) =>
-        `${role.toUpperCase()}: ${content}`,
-    )
-    .join("\n");
-
+export const POST = async (req: Request) => {
   try {
-    const result = streamText({
-      model: google("gemini-2.0-flash"),
-      prompt,
-      maxTokens: 4096,
-      temperature: 0.7,
-      topP: 1,
-      frequencyPenalty: 0,
-      presencePenalty: 0,
-    });
+    const { messages } = await req.json();
 
-    return result.toDataStreamResponse();
-  } catch (err) {
-    console.error("Error processing request:", err);
-    return NextResponse.json(
-      { error: "Failed to process AI request" },
-      { status: 500 },
+    const contents = messages.map(
+      ({ role, content }: { role: string; content: string }) => ({
+        role: role, // "user" or "model"
+        parts: [{ text: content }],
+      }),
     );
+
+    console.log("Contents:", contents);
+
+    const result = await model.generateContent({ contents });
+    const text = await result.response.text();
+    console.log("Response:", text);
+    return NextResponse.json({ text }); // ✅ Ensure you return a response
+  } catch (error) {
+    console.error("Error in /api/test:", error);
+    return new NextResponse("Internal Server Error", { status: 500 });
   }
-}
+};
