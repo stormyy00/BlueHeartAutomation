@@ -1,40 +1,39 @@
-// "use client";
+"use client";
 
-// import { useChat } from "@ai-sdk/react";
+import { useChat } from "@ai-sdk/react";
 
-// export default function Page() {
-//   const { messages, input, handleInputChange, handleSubmit } = useChat(
-//     { api: "/api/ai/command",
-//         onFinish: (message, { usage, finishReason }) => {
-//           console.log('Finished streaming message:', message);
-//           console.log('Token usage:', usage);
-//           console.log('Finish reason:', finishReason);
-//         },
-//        }
-//   );
+export default function Page() {
+  const { messages, input, handleInputChange, handleSubmit } = useChat({
+    api: "/api/ai/command",
+    onFinish: (message, { usage, finishReason }) => {
+      console.log("Finished streaming message:", message);
+      console.log("Token usage:", usage);
+      console.log("Finish reason:", finishReason);
+    },
+  });
 
-//   return (
-//     <div className="flex flex-col w-full max-w-md py-24 mx-auto stretch">
-//       {messages.length > 0
-//         ? messages.map((m) => (
-//             <div key={m.id} className="whitespace-pre-wrap">
-//               {m.role === "user" ? "User: " : "Assistant: "}
-//               {m.content}
-//             </div>
-//           ))
-//         : null}
+  return (
+    <div className="flex flex-col w-full max-w-md py-24 mx-auto stretch">
+      {messages.length > 0
+        ? messages.map((m) => (
+            <div key={m.id} className="whitespace-pre-wrap">
+              {m.role === "user" ? "User: " : "Assistant: "}
+              {m.content}
+            </div>
+          ))
+        : null}
 
-//       <form onSubmit={handleSubmit}>
-//         <input
-//           className="fixed bottom-0 w-full max-w-md p-2 mb-8 border border-gray-300 rounded shadow-xl text-black"
-//           value={input}
-//           placeholder="Say something..."
-//           onChange={handleInputChange}
-//         />
-//       </form>
-//     </div>
-//   );
-// }
+      <form onSubmit={handleSubmit}>
+        <input
+          className="fixed bottom-0 w-full max-w-md p-2 mb-8 border border-gray-300 rounded shadow-xl text-black"
+          value={input}
+          placeholder="Say something..."
+          onChange={handleInputChange}
+        />
+      </form>
+    </div>
+  );
+}
 
 // import EditorNovel from "../../components/novel/editror";
 
@@ -46,12 +45,13 @@
 
 // import { UploadButton } from "@uploadthing/react";
 // import { useState } from "react";
-export default function page() {
-  // const [uploadedFiles, setUploadedFiles] = useState([]);
+// export default function page() {
+// const [uploadedFiles, setUploadedFiles] = useState([]);
 
-  return (
-    <div className="flex justify-center py-10 bg-black">
-      {/* <main className="flex min-h-screen flex-col items-center justify-between p-24">
+// return (
+// <div className="flex justify-center py-10 bg-black">
+{
+  /* <main className="flex min-h-screen flex-col items-center justify-between p-24">
         <div className="bg-white p-8 rounded-lg shadow-md">
           <h1 className="text-2xl font-bold mb-6 text-center">Upload Files</h1>
 
@@ -83,7 +83,8 @@ export default function page() {
             </div>
           )}
         </div>
-      </main> */}
-    </div>
-  );
+      </main> */
 }
+//     </div>
+//   );
+// }
