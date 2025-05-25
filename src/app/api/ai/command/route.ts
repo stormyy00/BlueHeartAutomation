@@ -1,7 +1,7 @@
 import { convertToCoreMessages, streamText } from "ai";
 import type { NextRequest } from "next/server";
 import { NextResponse } from "next/server";
-import { createOllama } from "ollama-ai-provider";
+import { googleProvider } from "@/utils/genai";
 import fs from "fs/promises";
 
 type Message = {
@@ -20,9 +20,7 @@ type UserMessage = {
  * If you have some config "P", place it here or
  * import it from environment variables, etc.
  */
-const ollama = createOllama({
-  baseURL: process.env.OLLAMA_URL || "http://localhost:11434",
-});
+
 // export async function POST(req: NextRequest) {
 //   try {
 //     const { messages, model = "llama3.2" } = await req.json();
@@ -136,7 +134,7 @@ const ollama = createOllama({
 
 export async function POST(req: NextRequest) {
   try {
-    const { messages, model = "llama3.2" } = await req.json();
+    const { messages } = await req.json();
 
     const latestMessage = messages[messages.length - 1];
     const documentContent = latestMessage.parts || "";
@@ -195,7 +193,7 @@ export async function POST(req: NextRequest) {
       temperature: 0.7,
       topP: 1,
       messages: userMessages,
-      model: ollama(model),
+      model: googleProvider,
       system: systemMessage.content,
     });
 

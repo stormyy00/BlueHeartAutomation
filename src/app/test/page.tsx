@@ -4,7 +4,7 @@ import { useChat } from "@ai-sdk/react";
 
 export default function Page() {
   const { messages, input, handleInputChange, handleSubmit } = useChat({
-    api: "/api/ai/command",
+    api: "/api/test",
     onFinish: (message, { usage, finishReason }) => {
       console.log("Finished streaming message:", message);
       console.log("Token usage:", usage);
