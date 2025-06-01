@@ -1,11 +1,7 @@
 import { streamText } from "ai";
 import { match } from "ts-pattern";
-import { createOllama } from "ollama-ai-provider";
 import { NextResponse } from "next/server";
-const ollama = createOllama({
-  /* your config */
-  baseURL: process.env.OLLAMA_URL || "http://localhost:11434",
-});
+import { googleProvider } from "@/utils/genai";
 
 // IMPORTANT! Set the runtime to edge: https://vercel.com/docs/functions/edge-functions/edge-runtime
 export const runtime = "edge";
@@ -135,7 +131,7 @@ export async function POST(req: Request): Promise<Response> {
       topP: 1,
       frequencyPenalty: 0,
       presencePenalty: 0,
-      model: ollama("llama3.2"),
+      model: googleProvider,
     });
 
     return result.toDataStreamResponse();
