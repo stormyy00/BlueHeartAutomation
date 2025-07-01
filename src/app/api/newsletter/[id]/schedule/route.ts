@@ -147,20 +147,20 @@ export const POST = async (
       subject,
       recipientGroup,
       template,
-    })
-      .then(async () => {
-        await fetch(`${process.env.BACKEND_SERVER_URL}/api/scheduler`, {
-          method: "PUT",
-          body: JSON.stringify({
-            id: snapshot.docs[0].id,
-            epochSchedule: date,
-          }),
-          headers: {
-            "Content-Type": "application/json",
-          },
-        });
-      })
-      .catch(console.error);
+    });
+    // .then(async () => {
+    //   await fetch(`${process.env.BACKEND_SERVER_URL}/api/scheduler`, {
+    //     method: "PUT",
+    //     body: JSON.stringify({
+    //       id: snapshot.docs[0].id,
+    //       epochSchedule: date,
+    //     }),
+    //     headers: {
+    //       "Content-Type": "application/json",
+    //     },
+    //   });
+    // })
+    // .catch(console.error);
 
     return NextResponse.json({ message: "OK" }, { status: 200 });
   } catch (error) {
