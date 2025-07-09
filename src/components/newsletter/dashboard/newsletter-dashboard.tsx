@@ -11,12 +11,13 @@ import {
 } from "@/components/ui/alert-dialog";
 import { useState, ChangeEvent, useEffect } from "react";
 import { NewsletterType } from "@/types/newsletter";
-import { AlertDialogAction } from "@radix-ui/react-alert-dialog";
+import { AlertDialogAction } from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
 import NewsletterToolbar from "./newsletter-toolbar";
-import { Loader2 } from "lucide-react";
 import { Popup } from "@/types/popup";
 import NewsletterModal from "./newsletter-modal";
+import { useNewsletterQuery } from "@/server/useQuery";
+import NewsletterSkeleton from "./newsletter-skeleton";
 
 type props = {
   newsletter: string;
@@ -63,26 +64,36 @@ const NewsletterDashboard = () => {
     });
   };
 
+  const { data, isPending } = useNewsletterQuery();
+
   useEffect(() => {
-    fetch("/api/newsletter", {
-      method: "GET",
-    })
-      .then((res) => {
-        if (!res.ok) {
-          throw new Error(`HTTP error! Status: ${res.status}`);
-        }
-        return res.json();
-      })
-      .then((data) => {
-        setNewsletters(data.newsletters);
-        setSearch(data.newsletters);
-      })
-      .catch((error) => {
-        console.error("Error fetching newsletters:", error);
-        setLoading(false);
-      })
-      .finally(() => setLoading(false));
-  }, []);
+    if (data) {
+      setNewsletters(data);
+      setSearch(data);
+      setLoading(isPending);
+    }
+  }, [data]);
+
+  // useEffect(() => {
+  //   fetch("/api/newsletter", {
+  //     method: "GET",
+  //   })
+  //     .then((res) => {
+  //       if (!res.ok) {
+  //         throw new Error(`HTTP error! Status: ${res.status}`);
+  //       }
+  //       return res.json();
+  //     })
+  //     .then((data) => {
+  //       setNewsletters(data.newsletters);
+  //       setSearch(data.newsletters);
+  //     })
+  //     .catch((error) => {
+  //       console.error("Error fetching newsletters:", error);
+  //       setLoading(false);
+  //     })
+  //     .finally(() => setLoading(false));
+  // }, []);
 
   return (
     <div className="flex flex-col w-10/12 m-10 gap-4">
@@ -116,7 +127,11 @@ const NewsletterDashboard = () => {
           )}
         </div>
       ) : (
-        <Loader2 size={35} />
+        <div className="grid grid-cols-3 gap-5">
+          {Array.from({ length: 9 }).map((_, index) => (
+            <NewsletterSkeleton key={index} />
+          ))}
+        </div>
       )}
       <AlertDialog open={popup.visible}>
         <AlertDialogContent className="flex flex-col">

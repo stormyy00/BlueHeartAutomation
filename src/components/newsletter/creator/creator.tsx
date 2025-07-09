@@ -33,6 +33,8 @@ import { Input } from "@/components/ui/input";
 import Select from "@/components/global/select";
 import { Organization } from "@/data/types";
 import { TEMPLATES } from "@/data/newsletter/newsletter";
+import { useQuery } from "@tanstack/react-query";
+import { useNewsletterByIdQuery } from "@/server/useQuery";
 
 type NewsletterData = {
   body: string;
@@ -75,13 +77,19 @@ const Creator = ({ org }: { org: Organization }) => {
     const toastId = toast.loading(
       sending ? "Sending newsletter..." : "Scheduling newsletter...",
     );
+
+    const millis = sending
+      ? 0
+      : typeof newsletter.scheduledDate === "string"
+        ? new Date(newsletter.scheduledDate).getTime()
+        : newsletter.scheduledDate;
     await fetch(`/api/newsletter/${id}/schedule`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        date: sending ? 0 : newsletter.scheduledDate,
+        date: millis,
         subject: newsletter.subject,
         recipientGroup: newsletter.recipientGroup,
         template: newsletter.template,
@@ -113,49 +121,78 @@ const Creator = ({ org }: { org: Organization }) => {
     // setEvents(updatedEvents)
   };
 
+  const { data: newsletterData } = useNewsletterByIdQuery(id);
+
   useEffect(() => {
-    fetch(`/api/newsletter/${id}`, {
-      method: "GET",
-    })
-      .then((res) => {
-        if (!res.ok) {
-          throw new Error(`HTTP error! Status: ${res.status}`);
-        }
-        return res.json();
-      })
-      .then((data) => {
-        let formattedContent;
+    if (newsletterData) {
+      let formattedContent;
 
-        if (typeof data.newsletterData.newsletter === "string") {
-          try {
-            formattedContent = JSON.parse(data.newsletterData.newsletter);
-          } catch {
-            formattedContent = createBasicJSONContent(
-              data.newsletterData.newsletter,
-            );
-          }
-        } else if (Array.isArray(data.newsletterData.newsletter)) {
-          formattedContent = createBasicJSONContent(
-            data.newsletterData.newsletter.join("\n"),
-          );
-        } else {
-          formattedContent = data.newsletterData.newsletter;
+      if (typeof newsletterData === "string") {
+        try {
+          formattedContent = JSON.parse(newsletterData);
+        } catch {
+          formattedContent = createBasicJSONContent(newsletterData);
         }
+      } else if (Array.isArray(newsletterData)) {
+        formattedContent = createBasicJSONContent(newsletterData.join("\n"));
+      } else {
+        formattedContent = newsletterData;
+      }
 
-        setNewsletter({
-          body: formattedContent,
-          status: data.newsletterData.status,
-          scheduledDate: data.newsletterData.scheduledDate,
-          recipientGroup: data.newsletterData.recipientGroup ?? "",
-          subject: data.newsletterData.subject ?? "",
-          template: data.template,
-        });
-      })
-      .catch((error) => {
-        console.error("Error fetching newsletter:", error);
-        toast.error("Failed to load newsletter content");
+      setNewsletter({
+        body: formattedContent,
+        status: newsletterData.status,
+        scheduledDate: newsletterData.scheduledDate,
+        recipientGroup: newsletterData.recipientGroup ?? "",
+        subject: newsletterData.subject ?? "",
+        template: newsletterData.template,
       });
-  }, [id]);
+    }
+  }, [newsletterData]);
+
+  // useEffect(() => {
+  //   fetch(`/api/newsletter/${id}`, {
+  //     method: "GET",
+  //   })
+  //     .then((res) => {
+  //       if (!res.ok) {
+  //         throw new Error(`HTTP error! Status: ${res.status}`);
+  //       }
+  //       return res.json();
+  //     })
+  //     .then((data) => {
+  //       let formattedContent;
+
+  //       if (typeof data.newsletterData.newsletter === "string") {
+  //         try {
+  //           formattedContent = JSON.parse(data.newsletterData.newsletter);
+  //         } catch {
+  //           formattedContent = createBasicJSONContent(
+  //             data.newsletterData.newsletter,
+  //           );
+  //         }
+  //       } else if (Array.isArray(data.newsletterData.newsletter)) {
+  //         formattedContent = createBasicJSONContent(
+  //           data.newsletterData.newsletter.join("\n"),
+  //         );
+  //       } else {
+  //         formattedContent = data.newsletterData.newsletter;
+  //       }
+
+  //       setNewsletter({
+  //         body: formattedContent,
+  //         status: data.newsletterData.status,
+  //         scheduledDate: data.newsletterData.scheduledDate,
+  //         recipientGroup: data.newsletterData.recipientGroup ?? "",
+  //         subject: data.newsletterData.subject ?? "",
+  //         template: data.template,
+  //       });
+  //     })
+  //     .catch((error) => {
+  //       console.error("Error fetching newsletter:", error);
+  //       toast.error("Failed to load newsletter content");
+  //     });
+  // }, [id]);
 
   const createBasicJSONContent = (text: string): JSONContent => {
     if (/\*\*|\*|__|~~/.test(text)) {
