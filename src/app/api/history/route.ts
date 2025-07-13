@@ -14,6 +14,7 @@ export const GET = async () => {
     const q = query(
       collection(db, "newsletters"),
       where("orgId", "==", session.user.orgId),
+      where("status", "==", "sent"),
     );
     const querySnapshot = await getDocs(q);
 
@@ -26,10 +27,13 @@ export const GET = async () => {
       return {
         newsletter: newsletterContent || data.newsletter[0],
         newsletterId: data.newsletterId,
-        newsletterStatus: data.newsletterStatus,
-        newsletterTimestamp: new Date(
-          data.timestamp.seconds * 1000 + data.timestamp.nanoseconds / 1000000,
-        ), // Convert seconds and nanoseconds to milliseconds
+        newsletterStatus: data.status,
+        newsletterSentDate: data.scheduledDate
+          ? new Date(
+              data.scheduledDate.seconds * 1000 +
+                data.scheduledDate.nanoseconds / 1000000,
+            )
+          : null,
       };
     });
 

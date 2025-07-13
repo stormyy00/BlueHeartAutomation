@@ -9,7 +9,7 @@ import {
   AlertDialogDescription,
   AlertDialogHeader,
 } from "@/components/ui/alert-dialog";
-import { useState, ChangeEvent, useEffect, useMemo } from "react";
+import { useState, ChangeEvent, useMemo } from "react";
 import { NewsletterType } from "@/types/newsletter";
 import { AlertDialogAction } from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
@@ -20,15 +20,15 @@ import { useNewsletterQuery } from "@/server/useQuery";
 import NewsletterSkeleton from "./newsletter-skeleton";
 import { Newsletter, searchable } from "@/utils/search";
 
-type props = {
-  newsletter: string;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  newsletterId?: string | any;
-  newsletterStatus: string;
-  id: string;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  handleConfigure: () => void;
-};
+// type props = {
+//   newsletter: string;
+//   // eslint-disable-next-line @typescript-eslint/no-explicit-any
+//   newsletterId?: string | any;
+//   newsletterStatus: string;
+//   id: string;
+//   // eslint-disable-next-line @typescript-eslint/no-explicit-any
+//   handleConfigure: () => void;
+// };
 
 const NewsletterDashboard = () => {
   const { data = [], isPending } = useNewsletterQuery();
@@ -76,7 +76,7 @@ const NewsletterDashboard = () => {
       <NewsletterToolbar
         search={newsletterSearch}
         onSearchChange={(val) => setSearch(val)}
-        data={data}
+        // data={data}
         setStatusFilter={setStatusFilter}
         // setSearch={setSearch}
         checked={checked}

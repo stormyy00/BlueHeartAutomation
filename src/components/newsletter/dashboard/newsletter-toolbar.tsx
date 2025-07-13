@@ -26,7 +26,7 @@ interface props {
   onSearchChange: (value: string) => void;
   // setSearch: (value: any[]) => void;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  data: any[];
+  // data: any[];
 
   checked: { [key: string]: boolean };
   setChecked: (value: { [key: string]: boolean }) => void;
@@ -39,7 +39,6 @@ interface props {
 const NewsletterToolbar = ({
   search,
   onSearchChange,
-  data,
   setStatusFilter,
 
   checked,
@@ -64,7 +63,7 @@ const NewsletterToolbar = ({
       onSuccess: ({ newsletterId }) => {
         router.push(`newsletter/${newsletterId}`);
       },
-      onError: (error) => {
+      onError: () => {
         toast.error("Failed to create newsletter");
       },
     });

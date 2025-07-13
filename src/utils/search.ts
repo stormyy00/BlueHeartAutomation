@@ -1,6 +1,7 @@
 export type Newsletter = {
   newsletter: string;
   newsletterStatus: string;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   [key: string]: any;
 };
 
