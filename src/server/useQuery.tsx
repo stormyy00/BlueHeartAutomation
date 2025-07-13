@@ -18,7 +18,7 @@ export const useNewsletterQuery = () => {
 
 export const useNewsletterByIdQuery = (newsletterId: string) => {
   return useQuery({
-    queryKey: ["newsletter", newsletterId],
+    queryKey: ["newsletters", newsletterId],
     queryFn: async () => {
       const response = await fetch(`/api/newsletter/${newsletterId}`, {
         method: "GET",
@@ -28,5 +28,21 @@ export const useNewsletterByIdQuery = (newsletterId: string) => {
       }
       return response.json();
     },
+  });
+};
+
+export const useHistoryQuery = () => {
+  return useQuery({
+    queryKey: ["history"],
+    queryFn: async () => {
+      const response = await fetch("/api/history", {
+        method: "GET",
+      });
+      if (!response.ok) {
+        throw new Error("Failed to fetch history");
+      }
+      return response.json();
+    },
+    select: (data) => data.newsletters,
   });
 };

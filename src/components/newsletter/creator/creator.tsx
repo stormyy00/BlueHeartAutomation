@@ -33,7 +33,6 @@ import { Input } from "@/components/ui/input";
 import Select from "@/components/global/select";
 import { Organization } from "@/data/types";
 import { TEMPLATES } from "@/data/newsletter/newsletter";
-import { useQuery } from "@tanstack/react-query";
 import { useNewsletterByIdQuery } from "@/server/useQuery";
 
 type NewsletterData = {
@@ -121,7 +120,7 @@ const Creator = ({ org }: { org: Organization }) => {
     // setEvents(updatedEvents)
   };
 
-  const { data: newsletterData } = useNewsletterByIdQuery(id);
+  const { data: newsletterData, isPending } = useNewsletterByIdQuery(id);
 
   useEffect(() => {
     if (newsletterData) {
@@ -138,7 +137,7 @@ const Creator = ({ org }: { org: Organization }) => {
       } else {
         formattedContent = newsletterData;
       }
-
+      setIsLoading(isPending);
       setNewsletter({
         body: formattedContent,
         status: newsletterData.status,
@@ -148,7 +147,7 @@ const Creator = ({ org }: { org: Organization }) => {
         template: newsletterData.template,
       });
     }
-  }, [newsletterData]);
+  }, [newsletterData, isPending]);
 
   // useEffect(() => {
   //   fetch(`/api/newsletter/${id}`, {
