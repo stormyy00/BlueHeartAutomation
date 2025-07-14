@@ -55,8 +55,10 @@ const Navigation: FC = () => {
             </>
           ) : (
             <button
-              className="bg-ttickles-lightblue/20 backdrop-blur-sm border border-ttickles-white/30 px-2.5 py-1 text-white/80 font-bold hover:bg-ttickles-darkblue/40 transition-all duration-300 rounded-full"
-              onClick={() => signIn("google", { callbackUrl: "/" })}
+              className="bg-ttickles-darkblue/80 backdrop-blur-sm border border-ttickles-white/30 px-2.5 py-1 text-white font-bold hover:bg-ttickles-darkblue/60 transition-all duration-300 rounded-full"
+              onClick={() =>
+                signIn("google", { callbackUrl: "/orgs/@mine/newsletter" })
+              }
             >
               Join Us
             </button>
