@@ -2,7 +2,7 @@ import React from "react";
 import Image from "next/image";
 import { motion } from "framer-motion";
 import Background from "@/public/ucr_background.png";
-import { Play } from "lucide-react";
+import { Play, ShipWheel } from "lucide-react";
 import Link from "next/link";
 import LOGO from "@/public/temporarylogo.png";
 
@@ -68,7 +68,7 @@ const Landing = () => {
         </motion.p>
 
         <motion.p
-          className="text-lg md:text-xl lg:text-2xl font-medium mb-12 max-w-xl leading-relaxed drop-shadow-md"
+          className="text-lg md:text-xl lg:text-2xl font-semibold mb-12 max-w-xl leading-relaxed drop-shadow-md"
           style={{ color: "#edf6f9" }}
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -76,7 +76,7 @@ const Landing = () => {
         >
           Amplify your social outreach in a few clicks. Create compelling
           newsletters and social media posts with AI-powered automation. <br />
-          <span style={{ color: "#ff9c1c" }}>
+          <span className="text-ttickles-orange font-medium">
             Free forever, built for impact.
           </span>
         </motion.p>
@@ -95,13 +95,13 @@ const Landing = () => {
               Get Started
             </span>
           </Link>
-          {/* <Link
-            href="/orgs/test/newsletter"
+          <Link
+            href="/demo"
             className="flex items-center gap-3 px-6 py-3 rounded-xl bg-gradient-to-tr from-ttickles-orange/90 to-ttickles-orange text-white shadow-2xl transition hover:shadow-yellow-300/40"
           >
             <ShipWheel />
             <span className="font-bold text-lg tracking-wider">Try Demo</span>
-          </Link> */}
+          </Link>
         </motion.div>
       </motion.div>
     </div>

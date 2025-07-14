@@ -16,7 +16,10 @@ export const useNewsletterQuery = () => {
   });
 };
 
-export const useNewsletterByIdQuery = (newsletterId: string) => {
+export const useNewsletterByIdQuery = (
+  newsletterId: string,
+  options?: { enabled?: boolean },
+) => {
   return useQuery({
     queryKey: ["newsletters", newsletterId],
     queryFn: async () => {
@@ -29,6 +32,7 @@ export const useNewsletterByIdQuery = (newsletterId: string) => {
       const data = await response.json();
       return data;
     },
+    enabled: options?.enabled,
   });
 };
 

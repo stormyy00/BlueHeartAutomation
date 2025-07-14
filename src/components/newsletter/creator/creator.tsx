@@ -41,6 +41,7 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
+import { defaultEditorContent } from "@/utils/content";
 
 type NewsletterData = {
   body: string;
@@ -77,7 +78,6 @@ const Creator = ({ org }: { org: Organization }) => {
   const [scheduleLoading, setScheduleLoading] = useState(false);
   const [open, setOpen] = useState(false);
   const [date, setDate] = useState<Date | undefined>(undefined);
-  console.log(date);
   const pathname = usePathname();
   const id = pathname.split("/")[4];
 
@@ -130,8 +130,10 @@ const Creator = ({ org }: { org: Organization }) => {
     // setEvents(updatedEvents)
   };
 
-  const { data: newsletterData, isPending } = useNewsletterByIdQuery(id);
-  console.log(newsletterData, "newsletterData");
+  const { data: newsletterData, isPending } = useNewsletterByIdQuery(id, {
+    enabled: org?.name?.toLowerCase() !== "demo",
+  });
+
   useEffect(() => {
     if (newsletterData) {
       const {
@@ -158,7 +160,6 @@ const Creator = ({ org }: { org: Organization }) => {
       } else {
         formattedContent = newsletter;
       }
-      console.log(recipientGroup, "recipientGroup");
       setNewsletter({
         body: formattedContent,
         status: status ?? "draft",
@@ -260,6 +261,32 @@ const Creator = ({ org }: { org: Organization }) => {
     });
     setEventLoading(false);
   };
+
+  if (org?.name?.toLowerCase() === "demo") {
+    toast.info(
+      "You are currently editing in Demo Mode. Your work will not be saved locally.",
+    );
+    return (
+      <div className="flex flex-col gap-4 h-full w-11/12 m-10">
+        <div className="font-extrabold text-3xl mb-8">
+          Newsletter Editor (Demo)
+        </div>
+        <div className="flex h-full w-full">
+          <div className="flex flex-col bg-white p-4 rounded-md border border-gray-100 shadow-sm w-full gap-4 h-full">
+            <ScrollArea>
+              <Editor
+                ai={ai}
+                setAI={setAI}
+                chatHelpers={chatHelpers}
+                onChange={handleChange}
+                data={defaultEditorContent}
+              />
+            </ScrollArea>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <AIContext.Provider value={{ generateFromEvents }}>
