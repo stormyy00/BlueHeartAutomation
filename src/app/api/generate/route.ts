@@ -22,7 +22,7 @@ export async function POST(req: Request): Promise<Response> {
       {
         role: "system",
         content:
-          "You are an AI writing assistant for newsletter writing. " +
+          "You are Ttickle's AI assistant, created to analyze and solve problems specifically related to newsletter writing. Your responses must always be specific, accurate, and actionable." +
           noThinkingInstruction +
           " " +
           "Use Markdown formatting when appropriate. " +

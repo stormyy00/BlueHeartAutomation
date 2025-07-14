@@ -33,6 +33,15 @@ import { Input } from "@/components/ui/input";
 import Select from "@/components/global/select";
 import { Organization } from "@/data/types";
 import { TEMPLATES } from "@/data/newsletter/newsletter";
+import { useNewsletterByIdQuery } from "@/server/useQuery";
+import { ChevronDownIcon } from "lucide-react";
+import { Calendar as Cal } from "@/components/ui/calendar";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
+import { defaultEditorContent } from "@/utils/content";
 
 type NewsletterData = {
   body: string;
@@ -67,6 +76,8 @@ const Creator = ({ org }: { org: Organization }) => {
   const [loading, setIsLoading] = useState(true);
   const [eventLoading, setEventLoading] = useState(false);
   const [scheduleLoading, setScheduleLoading] = useState(false);
+  const [open, setOpen] = useState(false);
+  const [date, setDate] = useState<Date | undefined>(undefined);
   const pathname = usePathname();
   const id = pathname.split("/")[4];
 
@@ -75,13 +86,19 @@ const Creator = ({ org }: { org: Organization }) => {
     const toastId = toast.loading(
       sending ? "Sending newsletter..." : "Scheduling newsletter...",
     );
+
+    const millis = sending
+      ? 0
+      : typeof newsletter.scheduledDate === "string"
+        ? new Date(newsletter.scheduledDate).getTime()
+        : newsletter.scheduledDate;
     await fetch(`/api/newsletter/${id}/schedule`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        date: sending ? 0 : newsletter.scheduledDate,
+        date: millis,
         subject: newsletter.subject,
         recipientGroup: newsletter.recipientGroup,
         template: newsletter.template,
@@ -113,49 +130,47 @@ const Creator = ({ org }: { org: Organization }) => {
     // setEvents(updatedEvents)
   };
 
+  const { data: newsletterData, isPending } = useNewsletterByIdQuery(id, {
+    enabled: org?.name?.toLowerCase() !== "demo",
+  });
+
   useEffect(() => {
-    fetch(`/api/newsletter/${id}`, {
-      method: "GET",
-    })
-      .then((res) => {
-        if (!res.ok) {
-          throw new Error(`HTTP error! Status: ${res.status}`);
-        }
-        return res.json();
-      })
-      .then((data) => {
-        let formattedContent;
+    if (newsletterData) {
+      const {
+        newsletterData: {
+          newsletter,
+          status,
+          scheduledDate,
+          recipientGroup,
+          subject,
+        },
+        template,
+      } = newsletterData;
 
-        if (typeof data.newsletterData.newsletter === "string") {
-          try {
-            formattedContent = JSON.parse(data.newsletterData.newsletter);
-          } catch {
-            formattedContent = createBasicJSONContent(
-              data.newsletterData.newsletter,
-            );
-          }
-        } else if (Array.isArray(data.newsletterData.newsletter)) {
-          formattedContent = createBasicJSONContent(
-            data.newsletterData.newsletter.join("\n"),
-          );
-        } else {
-          formattedContent = data.newsletterData.newsletter;
-        }
+      let formattedContent;
 
-        setNewsletter({
-          body: formattedContent,
-          status: data.newsletterData.status,
-          scheduledDate: data.newsletterData.scheduledDate,
-          recipientGroup: data.newsletterData.recipientGroup ?? "",
-          subject: data.newsletterData.subject ?? "",
-          template: data.template,
-        });
-      })
-      .catch((error) => {
-        console.error("Error fetching newsletter:", error);
-        toast.error("Failed to load newsletter content");
+      if (typeof newsletter === "string") {
+        try {
+          formattedContent = JSON.parse(newsletter);
+        } catch {
+          formattedContent = createBasicJSONContent(newsletter);
+        }
+      } else if (Array.isArray(newsletter)) {
+        formattedContent = createBasicJSONContent(newsletter.join("\n"));
+      } else {
+        formattedContent = newsletter;
+      }
+      setNewsletter({
+        body: formattedContent,
+        status: status ?? "draft",
+        scheduledDate: scheduledDate ?? null,
+        recipientGroup: recipientGroup ?? "",
+        subject: subject ?? "",
+        template: template ?? "",
       });
-  }, [id]);
+      setIsLoading(!isPending);
+    }
+  }, [newsletterData, isPending]);
 
   const createBasicJSONContent = (text: string): JSONContent => {
     if (/\*\*|\*|__|~~/.test(text)) {
@@ -247,11 +262,31 @@ const Creator = ({ org }: { org: Organization }) => {
     setEventLoading(false);
   };
 
-  const formatDate = (date: string | number) => {
-    const obj = new Date(date);
-    obj.setMinutes(obj.getMinutes() - obj.getTimezoneOffset());
-    return obj.toISOString().slice(0, 16);
-  };
+  if (org?.name?.toLowerCase() === "demo") {
+    toast.info(
+      "You are currently editing in Demo Mode. Your work will not be saved locally.",
+    );
+    return (
+      <div className="flex flex-col gap-4 h-full w-11/12 m-10">
+        <div className="font-extrabold text-3xl mb-8">
+          Newsletter Editor (Demo)
+        </div>
+        <div className="flex h-full w-full">
+          <div className="flex flex-col bg-white p-4 rounded-md border border-gray-100 shadow-sm w-full gap-4 h-full">
+            <ScrollArea>
+              <Editor
+                ai={ai}
+                setAI={setAI}
+                chatHelpers={chatHelpers}
+                onChange={handleChange}
+                data={defaultEditorContent}
+              />
+            </ScrollArea>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <AIContext.Provider value={{ generateFromEvents }}>
@@ -391,24 +426,95 @@ const Creator = ({ org }: { org: Organization }) => {
                   placeholder="Select a Template"
                 />
                 {!sending && (
-                  <>
-                    <Label className="font-bold">Date & Time</Label>
-                    <Input
-                      type="datetime-local"
-                      defaultValue={formatDate(
-                        newsletter.scheduledDate ?? Date.now(),
-                      )}
-                      onChange={(value) => {
-                        const val = value.currentTarget.value;
-                        setNewsletter((old) => {
-                          return {
+                  <div className="flex gap-4">
+                    <div className="flex flex-col gap-3">
+                      <Label htmlFor="date-picker" className="px-1">
+                        Date
+                      </Label>
+                      <Popover open={open} onOpenChange={setOpen}>
+                        <PopoverTrigger asChild>
+                          <Button
+                            variant="outline"
+                            id="date-picker"
+                            className="w-32 justify-between font-normal"
+                          >
+                            {date ? date.toLocaleDateString() : "Select date"}
+                            <ChevronDownIcon />
+                          </Button>
+                        </PopoverTrigger>
+                        <PopoverContent
+                          className="w-auto overflow-hidden p-0 z-50 pointer-events-auto"
+                          side="bottom"
+                          align="start"
+                        >
+                          <Cal
+                            mode="single"
+                            selected={date}
+                            captionLayout="dropdown"
+                            onSelect={(selectedDate) => {
+                              if (!selectedDate) return;
+
+                              const updatedDate = new Date(selectedDate);
+                              if (date) {
+                                updatedDate.setHours(date.getHours());
+                                updatedDate.setMinutes(date.getMinutes());
+                                updatedDate.setSeconds(date.getSeconds());
+                              }
+
+                              setDate(updatedDate);
+                              setOpen(false);
+
+                              setNewsletter((old) => ({
+                                ...old,
+                                scheduledDate: updatedDate.toISOString(),
+                              }));
+                            }}
+                            className="z-50"
+                          />
+                        </PopoverContent>
+                      </Popover>
+                    </div>
+                    <div className="flex flex-col gap-3">
+                      <Label htmlFor="time-picker" className="px-1">
+                        Time
+                      </Label>
+                      <Input
+                        type="time"
+                        id="time-picker"
+                        step={0}
+                        onChange={(e) => {
+                          const timeVal = e.currentTarget.value;
+                          if (!date) return;
+
+                          const [hoursStr, minutesStr] = timeVal.split(":");
+                          const hours = Number(hoursStr);
+                          const minutes = Number(minutesStr);
+
+                          if (isNaN(hours) || isNaN(minutes)) return;
+
+                          const updatedDate = new Date(date);
+                          updatedDate.setHours(hours);
+                          updatedDate.setMinutes(minutes);
+                          updatedDate.setSeconds(0);
+                          updatedDate.setMilliseconds(0);
+
+                          if (isNaN(updatedDate.getTime())) {
+                            console.error("Invalid date after setting time");
+                            return;
+                          }
+
+                          setDate(updatedDate);
+
+                          setNewsletter((old) => ({
                             ...old,
-                            scheduledDate: val,
-                          };
-                        });
-                      }}
-                    />
-                  </>
+                            scheduledDate: updatedDate.toISOString(),
+                          }));
+                        }}
+                        defaultValue={new Date().toTimeString().slice(0, 5)}
+                        className="bg-background appearance-none [&::-webkit-calendar-picker-indicator]:hidden [&::-webkit-calendar-picker-indicator]:appearance-none"
+                      />
+                    </div>
+                  </div>
                 )}
               </div>
             </DialogDescription>

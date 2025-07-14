@@ -15,28 +15,36 @@ import {
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 import { toast } from "sonner";
+import {
+  useAddNewsletterMutation,
+  useDeleteNewsletterMutation,
+} from "@/server/mutateQuery";
 
 interface props {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  setSearch: (value: any[]) => void;
+  search: string;
+  onSearchChange: (value: string) => void;
+  // setSearch: (value: any[]) => void;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  data: any[];
+  // data: any[];
 
   checked: { [key: string]: boolean };
   setChecked: (value: { [key: string]: boolean }) => void;
+  setStatusFilter: (value: string) => void;
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  setNewsletters: (value: any[] | ((prev: any[]) => any[])) => void;
+  // setNewsletters: (value: any[] | ((prev: any[]) => any[])) => void;
 }
 
 const NewsletterToolbar = ({
-  data,
-  setSearch,
+  search,
+  onSearchChange,
+  setStatusFilter,
+
   checked,
-  setNewsletters,
 }: props) => {
   const router = useRouter();
-  const [value, setValue] = useState("");
+  // const [value, setValue] = useState("");
   const [popup, setPopup] = useState({
     title: "",
     text: "",
@@ -45,61 +53,53 @@ const NewsletterToolbar = ({
     onClick: () => {},
     button: "",
   });
+  const { mutate: addNewsletter } = useAddNewsletterMutation();
+  const { mutate: deleteNewsletter } = useDeleteNewsletterMutation();
 
   const ids = Object.keys(checked).filter((id) => checked[id]);
 
-  const handleChange = (e: string) => {
-    setValue(e);
-    setSearch(
-      e === ""
-        ? data
-        : data.filter(({ newsletter }) =>
-            newsletter.toLowerCase().includes(e.toLowerCase()),
-          ),
-    );
-  };
-
   const handleNewletter = () => {
-    fetch("/api/newsletter", {
-      method: "POST",
-    })
-      .then((res) => {
-        if (!res.ok) {
-          throw new Error(`HTTP error! Status: ${res.status}`);
-        }
-        return res.json();
-      })
-      .then((data) => {
-        console.log("Created newsletter:", data);
-
-        router.push(`newsletter/${data.newsletterId}`);
-      })
-      .catch((error) => {
-        console.error("Error creating newsletters:", error);
-      });
+    addNewsletter(undefined, {
+      onSuccess: ({ newsletterId }) => {
+        router.push(`newsletter/${newsletterId}`);
+      },
+      onError: () => {
+        toast.error("Failed to create newsletter");
+      },
+    });
   };
 
-  const deleteNewsletter = () => {
-    const keep = data.filter((item) => !ids.includes(item.newsletterId));
-    console.log("keep", keep);
-    setSearch(keep);
-    setNewsletters(keep);
-    fetch("/api/newsletter", {
-      method: "DELETE",
-      body: JSON.stringify({ newsletterId: ids }),
-    })
-      .then((res) => {
-        if (!res.ok) {
-          throw new Error(`HTTP error! Status: ${res.status}`);
-        }
-      })
-      .then(() => {
+  const handleDeleteNewsletter = () => {
+    deleteNewsletter(ids, {
+      onSuccess: () => {
         toast.success("Deleted successfully");
-      })
-      .catch((error) => {
-        console.error("Error creating newsletters:", error);
-      });
+      },
+      onError: () => {
+        toast.error("Failed to delete newsletter(s)");
+      },
+    });
   };
+  // const handleDeleteNewsletter = () => {
+  // const keep = data.filter((item) => !ids.includes(item.newsletterId));
+  // console.log("keep", keep);
+
+  // setSearch(keep);
+  // setNewsletters(keep);
+  // fetch("/api/newsletter", {
+  //   method: "DELETE",
+  //   body: JSON.stringify({ newsletterId: ids }),
+  // })
+  //   .then((res) => {
+  //     if (!res.ok) {
+  //       throw new Error(`HTTP error! Status: ${res.status}`);
+  //     }
+  //   })
+  // .then(() => {
+  //   toast.success("Deleted successfully");
+  // })
+  // .catch((error) => {
+  //   console.error("Error creating newsletters:", error);
+  // });
 
   const confirmDelete = () => {
     if (ids.length === 0) {
@@ -112,7 +112,7 @@ const NewsletterToolbar = ({
       text: "Are you sure you want to delete this newsletter This action is irreversible.",
       color: "red",
       visible: true,
-      onClick: deleteNewsletter,
+      onClick: handleDeleteNewsletter,
       button: "Confirm",
     });
   };
@@ -120,9 +120,9 @@ const NewsletterToolbar = ({
   return (
     <div className="flex flex-row items-center gap-2">
       <Input
-        value={value}
+        value={search}
         className="bg-white shadow-none"
-        onChange={(e) => handleChange(e.target.value)}
+        onChange={(e) => onSearchChange(e.target.value)}
         placeholder="search"
       />
       <Select
@@ -131,11 +131,7 @@ const NewsletterToolbar = ({
           value: status,
         }))}
         onChange={(selected) => {
-          setSearch(
-            selected === "All"
-              ? data
-              : data.filter((item) => item.newsletterStatus === selected),
-          );
+          setStatusFilter(selected);
         }}
         placeholder="filter by status"
       />

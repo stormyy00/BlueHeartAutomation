@@ -4,54 +4,66 @@ import { signIn, signOut, useSession } from "next-auth/react";
 import Link from "next/link";
 import { motion } from "framer-motion";
 import { FC, ReactNode } from "react";
+import Image from "next/image";
+import LOGO from "@/public/temporarylogo.png";
 
 const Navigation: FC = () => {
   const { data: session } = useSession();
 
   return (
     <motion.nav
-      className="opacity- fixed top-0 left-0 w-full bg-gradient-to-r from-[#4A9085] to-[#657787] z-50 px-6 py-3 flex justify-between items-center"
-      initial={{ opacity: 0, y: -30 }}
+      className=" fixed top-0 left-0 w-full  z-50 px-6 backdrop-blur-md bg-ttickles-white/90 py-4 border-b border-ttickles-blue shadow-lg shadow-ttickles-lightblue/20"
+      initial={{ opacity: 0, y: -50 }}
       animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.8, ease: "easeOut" }}
+      transition={{ duration: 0.5, ease: "easeOut" }}
+      viewport={{ once: true }}
     >
-      {/* Logo */}
-      <Link
-        href="/"
-        className="text-xl font-semibold text-white hover:opacity-80 transition"
-      >
-        TTickle
-      </Link>
+      <div className="mx-auto flex items-center justify-between px-6 max-w-8xl">
+        <Link
+          href="/"
+          className="flex items-center text-3xl tracking-wide font-bold text-ttickles-blue hover:opacity-80 transition"
+        >
+          <Image
+            src={LOGO}
+            alt="TTickle Logo"
+            className="h-12 w-12"
+            priority
+            quality={100}
+          />
+          <span className="-ml-1.5">ickle</span>
+        </Link>
 
-      {/* Navigation Links */}
-      <div className="flex gap-x-6 items-center">
-        <NavLink href="/about">About Us</NavLink>
+        <div className="flex gap-x-6 items-center">
+          <NavLink href="/about">About Us</NavLink>
 
-        {session ? (
-          <>
-            <Link
-              href="/orgs/test/newsletter"
-              className="relative text-white text-lg font-bold group"
-            >
-              Dashboard
-              <span className="absolute -bottom-0.5 left-0 h-[2px] w-0 bg-white transition-all duration-300 group-hover:w-full"></span>
-            </Link>
+          {session ? (
+            <>
+              <Link
+                href="/orgs/test/newsletter"
+                className="relative text-ttickles-darkblue text-lg font-bold group"
+              >
+                Dashboard
+                <span className="absolute -bottom-0.5 left-0 h-[2px] w-0 bg-ttickles-darkblue transition-all duration-300 group-hover:w-full"></span>
+              </Link>
+              <button
+                className="bg-ttickles-darkblue/80 backdrop-blur-sm border border-ttickles-white/30 px-2.5 py-1 text-white font-bold hover:bg-ttickles-darkblue/60 transition-all duration-300 rounded-full"
+                onClick={() => signOut()}
+              >
+                Sign Out
+              </button>
+              {/* <UserButton /> */}
+            </>
+          ) : (
             <button
-              className="px-2 py-1  bg-ttickles-blue text-white font-bold hover:scale-105 duration-300 rounded-xl"
-              onClick={() => signOut()}
+              className="bg-ttickles-darkblue/80 backdrop-blur-sm border border-ttickles-white/30 px-2.5 py-1 text-white font-bold hover:bg-ttickles-darkblue/60 transition-all duration-300 rounded-full"
+              onClick={() =>
+                signIn("google", { callbackUrl: "/orgs/@mine/newsletter" })
+              }
             >
-              Sign Out
+              Join Us
             </button>
-            {/* <UserButton /> */}
-          </>
-        ) : (
-          <button
-            className="px-2 py-1  bg-ttickles-blue text-white font-bold hover:scale-105 duration-300 rounded-xl"
-            onClick={() => signIn("google", { callbackUrl: "/" })}
-          >
-            Join Us
-          </button>
-        )}
+          )}
+        </div>
       </div>
     </motion.nav>
   );
@@ -65,9 +77,12 @@ interface NavLinkProps {
 
 /** Reusable NavLink Component with Hover Underline Effect **/
 const NavLink: FC<NavLinkProps> = ({ href, children }) => (
-  <Link href={href} className="relative text-white text-lg font-medium group">
+  <Link
+    href={href}
+    className="relative text-ttickles-darkblue text-lg font-bold group"
+  >
     {children}
-    <span className="absolute -bottom-1 left-0 h-[2px] w-0 bg-white transition-all duration-300 group-hover:w-full"></span>
+    <span className="absolute -bottom-1 left-0 h-[2px] w-0 bg-ttickles-darkblue transition-all duration-300 group-hover:w-full"></span>
   </Link>
 );
 

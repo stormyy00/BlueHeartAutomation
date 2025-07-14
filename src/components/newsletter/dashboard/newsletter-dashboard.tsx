@@ -9,30 +9,32 @@ import {
   AlertDialogDescription,
   AlertDialogHeader,
 } from "@/components/ui/alert-dialog";
-import { useState, ChangeEvent, useEffect } from "react";
+import { useState, ChangeEvent, useMemo } from "react";
 import { NewsletterType } from "@/types/newsletter";
-import { AlertDialogAction } from "@radix-ui/react-alert-dialog";
+import { AlertDialogAction } from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
 import NewsletterToolbar from "./newsletter-toolbar";
-import { Loader2 } from "lucide-react";
 import { Popup } from "@/types/popup";
 import NewsletterModal from "./newsletter-modal";
+import { useNewsletterQuery } from "@/server/useQuery";
+import NewsletterSkeleton from "./newsletter-skeleton";
+import { Newsletter, searchable } from "@/utils/search";
 
-type props = {
-  newsletter: string;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  newsletterId?: string | any;
-  newsletterStatus: string;
-  id: string;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  handleConfigure: () => void;
-};
+// type props = {
+//   newsletter: string;
+//   // eslint-disable-next-line @typescript-eslint/no-explicit-any
+//   newsletterId?: string | any;
+//   newsletterStatus: string;
+//   id: string;
+//   // eslint-disable-next-line @typescript-eslint/no-explicit-any
+//   handleConfigure: () => void;
+// };
 
 const NewsletterDashboard = () => {
-  const [newsletters, setNewsletters] = useState<props[]>([]);
-  const [newsletterSearch, setSearch] = useState<props[]>([]);
+  const { data = [], isPending } = useNewsletterQuery();
+  const [newsletterSearch, setSearch] = useState<string>("");
   const [checked, setChecked] = useState<{ [key: string]: boolean }>({});
-  const [loading, setLoading] = useState(true);
+  const [statusFilter, setStatusFilter] = useState("All");
 
   const [popup, setPopup] = useState<Popup>({
     title: "",
@@ -63,40 +65,27 @@ const NewsletterDashboard = () => {
     });
   };
 
-  useEffect(() => {
-    fetch("/api/newsletter", {
-      method: "GET",
-    })
-      .then((res) => {
-        if (!res.ok) {
-          throw new Error(`HTTP error! Status: ${res.status}`);
-        }
-        return res.json();
-      })
-      .then((data) => {
-        setNewsletters(data.newsletters);
-        setSearch(data.newsletters);
-      })
-      .catch((error) => {
-        console.error("Error fetching newsletters:", error);
-        setLoading(false);
-      })
-      .finally(() => setLoading(false));
-  }, []);
+  const searchableItems = useMemo(
+    () => searchable(data as Newsletter[], newsletterSearch, statusFilter),
+    [data, newsletterSearch, statusFilter],
+  );
 
   return (
     <div className="flex flex-col w-10/12 m-10 gap-4">
       <Label className="font-extrabold text-3xl">Newsletter</Label>
       <NewsletterToolbar
-        data={newsletters}
-        setSearch={setSearch}
+        search={newsletterSearch}
+        onSearchChange={(val) => setSearch(val)}
+        // data={data}
+        setStatusFilter={setStatusFilter}
+        // setSearch={setSearch}
         checked={checked}
         setChecked={setChecked}
-        setNewsletters={setNewsletters}
+        // setNewsletters={setNewsletters}
       />
-      {!loading ? (
+      {!isPending ? (
         <div className="grid grid-cols-3 gap-5">
-          {newsletterSearch.map(
+          {searchableItems.map(
             ({ newsletter, newsletterId, newsletterStatus }, index) => (
               <NewsletterCard
                 title={newsletter === " " ? "Untitled" : newsletter}
@@ -116,7 +105,11 @@ const NewsletterDashboard = () => {
           )}
         </div>
       ) : (
-        <Loader2 size={35} />
+        <div className="grid grid-cols-3 gap-5">
+          {Array.from({ length: 9 }).map((_, index) => (
+            <NewsletterSkeleton key={index} />
+          ))}
+        </div>
       )}
       <AlertDialog open={popup.visible}>
         <AlertDialogContent className="flex flex-col">

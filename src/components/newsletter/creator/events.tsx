@@ -18,8 +18,8 @@ import { Textarea } from "@/components/ui/textarea";
 import { QUESTIONS } from "@/data/newsletter/event";
 import { ChangeEvent } from "react";
 import { EventType } from "@/types/event";
-import { toast } from "sonner";
 import Loading from "@/components/global/loading";
+import { useCalendarEventsQuery, useCalendarIdQuery } from "./actions";
 
 type props = {
   setEvent: (value: (prevEvent: EventType) => EventType) => void;
@@ -63,7 +63,7 @@ const EventModal = ({ setEvent }: props) => {
 };
 
 const Events = ({ onChange, eventLoading, setEventLoading }: EventsProps) => {
-  const [loading, setLoading] = useState<boolean>(false);
+  // const [loading, setLoading] = useState<boolean>(false);
   const [events, setEvents] = useState<EventType[]>([]);
   const [event, setEvent] = useState<EventType>(() => ({
     name: "",
@@ -80,8 +80,28 @@ const Events = ({ onChange, eventLoading, setEventLoading }: EventsProps) => {
     submit: false,
   });
 
+  const { data: calendarId, isPending: calendarLoading } = useCalendarIdQuery();
+
+  const {
+    data: items = [],
+    isPending: eventsLoading,
+    refetch,
+  } = useCalendarEventsQuery(calendarId ?? "");
+
+  useEffect(() => {
+    const newEvents = items.map((event: any) => ({
+      name: event.summary,
+      description: event.description,
+      location: event.location,
+      date: event.start.dateTime,
+    }));
+    setEvents(newEvents);
+  }, [items]);
+
+  const loading = calendarLoading || eventsLoading;
+
   const handleSubmit = () => {
-    console.log("Current Event State:", event); // Debugging
+    console.log("Current Event State:", event);
     setEvents((prevEvents) => {
       const updatedEvents = [...prevEvents, event];
       onChange(updatedEvents);
@@ -89,41 +109,8 @@ const Events = ({ onChange, eventLoading, setEventLoading }: EventsProps) => {
     });
     setEvent({ name: "", description: "", location: "", date: "" }); // Reset form
     setPopup({ ...popup, visible: false }); // Close modal
+    refetch();
   };
-
-  const handleFetch = async () => {
-    setLoading(true);
-    const { calendarId } = await fetch("/api/events", {
-      method: "GET",
-    }).then((response) => {
-      if (response.status !== 200) {
-        toast("Failed to fetch calendarId");
-      }
-      return response.json();
-    });
-
-    const response = await fetch(
-      `https://www.googleapis.com/calendar/v3/calendars/${calendarId}/events?key=${process.env.NEXT_PUBLIC_GOOGLE_CALENDAR_API_KEY}&singleEvents=true&orderBy=startTime`,
-    );
-    if (!response.ok) {
-      toast("Failed to fetch calendar events");
-      setLoading(false);
-      return;
-    }
-    const data = await response.json();
-    const newEvents = data.items.map((event: any) => ({
-      name: event.summary,
-      description: event.description,
-      location: event.location,
-      date: event.start.dateTime,
-    }));
-    setEvents(newEvents);
-    setLoading(false);
-  };
-
-  useEffect(() => {
-    handleFetch();
-  }, []);
 
   return (
     <div className="w-full flex flex-col bg-gray-50 p-4 rounded-md border border-gray-100 shadow-md gap-2">

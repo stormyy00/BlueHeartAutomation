@@ -14,6 +14,10 @@ import { db } from "../firebase";
 export const getOrg = async (
   uuid: string,
 ): Promise<Organization | undefined> => {
+  if (uuid === "demo") {
+    return { name: "demo" } as unknown as Organization;
+  }
+
   const result = await getDocs(
     query(collection(db, "orgs"), where("id", "==", uuid), limit(1)),
   );

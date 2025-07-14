@@ -7,7 +7,7 @@ import {
   MinimalistTemplate,
   ModernBusinessTemplate,
   VibrantTemplate,
-} from "../../../src/components/email/template";
+} from "./template";
 
 dotenv.config({
   path: "../.env",
