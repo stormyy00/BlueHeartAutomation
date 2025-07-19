@@ -58,7 +58,7 @@ export const suggestionItems = createSuggestionItems([
               .run();
           };
           reader.readAsDataURL(file);
-          console.log(file);
+          // console.log(file);
         }
       };
       input.click();

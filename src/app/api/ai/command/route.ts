@@ -138,7 +138,7 @@ export async function POST(req: NextRequest) {
 
     const latestMessage = messages[messages.length - 1];
     const documentContent = latestMessage.parts || "";
-    console.log(documentContent);
+    // console.log(documentContent);
 
     let training;
     if (!training) {

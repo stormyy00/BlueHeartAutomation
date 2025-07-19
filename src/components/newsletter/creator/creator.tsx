@@ -224,7 +224,7 @@ const Creator = ({ org }: { org: Organization }) => {
     }
   };
   const handleChange = (value: JSONContent) => {
-    console.log("Updated", value);
+    // console.log("Updated", value);
     setData(value);
   };
 
@@ -481,27 +481,26 @@ const Creator = ({ org }: { org: Organization }) => {
                       <Input
                         type="time"
                         id="time-picker"
-                        step={0}
+                        step={300}
                         onChange={(e) => {
                           const timeVal = e.currentTarget.value;
                           if (!date) return;
 
                           const [hoursStr, minutesStr] = timeVal.split(":");
-                          const hours = Number(hoursStr);
-                          const minutes = Number(minutesStr);
+                          let hours = Number(hoursStr);
+                          let minutes = Number(minutesStr);
 
-                          if (isNaN(hours) || isNaN(minutes)) return;
+                          minutes = Math.round(minutes / 5) * 5;
+                          if (minutes === 60) {
+                            minutes = 0;
+                            hours = (hours + 1) % 24;
+                          }
 
                           const updatedDate = new Date(date);
                           updatedDate.setHours(hours);
                           updatedDate.setMinutes(minutes);
                           updatedDate.setSeconds(0);
                           updatedDate.setMilliseconds(0);
-
-                          if (isNaN(updatedDate.getTime())) {
-                            console.error("Invalid date after setting time");
-                            return;
-                          }
 
                           setDate(updatedDate);
 
