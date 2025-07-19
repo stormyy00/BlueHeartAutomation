@@ -45,17 +45,32 @@ export function ImportToolbarButton({ children, ...props }: DropdownMenuProps) {
     return nodes;
   };
 
-  const { openFilePicker } = useFilePicker({
+  interface FileData {
+    plainFiles?: File[];
+  }
+
+  interface UseFilePickerConfig {
+    accept: string[];
+    multiple: boolean;
+    onFilesSelected: (data: FileData) => Promise<void>;
+  }
+
+  interface UseFilePickerReturn {
+    openFilePicker: () => void;
+  }
+
+  const { openFilePicker }: UseFilePickerReturn = useFilePicker({
     accept,
     multiple: false,
-    onFilesSelected: async ({ plainFiles }) => {
-      const text = await plainFiles[0].text();
+    onFilesSelected: async (data: FileData): Promise<void> => {
+      if (!data.plainFiles || data.plainFiles.length === 0) return;
+      const text: string = await data.plainFiles[0].text();
 
       const nodes = getFileNodes(text, type);
 
       editor.tf.insertNodes(nodes);
     },
-  });
+  } as UseFilePickerConfig);
 
   return (
     <DropdownMenu modal={false} {...openState} {...props}>
