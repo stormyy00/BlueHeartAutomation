@@ -101,7 +101,7 @@ const Events = ({ onChange, eventLoading, setEventLoading }: EventsProps) => {
   const loading = calendarLoading || eventsLoading;
 
   const handleSubmit = () => {
-    console.log("Current Event State:", event);
+    // console.log("Current Event State:", event);
     setEvents((prevEvents) => {
       const updatedEvents = [...prevEvents, event];
       onChange(updatedEvents);

@@ -55,7 +55,7 @@ const TailwindAdvancedEditor = ({
   const [initialContent, setInitialContent] = useState<null | JSONContent>(
     null,
   );
-  console.log(initialContent);
+  // console.log(initialContent);
   const [saveStatus, setSaveStatus] = useState("Saved");
   const [charsCount, setCharsCount] = useState();
 
@@ -160,7 +160,7 @@ const TailwindAdvancedEditor = ({
               debouncedUpdates(editor);
               setSaveStatus("Unsaved");
               const content = editor.getJSON();
-              console.log("Editor content updated:", content);
+              // console.log("Editor content updated:", content);
             }}
             slotAfter={<ImageResizer />}
           >

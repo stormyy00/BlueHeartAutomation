@@ -9,7 +9,7 @@ const ollama = createOllama({
 });
 export async function POST(req: NextRequest) {
   const { prompt, system } = await req.json();
-  console.log(prompt, system);
+  // console.log(prompt, system);
 
   try {
     const result = await generateText({
@@ -28,7 +28,7 @@ export async function POST(req: NextRequest) {
     };
     return NextResponse.json(sanitizedResult);
   } catch (error: unknown) {
-    console.log("error", error);
+    // console.log("error", error);
     if (error instanceof Error && error.name === "AbortError") {
       return NextResponse.json(null, { status: 408 });
     }
