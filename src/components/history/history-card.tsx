@@ -1,5 +1,5 @@
 import { Copy, MoreVertical, Pen } from "lucide-react";
-import { Checkbox } from "./ui/checkbox";
+import { Checkbox } from "../ui/checkbox";
 import { toast } from "sonner";
 import Link from "next/link";
 
