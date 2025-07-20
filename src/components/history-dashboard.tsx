@@ -41,33 +41,40 @@ const HistoryDashboard = () => {
       />
       {!isPending ? (
         <div className="flex flex-col gap-2">
-          {searchableItems.map(
-            (
-              {
-                newsletter,
-                newsletterId,
-                newsletterStatus,
-                newsletterSentDate,
-              },
-              index,
-            ) => (
-              <NewsletterCard
-                title={newsletter === " " ? "Untitled" : newsletter}
-                id={newsletterId}
-                status={newsletterStatus || "draft"}
-                timestamp={newsletterSentDate}
-                handleConfigure={() => console.log("yay")}
-                onClick={() => {
-                  setChecked({
-                    ...checked,
-                    [newsletterId]: !checked[newsletterId],
-                  });
-                }}
-                checked={checked[newsletterId as keyof typeof checked]}
-                key={index}
-              />
-            ),
-          )}
+          {searchableItems
+            .filter((item) => item.newsletterSentDate)
+            .sort(
+              (a, b) =>
+                new Date(b.newsletterSentDate).getTime() -
+                new Date(a.newsletterSentDate).getTime(),
+            )
+            .map(
+              (
+                {
+                  newsletter,
+                  newsletterId,
+                  newsletterStatus,
+                  newsletterSentDate,
+                },
+                index,
+              ) => (
+                <NewsletterCard
+                  title={newsletter === " " ? "Untitled" : newsletter}
+                  id={newsletterId}
+                  status={newsletterStatus || "draft"}
+                  timestamp={newsletterSentDate}
+                  handleConfigure={() => console.log("yay")}
+                  onClick={() => {
+                    setChecked({
+                      ...checked,
+                      [newsletterId]: !checked[newsletterId],
+                    });
+                  }}
+                  checked={checked[newsletterId as keyof typeof checked]}
+                  key={index}
+                />
+              ),
+            )}
         </div>
       ) : (
         <>
