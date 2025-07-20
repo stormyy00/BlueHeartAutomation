@@ -1,4 +1,4 @@
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/utils/firebase";
 import {
   collection,
@@ -12,7 +12,8 @@ import {
 import { sendEmail } from "@/utils/email";
 import { contentToHtml } from "@/utils/parser";
 
-export const GET = async () => {
+export const POST = async (req: NextRequest) => {
+  console.log(req);
   const now = Date.now();
 
   const q = query(
