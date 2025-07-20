@@ -1,14 +1,5 @@
 import { logger, schedules } from "@trigger.dev/sdk/v3";
-import { db } from "@/utils/firebase";
-import {
-  collection,
-  query,
-  where,
-  getDocs,
-  updateDoc,
-  doc,
-  getDoc,
-} from "firebase/firestore";
+import { db } from "@/utils/admin";
 import { sendEmail } from "@/utils/email";
 import { contentToHtml } from "@/utils/parser";
 
@@ -22,12 +13,11 @@ export const emailNewsletterJob = schedules.task({
 
     logger.log("Checking for scheduled newsletters to send...");
 
-    const q = query(
-      collection(db, "newsletters"),
-      where("status", "==", "scheduled"),
-      where("scheduledDate", "<=", now),
-    );
-    const snapshot = await getDocs(q);
+    const newslettersRef = db.collection("newsletters");
+    const snapshot = await newslettersRef
+      .where("status", "==", "scheduled")
+      .where("scheduledDate", "<=", now)
+      .get();
 
     if (snapshot.empty) {
       logger.log("No newsletters to send.");
@@ -43,13 +33,13 @@ export const emailNewsletterJob = schedules.task({
 
       if (orgId && recipientGroup) {
         try {
-          const orgRef = doc(db, "orgs", orgId);
-          const orgSnap = await getDoc(orgRef);
+          const orgRef = db.collection("orgs").doc(orgId);
+          const orgSnap = await orgRef.get();
 
-          if (orgSnap.exists()) {
+          if (orgSnap.exists) {
             const orgData = orgSnap.data();
-            const group = Array.isArray(orgData.groups)
-              ? orgData.groups.find(
+            const group = Array.isArray(orgData?.groups)
+              ? orgData?.groups.find(
                   (g) =>
                     g.name &&
                     g.name.trim().toLowerCase() ===
@@ -96,7 +86,7 @@ export const emailNewsletterJob = schedules.task({
 
       try {
         await sendEmail(data.subject, body, recipients, data.template);
-        await updateDoc(doc(db, "newsletters", d.id), {
+        await db.collection("newsletters").doc(d.id).update({
           status: "sent",
           sentDate: now,
         });
