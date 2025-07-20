@@ -52,4 +52,7 @@ jobs:
         with:
           version: 10
 
+      - name: Install dependencies
+        run: pnpm install
+
       - uses: acm-ucr/build@v2
