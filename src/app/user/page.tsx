@@ -1,5 +1,5 @@
 "use client";
-import OrganizationForm from "@/components/joinorg";
+import OrganizationForm from "@/components/manage/joinorg";
 import { useQuery } from "@tanstack/react-query";
 
 const Page = () => {
