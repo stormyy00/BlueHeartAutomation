@@ -554,10 +554,10 @@ const Creator = ({ org }: { org: Organization }) => {
                 )}
               </div>
             </DialogDescription>
-            <div className="flex flex-row self-end gap-2">
+            <div className="flex flex-row justify-end gap-3">
               <DialogClose asChild>
                 <Button
-                  className="px-4 py-1 rounded bg-white text-black hover:text-black hover:bg-white"
+                  className="px-4 py-1 rounded border bg-white border-black/20 text-black hover:text-black hover:bg-white"
                   onClick={() => {
                     setPopup({ ...popup, visible: false });
                   }}

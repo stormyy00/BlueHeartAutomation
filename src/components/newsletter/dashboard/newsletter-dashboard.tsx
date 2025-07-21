@@ -71,7 +71,7 @@ const NewsletterDashboard = () => {
   );
 
   return (
-    <div className="flex flex-col w-10/12 m-10 gap-4">
+    <div className="flex flex-col w-11/12 m-10 gap-4">
       <Label className="font-extrabold text-3xl">Newsletter</Label>
       <NewsletterToolbar
         search={newsletterSearch}

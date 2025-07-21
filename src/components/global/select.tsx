@@ -22,10 +22,20 @@ const Select = ({ options, onChange, placeholder = "select" }: SelectProps) => {
       >
         <SelectValue placeholder={placeholder} />
       </SelectTrigger>
-      <SelectContent data-cy="select-menu" className="bg-white">
+      <SelectContent
+        data-cy="select-menu"
+        className="bg-white text-black shadow-lg"
+      >
         <SelectGroup>
           {options.map(({ value, label }, index) => (
-            <SelectItem key={index} value={value}>
+            <SelectItem
+              key={index}
+              value={value}
+              className="cursor-pointer px-3 py-2 rounded transition-colors duration-150 
+              hover:bg-ttickles-lightblue hover:text-ttickles-blue
+              focus:bg-gray-200 focus:text-ttickles-blue
+              data-[state=checked]:bg-ttickles-blue data-[state=checked]:text-white"
+            >
               {label}
             </SelectItem>
           ))}
