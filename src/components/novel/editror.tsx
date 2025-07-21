@@ -31,9 +31,11 @@ import { slashCommand, suggestionItems } from "./slash";
 
 import hljs from "highlight.js";
 import { Button } from "../ui/button";
-import { Ellipsis, Sparkle } from "lucide-react";
+import { Ellipsis, Sparkle, Sparkles } from "lucide-react";
 import AIChatbot from "./generate/ai-chat";
 import { WrappedImageSelector } from "./image-selector";
+import { Card, CardContent } from "../ui/card";
+import { Badge } from "../ui/badge";
 
 const extensions = [...defaultExtensions, slashCommand];
 
@@ -57,7 +59,7 @@ const TailwindAdvancedEditor = ({
   );
   // console.log(initialContent);
   const [saveStatus, setSaveStatus] = useState("Saved");
-  const [charsCount, setCharsCount] = useState();
+  const [charsCount, setCharsCount] = useState(0);
 
   const [openNode, setOpenNode] = useState(false);
   const [openColor, setOpenColor] = useState(false);
@@ -111,111 +113,127 @@ const TailwindAdvancedEditor = ({
   if (!initialContent) return null;
 
   return (
-    <div className="flex flex-col bg-gray-200 p-4 rounded-md border border-gray-400 w-full gap-4 h-full">
-      <div className="relative w-full">
-        <div className="flex absolute right-0 top-0 z-10 mb-5 gap-2">
-          <div className="rounded-lg bg-accent px-4 py-2 text-xs bg-white text-muted-foreground">
-            {saveStatus}
-          </div>
-          <div
-            className={
-              charsCount
-                ? "rounded-lg bg-accent px-2 py-1 bg-white text-sm text-muted-foreground"
-                : "hidden"
-            }
+    <div className="relative w-full h-full flex flex-col justify-start">
+      <div className="flex items-start justify-between sticky top-0 z-20 px-6 py-2 bg-white/95 backdrop-blur-sm border-b border-gray-200/60">
+        <div className="flex items-center space-x-3">
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={() => setAI(!ai)}
+            className={`
+              transition-all duration-200 
+              ${
+                ai
+                  ? "bg-ttickles-darkblue text-white shadow-md hover:shadow-lg"
+                  : "text-ttickles-darkblue hover:bg-ttickles-lightblue border border-ttickles-lightblue"
+              }
+            `}
           >
-            {charsCount} Words
-          </div>
+            <Sparkles className={`w-4 h-4 mr-2 ${ai ? "animate-pulse" : ""}`} />
+            AI Assistant
+          </Button>
         </div>
 
-        <EditorRoot>
-          <Button
-            className="gap-1 text-ttickles-blue border-muted bg-background mb-2 p-4 hover:text-purple-700 transition duration-100 hover:bg-gray-100"
-            variant="ghost"
-            onClick={() => setAI(!ai)}
-            size="sm"
-          >
-            <Sparkle className="h-4 w-4" />
-            Ask AI
-          </Button>
+        <div className="flex items-center space-x-3">
+          <Badge variant="secondary" className={`bg-gray-200 text-gray-600`}>
+            {saveStatus}
+          </Badge>
+          {charsCount > 0 && (
+            <Badge variant="outline" className="text-gray-600">
+              {charsCount} words
+            </Badge>
+          )}
+        </div>
+      </div>
 
-          <EditorContent
-            initialContent={initialContent}
-            extensions={extensions}
-            className="relative min-h-[500px] w-full p-8 border-gray-900 border-2 border-muted bg-background sm:mb-[calc(20vh)] sm:rounded-lg sm:border sm:shadow-sm"
-            editorProps={{
-              handleDOMEvents: {
-                keydown: (_view, event) => handleCommandNavigation(event),
-              },
-              handlePaste: (view, event) =>
-                handleImagePaste(view, event, uploadFn),
-              handleDrop: (view, event, _slice, moved) =>
-                handleImageDrop(view, event, moved, uploadFn),
-              attributes: {
-                class:
-                  "prose prose-lg dark:prose-invert prose-headings:font-title font-default focus:outline-none max-w-full",
-              },
-            }}
-            onUpdate={({ editor }) => {
-              debouncedUpdates(editor);
-              setSaveStatus("Unsaved");
-              const content = editor.getJSON();
-              // console.log("Editor content updated:", content);
-            }}
-            slotAfter={<ImageResizer />}
-          >
-            <EditorCommand className="z-50 h-auto max-h-[330px] overflow-y-auto rounded-md border border-muted bg-background px-1 py-2 shadow-md transition-all">
-              <EditorCommandEmpty className="px-2 text-muted-foreground">
-                No results
-              </EditorCommandEmpty>
-              <EditorCommandList>
-                {suggestionItems.map((item) => (
-                  <EditorCommandItem
-                    value={item.title}
-                    onCommand={(val) => item.command?.(val)}
-                    className="flex w-full items-center space-x-2 rounded-md px-2 py-1 text-left text-sm hover:bg-accent aria-selected:bg-accent"
-                    key={item.title}
-                  >
-                    <div className="flex h-10 w-10 items-center justify-center rounded-md border border-muted bg-background">
-                      {item.icon}
+      <div className="max-w-5xl mx-auto py-5 px-4">
+        <div className="relative">
+          <Card className="bg-white shadow-sm border border-gray-200 rounded-lg overflow-hidden min-h-[800px] drop-shadow-md shadow-ttickles-white backdrop-blur-lg">
+            <CardContent className="p-6">
+              <EditorRoot>
+                <EditorContent
+                  initialContent={initialContent}
+                  extensions={extensions}
+                  className="relative min-h-[600px] w-full"
+                  editorProps={{
+                    handleDOMEvents: {
+                      keydown: (_view, event) => handleCommandNavigation(event),
+                    },
+                    handlePaste: (view, event) =>
+                      handleImagePaste(view, event, uploadFn),
+                    handleDrop: (view, event, _slice, moved) =>
+                      handleImageDrop(view, event, moved, uploadFn),
+                    attributes: {
+                      class:
+                        "prose prose-lg dark:prose-invert prose-headings:font-title font-default focus:outline-none max-w-full p-1 prose-p:leading-relaxed prose-headings:leading-tight",
+                    },
+                  }}
+                  onUpdate={({ editor }) => {
+                    debouncedUpdates(editor);
+                    setSaveStatus("Unsaved");
+                    const content = editor.getJSON();
+                    // console.log("Editor content updated:", content);
+                  }}
+                  slotAfter={<ImageResizer />}
+                >
+                  <EditorCommand className="z-50 h-auto max-h-[330px] overflow-y-auto rounded-md border border-muted bg-background px-1 py-2 shadow-md transition-all">
+                    <EditorCommandEmpty className="px-2 text-muted-foreground">
+                      No results
+                    </EditorCommandEmpty>
+                    <EditorCommandList>
+                      {suggestionItems.map((item) => (
+                        <EditorCommandItem
+                          value={item.title}
+                          onCommand={(val) => item.command?.(val)}
+                          className="flex w-full items-center space-x-2 rounded-md px-2 py-1 text-left text-sm hover:bg-accent aria-selected:bg-accent"
+                          key={item.title}
+                        >
+                          <div className="flex h-10 w-10 items-center justify-center rounded-md border border-muted bg-background">
+                            {item.icon}
+                          </div>
+                          <div>
+                            <p className="font-medium">{item.title}</p>
+                            <p className="text-xs text-muted-foreground">
+                              {item.description}
+                            </p>
+                          </div>
+                        </EditorCommandItem>
+                      ))}
+                    </EditorCommandList>
+                  </EditorCommand>
+
+                  <GenerativeMenuSwitch open={openAI} onOpenChange={setOpenAI}>
+                    <Separator orientation="vertical" />
+                    <NodeSelector open={openNode} onOpenChange={setOpenNode} />
+                    <Separator orientation="vertical" />
+
+                    <LinkSelector open={openLink} onOpenChange={setOpenLink} />
+                    <Separator orientation="vertical" />
+                    <MathSelector />
+                    <Separator orientation="vertical" />
+                    <TextButtons />
+                    <Separator orientation="vertical" />
+                    <ColorSelector
+                      open={openColor}
+                      onOpenChange={setOpenColor}
+                    />
+                    <WrappedImageSelector />
+                  </GenerativeMenuSwitch>
+
+                  {ai && (
+                    <div className=" absolute z-50 top-12 right-0 w-fit bg-background border border-muted rounded-md shadow-xl p-2">
+                      <AIChatbot
+                        open={ai}
+                        onOpenChange={setAI}
+                        chatHelpers={chatHelpers}
+                      />
                     </div>
-                    <div>
-                      <p className="font-medium">{item.title}</p>
-                      <p className="text-xs text-muted-foreground">
-                        {item.description}
-                      </p>
-                    </div>
-                  </EditorCommandItem>
-                ))}
-              </EditorCommandList>
-            </EditorCommand>
-
-            <GenerativeMenuSwitch open={openAI} onOpenChange={setOpenAI}>
-              <Separator orientation="vertical" />
-              <NodeSelector open={openNode} onOpenChange={setOpenNode} />
-              <Separator orientation="vertical" />
-
-              <LinkSelector open={openLink} onOpenChange={setOpenLink} />
-              <Separator orientation="vertical" />
-              <MathSelector />
-              <Separator orientation="vertical" />
-              <TextButtons />
-              <Separator orientation="vertical" />
-              <ColorSelector open={openColor} onOpenChange={setOpenColor} />
-              <WrappedImageSelector />
-            </GenerativeMenuSwitch>
-
-            {ai && (
-              <div className=" absolute z-50 top-12 right-0 w-fit bg-background border border-muted rounded-md shadow-xl p-2">
-                <AIChatbot
-                  open={ai}
-                  onOpenChange={setAI}
-                  chatHelpers={chatHelpers}
-                />
-              </div>
-            )}
-          </EditorContent>
-        </EditorRoot>
+                  )}
+                </EditorContent>
+              </EditorRoot>
+            </CardContent>
+          </Card>
+        </div>
       </div>
     </div>
   );

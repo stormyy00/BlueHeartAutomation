@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import Events from "./events";
 import { Button } from "@/components/ui/button";
-import { Calendar, Clock, Ellipsis, Loader, Save, Send } from "lucide-react";
+import { Calendar, Clock, Loader, Save, Send } from "lucide-react";
 import { EventType } from "@/types/event";
 import { usePathname } from "next/navigation";
 import { toast } from "sonner";
@@ -42,6 +42,8 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import { defaultEditorContent } from "@/utils/content";
+import { Card, CardContent } from "@/components/ui/card";
+import { Skeleton } from "@/components/ui/skeleton";
 
 type NewsletterData = {
   body: string;
@@ -290,91 +292,115 @@ const Creator = ({ org }: { org: Organization }) => {
 
   return (
     <AIContext.Provider value={{ generateFromEvents }}>
-      <div className="flex flex-col gap-4 h-full w-11/12 m-10">
-        <div className="flex flex-row justify-between w-full">
-          <div className="font-extrabold text-3xl mb-8">Newsletter</div>
+      <div className="flex flex-col h-screen bg-gray-50 w-full">
+        <div className="bg-white border-b border-gray-200 px-6 py-4">
+          <div className="flex items-center justify-between ">
+            <div className="flex items-center space-x-4">
+              <h1 className="text-2xl font-semibold text-gray-900">
+                {newsletter.subject}
+              </h1>
+              {/* <div className="hidden sm:flex items-center space-x-2 text-sm text-gray-500">
+                <div className="w-2 h-2 bg-green-400 rounded-full" />
+                <span>Auto-saved</span>
+              </div> */}
+            </div>
 
-          <div className="flex flex-row gap-3">
-            <Sheet open={sheetOpen} onOpenChange={setSheetOpen}>
-              <SheetTrigger asChild>
-                <Button
-                  variant="outline"
-                  className="flex items-center gap-2 bg-teal-400 hover:bg-teal-400 hover:brightness-110 hover:text-white text-white transition duration-100"
-                >
-                  <Calendar />
-                  Add Events
-                </Button>
-              </SheetTrigger>
-            </Sheet>
+            <div className="flex items-center space-x-3">
+              <Sheet open={sheetOpen} onOpenChange={setSheetOpen}>
+                <SheetTrigger asChild>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    className="bg-teal-50 border-teal-200 text-teal-700 hover:bg-teal-100"
+                  >
+                    <Calendar className="w-4 h-4 mr-1" />
+                    Add Events
+                  </Button>
+                </SheetTrigger>
+              </Sheet>
 
-            <Button
-              disabled={!data}
-              onClick={generateDocument}
-              className="bg-ttickles-darkblue hover:bg-ttickles-darkblue hover:brightness-110 transition duration-100 text-white px-4 py-2 rounded disabled:opacity-50 w-fit"
-            >
-              {loading ? <Save /> : <Loader className="animate-spin" />}
-              Save
-            </Button>
+              <Button
+                disabled={!data}
+                onClick={generateDocument}
+                size="sm"
+                className="bg-ttickles-darkblue hover:bg-ttickles-lightblue text-white disabled:opacity-50"
+              >
+                {loading ? (
+                  <Save className="w-4 h-4 mr-1" />
+                ) : (
+                  <Loader className="w-4 h-4 mr-2 animate-spin" />
+                )}
+                Save
+              </Button>
 
-            <Button
-              className="bg-ttickles-orange hover:bg-ttickles-orange hover:brightness-110 transition duration-100"
-              onClick={() => {
-                setPopup({
-                  ...popup,
-                  visible: true,
-                });
-                setSending(false);
-              }}
-            >
-              <Clock />
-              Schedule
-            </Button>
-            <Button
-              className="bg-ttickles-orange hover:bg-ttickles-orange hover:brightness-110 transition duration-100"
-              onClick={() => {
-                setPopup({
-                  ...popup,
-                  visible: true,
-                });
-                setSending(true);
-              }}
-            >
-              <Send />
-              Send
-            </Button>
+              <Button
+                size="sm"
+                variant="outline"
+                className="bg-orange-50 border-orange-200 text-orange-700 hover:bg-orange-100"
+                onClick={() => {
+                  setPopup({ ...popup, visible: true });
+                  setSending(false);
+                }}
+              >
+                <Clock className="w-4 h-4 mr-1" />
+                Schedule
+              </Button>
+
+              <Button
+                size="sm"
+                className="bg-orange-600 hover:bg-orange-700 text-white"
+                onClick={() => {
+                  setPopup({ ...popup, visible: true });
+                  setSending(true);
+                }}
+              >
+                <Send className="w-4 h-4 mr-1" />
+                Send
+              </Button>
+            </div>
           </div>
         </div>
-
-        <div className="flex  h-full w-full">
-          <div className="flex flex-col bg-white p-4 rounded-md border border-gray-100 shadow-sm w-full gap-4 h-full">
-            {newsletter.body ? (
-              <ScrollArea>
-                <Editor
-                  ai={ai}
-                  setAI={setAI}
-                  chatHelpers={chatHelpers}
-                  onChange={handleChange}
-                  data={textContent as unknown as JSONContent}
-                />
-              </ScrollArea>
-            ) : (
-              <Ellipsis className="motion-preset-pulse-sm motion-duration-1000" />
-            )}
+        <div className="flex-1 flex overflow-hidden">
+          <div className="flex-1 flex items-center justify-center p-2 w-full">
+            <Card className="w-full h-full shadow-sm border-gray-200">
+              <CardContent className="p-0 h-full">
+                {newsletter.body ? (
+                  <ScrollArea className="h-full">
+                    <div className="p-6">
+                      <Editor
+                        ai={ai}
+                        setAI={setAI}
+                        chatHelpers={chatHelpers}
+                        onChange={handleChange}
+                        data={textContent as unknown as JSONContent}
+                      />
+                    </div>
+                  </ScrollArea>
+                ) : (
+                  <div className="flex flex-col gap-4 p-6 h-full w-full">
+                    <Skeleton className="h-8 w-1/2" />
+                    <Skeleton className="h-6 w-1/3" />
+                    <Skeleton className="h-96 w-full rounded-lg" />
+                    <Skeleton className="h-8 w-32" />
+                  </div>
+                )}
+              </CardContent>
+            </Card>
           </div>
         </div>
 
         <Sheet open={sheetOpen} onOpenChange={setSheetOpen}>
-          <SheetContent side="right" className="w-full max-w-md overflow-auto">
-            <SheetHeader>
+          <SheetContent side="right" className="w-full max-w-md">
+            <SheetHeader className="pb-4">
               <SheetTitle>Events</SheetTitle>
             </SheetHeader>
-            <div className="mt-4">
+            <ScrollArea className="h-full">
               <Events
                 onChange={handleEventsChange}
                 eventLoading={eventLoading}
                 setEventLoading={setEventLoading}
               />
-            </div>
+            </ScrollArea>
           </SheetContent>
         </Sheet>
 
@@ -382,49 +408,60 @@ const Creator = ({ org }: { org: Organization }) => {
           open={popup.visible}
           onOpenChange={(open) => setPopup({ ...popup, visible: open })}
         >
-          <DialogContent className="flex flex-col gap-3 bg-white p-6 rounded-lg shadow-xl">
-            <DialogTitle>Schedule Newsletter</DialogTitle>
-            <DialogDescription className="flex flex-col gap-4">
-              <div className="flex flex-col gap-y-2">
-                <Label className="font-bold">Subject</Label>
-                <Input
-                  type="text"
-                  defaultValue={newsletter.subject}
-                  onChange={(value) => {
-                    const val = value.currentTarget.value;
-                    setNewsletter((prev) => {
-                      return { ...prev, subject: val };
-                    });
-                  }}
-                />
-                <Label className="font-bold">Recipient Group</Label>
-                {org?.groups && (
+          <DialogContent className="sm:max-w-md">
+            <DialogTitle>
+              {sending ? "Send Newsletter" : "Schedule Newsletter"}
+            </DialogTitle>
+
+            <DialogDescription asChild>
+              <div className="space-y-4 py-4">
+                <div className="space-y-2">
+                  <Label className="font-bold">Newsletter Template</Label>
+                  <Input
+                    id="subject"
+                    type="text"
+                    defaultValue={newsletter.subject}
+                    onChange={(e) => {
+                      setNewsletter((prev) => ({
+                        ...prev,
+                        subject: e.target.value,
+                      }));
+                    }}
+                    className="w-full"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label className="font-bold">Recipient Group</Label>
+                  {org?.groups && (
+                    <Select
+                      options={org?.groups.map((group) => ({
+                        label: group.name,
+                        value: group.name,
+                      }))}
+                      onChange={(selected) =>
+                        setNewsletter((prev) => {
+                          return { ...prev, recipientGroup: selected };
+                        })
+                      }
+                      placeholder="Select a Recipient"
+                    />
+                  )}
+                </div>
+                <div className="space-y-2">
+                  <Label className="font-bold">Newsletter Template</Label>
                   <Select
-                    options={org?.groups.map((group) => ({
-                      label: group.name,
-                      value: group.name,
+                    options={TEMPLATES.map(({ title }) => ({
+                      label: title,
+                      value: title,
                     }))}
                     onChange={(selected) =>
                       setNewsletter((prev) => {
-                        return { ...prev, recipientGroup: selected };
+                        return { ...prev, template: selected };
                       })
                     }
-                    placeholder="Select a Recipient"
+                    placeholder="Select a Template"
                   />
-                )}
-                <Label className="font-bold">Newsletter Template</Label>
-                <Select
-                  options={TEMPLATES.map(({ title }) => ({
-                    label: title,
-                    value: title,
-                  }))}
-                  onChange={(selected) =>
-                    setNewsletter((prev) => {
-                      return { ...prev, template: selected };
-                    })
-                  }
-                  placeholder="Select a Template"
-                />
+                </div>
                 {!sending && (
                   <div className="flex gap-4">
                     <div className="flex flex-col gap-3">
@@ -517,10 +554,10 @@ const Creator = ({ org }: { org: Organization }) => {
                 )}
               </div>
             </DialogDescription>
-            <div className="flex flex-row self-end gap-2">
+            <div className="flex flex-row justify-end gap-3">
               <DialogClose asChild>
                 <Button
-                  className="px-4 py-1 rounded bg-white text-black hover:text-black hover:bg-white"
+                  className="px-4 py-1 rounded border bg-white border-black/20 text-black hover:text-black hover:bg-white"
                   onClick={() => {
                     setPopup({ ...popup, visible: false });
                   }}

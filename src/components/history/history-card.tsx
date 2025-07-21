@@ -1,5 +1,5 @@
 import { Copy, MoreVertical, Pen } from "lucide-react";
-import { Checkbox } from "./ui/checkbox";
+import { Checkbox } from "../ui/checkbox";
 import { toast } from "sonner";
 import Link from "next/link";
 
@@ -45,12 +45,12 @@ const HistoryCard = ({
         </Link>
       </div>
       <div className="flex items-center gap-3 text-gray-500">
-        <span className=" px-3 py-1 rounded-full text-xs font-medium uppercase text-slate-400">
+        <span className="text-xs font-medium text-slate-600  bg-slate-100 px-3 py-1 rounded-full">
           {new Date(timestamp).toLocaleDateString("en-US", {
-            weekday: "long",
-            year: "numeric",
-            month: "long",
+            month: "short",
             day: "numeric",
+            hour: "numeric",
+            minute: "2-digit",
           })}
         </span>
         <div

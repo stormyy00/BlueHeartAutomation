@@ -11,7 +11,7 @@ const Page = async ({ params }: Params) => {
   const { orgId } = params;
   const org = await getOrg(orgId);
   return (
-    <div className="flex flex-col w-full bg-white">
+    <div className="flex w-full bg-white">
       <Creator org={org!} />
     </div>
   );

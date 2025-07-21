@@ -1,4 +1,4 @@
-import HistoryDashboard from "@/components/history-dashboard";
+import HistoryDashboard from "@/components/history/history-dashboard";
 
 const page = () => {
   return (

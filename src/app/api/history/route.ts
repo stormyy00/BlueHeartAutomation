@@ -28,12 +28,7 @@ export const GET = async () => {
         newsletter: newsletterContent || data.newsletter[0],
         newsletterId: data.newsletterId,
         newsletterStatus: data.status,
-        newsletterSentDate: data.scheduledDate
-          ? new Date(
-              data.scheduledDate.seconds * 1000 +
-                data.scheduledDate.nanoseconds / 1000000,
-            )
-          : null,
+        newsletterSentDate: data.sentDate ? new Date(data.sentDate) : null,
       };
     });
 

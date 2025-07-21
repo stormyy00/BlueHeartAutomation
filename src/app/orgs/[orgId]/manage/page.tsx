@@ -1,5 +1,5 @@
 import React from "react";
-import Manage from "@/components/manage";
+import Manage from "@/components/manage/manage";
 
 const Page = () => {
   return (
