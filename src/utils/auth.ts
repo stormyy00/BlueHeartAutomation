@@ -21,6 +21,12 @@ export const options: NextAuthOptions = {
       },
       clientId: process.env.GOOGLE_CLIENT_ID as string,
       clientSecret: process.env.GOOGLE_CLIENT_SECRET as string,
+      authorization: {
+        params: {
+          scope:
+            "openid email profile https://www.googleapis.com/auth/calendar",
+        },
+      },
     }),
   ],
   adapter: FirestoreAdapter({
