@@ -5,6 +5,7 @@ import {
   QueryClient,
   QueryClientProvider,
   HydrationBoundary,
+  DehydratedState,
 } from "@tanstack/react-query";
 import { SessionProvider } from "next-auth/react";
 import { Session } from "next-auth";
@@ -13,7 +14,7 @@ import { useState } from "react";
 type Props = {
   children: React.ReactNode;
   session: Session | null;
-  dehydratedState?: unknown;
+  dehydratedState?: DehydratedState;
 };
 
 const Providers = ({ children, session, dehydratedState }: Props) => {
