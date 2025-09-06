@@ -8,16 +8,12 @@ export const env = createEnv({
    */
   server: {
     // Firebase config
-    NEXT_PRIVATE_FIREBASE_PROJECT_ID: z.string(),
     NEXT_PRIVATE_FIREBASE_CLIENT_EMAIL: z.string().optional(),
     NEXT_PRIVATE_FIREBASE_PRIVATE_KEY: z.string().optional(),
 
     // API keys and auth
     GEMINI_API_KEY: z.string().optional(),
-    NEXTAUTH_SECRET:
-      process.env.NODE_ENV === "production"
-        ? z.string()
-        : z.string().optional(),
+    NEXTAUTH_SECRET: z.string().optional(),
     NEXTAUTH_URL: z.string().url().optional(),
     GOOGLE_CLIENT_ID: z.string(),
     GOOGLE_CLIENT_SECRET: z.string(),
@@ -76,8 +72,6 @@ export const env = createEnv({
       process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN,
     NEXT_PUBLIC_FIREBASE_PROJECT_ID:
       process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID,
-    NEXT_PRIVATE_FIREBASE_PROJECT_ID:
-      process.env.NEXT_PRIVATE_FIREBASE_PROJECT_ID,
     NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET:
       process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET,
     NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID:
