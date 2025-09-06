@@ -13,10 +13,7 @@ export const env = createEnv({
 
     // API keys and auth
     GEMINI_API_KEY: z.string().optional(),
-    NEXTAUTH_SECRET:
-      process.env.NODE_ENV === "production"
-        ? z.string()
-        : z.string().optional(),
+    NEXTAUTH_SECRET: z.string().optional(),
     NEXTAUTH_URL: z.string().url().optional(),
     GOOGLE_CLIENT_ID: z.string(),
     GOOGLE_CLIENT_SECRET: z.string(),
