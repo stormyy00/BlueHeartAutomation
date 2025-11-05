@@ -9,7 +9,7 @@ import {
 } from "@tanstack/react-query";
 
 import { useState } from "react";
-import ProtectedPage from "./protected";
+// import ProtectedPage from "./protected";
 
 type Props = {
   children: React.ReactNode;
