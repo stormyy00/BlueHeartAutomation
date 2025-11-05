@@ -1,3 +1,13 @@
+export const initContent = {
+  type: "doc",
+  content: [
+    {
+      type: "paragraph",
+      content: [{ type: "text", text: "" }],
+    },
+  ],
+};
+
 export const defaultEditorContent = {
   type: "doc",
   content: [

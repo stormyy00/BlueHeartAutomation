@@ -3,14 +3,34 @@ import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { QUESTIONS } from "@/data/newsletter/newsletter";
 import Select from "@/components/global/select";
-import { ChangeEvent } from "react";
+import { ChangeEvent, useState } from "react";
+import CampaignPopover from "@/components/global/popover";
+
+type Campaign = {
+  id: string;
+  title: string;
+  description: string;
+  status: string;
+  createdAt: string;
+  newsletters: number;
+};
 
 type props = {
   newsletter: NewsletterType;
   handleChange: (e: ChangeEvent<HTMLInputElement>, key: string) => void;
+  campaigns: Campaign[] | undefined;
+  newsletterId: string;
+  campaignId: string;
 };
 
-const NewsletterModal = ({ newsletter, handleChange }: props) => {
+const NewsletterModal = ({
+  newsletter,
+  handleChange,
+  campaigns,
+  newsletterId,
+  campaignId,
+}: props) => {
+  const [comboboxOpen, setComboboxOpen] = useState(false);
   return (
     <>
       {QUESTIONS.map((question, index) => (
@@ -34,6 +54,15 @@ const NewsletterModal = ({ newsletter, handleChange }: props) => {
                 console.log("Selected category:", selected)
               }
               placeholder="Select a Recipient"
+            />
+          )}
+          {question.type === "multiselect" && (
+            <CampaignPopover
+              comboboxOpen={comboboxOpen}
+              setComboboxOpen={setComboboxOpen}
+              campaign={campaigns || []}
+              documentId={newsletterId}
+              campaignId={campaignId}
             />
           )}
         </div>
