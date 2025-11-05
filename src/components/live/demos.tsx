@@ -1,154 +1,171 @@
+"use client";
+
 import React from "react";
-import Image from "next/image";
-import Link from "next/link";
 import { motion } from "framer-motion";
-import Background from "@/public/ucr_background.png";
-import { ChevronRight, MessageSquare, Clock, BookTemplate } from "lucide-react";
+import { ArrowRight, Timer, Users, Rocket, BarChart3 } from "lucide-react";
 
 const Demos = () => {
-  const demoFeatures = [
+  const comparisons = [
     {
-      id: "inline-chat",
-      title: "Inline Chat",
+      title: "Manual Process",
       description:
-        "Seamlessly communicate with your team while drafting newsletters.",
-      icon: <MessageSquare size={24} className="text-[#FFB81C]" />,
-      delay: 0.4,
+        "Teams spend hours manually writing and formatting newsletters across platforms.",
+      icon: <Timer className="w-6 h-6 text-[#7e8287]" />,
+      color: "from-gray-100 to-gray-200",
+      border: "border-gray/30",
+      side: "without",
     },
     {
-      id: "chatbot",
-      title: "AI Assistant Chatbot",
+      title: "Fragmented Messaging",
       description:
-        "Get content suggestions and answer questions with our intelligent chatbot.",
-      icon: <MessageSquare size={24} className="text-[#FFB81C]" />,
-      delay: 0.6,
+        "Each department uses its own tools, leading to inconsistent branding and slower turnaround.",
+      icon: <Users className="w-6 h-6 text-[#7e8287]" />,
+      color: "from-gray-100 to-gray-200",
+      border: "border-gray/30",
+      side: "without",
     },
     {
-      id: "email-scheduling",
-      title: "Email Scheduling",
+      title: "Automated Creativity",
       description:
-        "Plan and automate your newsletter delivery at optimal times.",
-      icon: <Clock size={24} className="text-[#FFB81C]" />,
-      delay: 0.8,
+        "AI generates campaign-ready posts in seconds — your team focuses on strategy, not formatting.",
+      icon: <Rocket className="w-6 h-6 text-[#1C6D96]" />,
+      color: "from-[#edf6f9] to-[#83c5be]/20",
+      border: "border-[#83c5be]/40",
+      side: "with",
     },
     {
-      id: "custom-templates",
-      title: "Custom Templates",
+      title: "Higher Throughput",
       description:
-        "Create and save custom newsletter designs for consistent branding.",
-      icon: <BookTemplate size={24} className="text-[#FFB81C]" />,
-      delay: 1.0,
+        "2× increase in campaign frequency and engagement rates — all measurable in your dashboard.",
+      icon: <BarChart3 className="w-6 h-6 text-[#ff9f1c]" />,
+      color: "from-[#fff7ec] to-[#ff9f1c]/10",
+      border: "border-[#ff9f1c]/30",
+      side: "with",
     },
   ];
 
   return (
-    <div className="relative min-h-screen w-full text-white">
-      {/* Background with overlay */}
+    <motion.section
+      className="relative py-28 bg-gradient-to-b from-muted/30 to-background text-center"
+      initial={{ opacity: 0, y: 30 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      transition={{ duration: 1, ease: "easeOut" }}
+      viewport={{ once: true }}
+    >
       <motion.div
-        className="absolute inset-0"
-        initial={{ opacity: 0, scale: 1.05, filter: "blur(10px)" }}
-        animate={{ opacity: 1, scale: 1, filter: "blur(0px)" }}
-        transition={{ duration: 1.2, ease: "easeOut" }}
-        viewport={{ once: false }}
+        className="max-w-4xl mx-auto mb-16"
+        initial={{ opacity: 0, y: 20 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.6 }}
+        viewport={{ once: true }}
       >
-        <Image
-          className="h-full w-full object-cover"
-          src={Background}
-          alt="UCR Background"
-          priority
-        />
+        <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-[#1C6D96]/10 text-[#1C6D96] font-medium text-sm mb-6">
+          Why This Platform?
+        </div>
+        <h2 className="text-5xl md:text-6xl font-bold tracking-tighter mb-6 text-foreground">
+          From chaos to clarity
+          <br />
+          <span className="bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
+            {" "}
+            see the difference
+          </span>
+        </h2>
+        <p className="text-lg text-[#7e8287] max-w-3xl mx-auto">
+          Compare the old way of manual outreach with the new era of automated,
+          data-driven communication. Increase your marketing throughput without
+          increasing your workload.
+        </p>
       </motion.div>
-      <div className="absolute inset-0 bg-gradient-to-b from-black/40 to-black/80" />
 
-      <div className="relative z-10 container mx-auto px-6 py-20">
+      <div className="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-10 px-6 md:px-12">
         <motion.div
-          className="flex flex-col items-center text-center mb-16"
-          initial={{ opacity: 0, y: 30 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 1, ease: "easeOut", delay: 0.2 }}
+          className="rounded-2xl border border-gray/20 bg-white/60 shadow-sm p-8 flex flex-col gap-6"
+          initial={{ opacity: 0, x: -50 }}
+          whileInView={{ opacity: 1, x: 0 }}
+          transition={{ duration: 0.7 }}
         >
-          <motion.h1
-            className="text-5xl font-semibold tracking-tight drop-shadow-md md:text-6xl"
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 1, ease: "easeOut", delay: 0.3 }}
-          >
-            Our Features
-          </motion.h1>
-          <motion.div
-            className="my-4 h-1 w-32 bg-[#FFB81C]"
-            initial={{ opacity: 0, scaleX: 0 }}
-            animate={{ opacity: 1, scaleX: 1 }}
-            transition={{ duration: 0.8, ease: "easeOut", delay: 0.5 }}
-          />
-          <motion.p
-            className="text-lg font-light text-gray-300 md:text-xl max-w-2xl"
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 1, ease: "easeOut", delay: 0.7 }}
-          >
-            Explore how TTickle Newsletter Automation can streamline your
-            nonprofit{"'"}s communications
-          </motion.p>
+          <h3 className="text-2xl font-bold text-[#7e8287] mb-2">
+            Without the Platform
+          </h3>
+          {comparisons
+            .filter((item) => item.side === "without")
+            .map((item, i) => (
+              <div
+                key={i}
+                className={`flex items-start gap-4 p-4 rounded-xl bg-gradient-to-r ${item.color} border ${item.border}`}
+              >
+                <div className="p-2 bg-white/60 rounded-lg shadow-sm">
+                  {item.icon}
+                </div>
+                <div className="text-left">
+                  <h4 className="font-semibold text-[#1C6D96]/80">
+                    {item.title}
+                  </h4>
+                  <p className="text-sm text-[#7e8287]/90">
+                    {item.description}
+                  </p>
+                </div>
+              </div>
+            ))}
         </motion.div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-6xl mx-auto">
-          {demoFeatures.map((feature) => (
-            <motion.div
-              key={feature.id}
-              className="bg-black/40 backdrop-blur-sm rounded-lg p-6 border border-gray-800 hover:border-[#FFB81C] transition-all duration-300"
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{
-                duration: 0.8,
-                ease: "easeOut",
-                delay: feature.delay,
-              }}
-              whileHover={{
-                y: -5,
-                boxShadow: "0 10px 30px -10px rgba(255, 184, 28, 0.3)",
-              }}
-            >
-              <div className="flex items-center mb-4">
-                {feature.icon}
-                <h3 className="text-2xl font-medium ml-3">{feature.title}</h3>
-              </div>
-              <p className="text-gray-300 mb-4">{feature.description}</p>
-              <div className="mt-auto">
-                <Link
-                  href={`/demos/${feature.id}`}
-                  className="group flex items-center text-[#FFB81C] hover:text-white transition-colors duration-300"
-                >
-                  <span>View Demo</span>
-                  <ChevronRight
-                    size={16}
-                    className="ml-1 transition-transform duration-300 group-hover:translate-x-1"
-                  />
-                </Link>
-              </div>
-            </motion.div>
-          ))}
-        </div>
-
         <motion.div
-          className="mt-16 text-center"
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, ease: "easeOut", delay: 1.2 }}
+          className="rounded-2xl border border-[#83c5be]/40 bg-white/80 shadow-lg p-8 flex flex-col gap-6"
+          initial={{ opacity: 0, x: 50 }}
+          whileInView={{ opacity: 1, x: 0 }}
+          transition={{ duration: 0.7 }}
         >
-          <motion.button
-            className="bg-[#FFB81C] hover:bg-[#FFB81C]/90 text-black font-medium px-8 py-3 rounded-md transition-all duration-300 shadow-lg hover:shadow-[#FFB81C]/20"
+          <h3 className="text-2xl font-bold text-[#1C6D96] mb-2">
+            With Our Platform
+          </h3>
+          {comparisons
+            .filter((item) => item.side === "with")
+            .map((item, i) => (
+              <div
+                key={i}
+                className={`flex items-start gap-4 p-4 rounded-xl bg-gradient-to-r ${item.color} border ${item.border}`}
+              >
+                <div className="p-2 bg-white/60 rounded-lg shadow-sm">
+                  {item.icon}
+                </div>
+                <div className="text-left">
+                  <h4 className="font-semibold text-[#1C6D96]">{item.title}</h4>
+                  <p className="text-sm text-[#7e8287]/90">
+                    {item.description}
+                  </p>
+                </div>
+              </div>
+            ))}
+
+          <div className="mt-8">
+            <p className="text-sm font-medium text-[#1C6D96]/70 mb-2">
+              Marketing Throughput
+            </p>
+            <div className="h-3 bg-[#edf6f9] rounded-full overflow-hidden">
+              <motion.div
+                className="h-full bg-gradient-to-r from-primary to-secondary rounded-full"
+                initial={{ width: "40%" }}
+                whileInView={{ width: "90%" }}
+                transition={{ duration: 1.5, ease: "easeOut" }}
+              />
+            </div>
+            <div className="flex justify-between text-xs text-[#7e8287] mt-1">
+              <span>Before</span>
+              <span>After</span>
+            </div>
+          </div>
+
+          <motion.a
+            href="/demo"
+            className="mt-8 inline-flex items-center gap-3 px-6 py-3 bg-[#1C6D96] text-white rounded-xl font-semibold hover:bg-[#155b74] transition-all duration-300 w-fit"
             whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.98 }}
           >
-            Request Full Demo
-          </motion.button>
-          <p className="text-gray-400 mt-4 text-sm">
-            See all our features in action with a personalized walkthrough
-          </p>
+            Try Demo
+            <ArrowRight className="w-4 h-4" />
+          </motion.a>
         </motion.div>
       </div>
-    </div>
+    </motion.section>
   );
 };
 
