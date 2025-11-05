@@ -1,0 +1,3 @@
+ALTER TABLE "session" ADD COLUMN "activeOrganizationId" varchar(255);--> statement-breakpoint
+ALTER TABLE "session" ADD CONSTRAINT "session_activeOrganizationId_organization_id_fk" FOREIGN KEY ("activeOrganizationId") REFERENCES "public"."organization"("id") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
+CREATE INDEX "session_active_org_idx" ON "session" USING btree ("activeOrganizationId");

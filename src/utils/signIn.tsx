@@ -1,11 +1,19 @@
-"use client";
-import { signIn } from "next-auth/react";
+import { ErrorContext } from "better-auth/react";
+import { signIn } from "./auth-client";
 
-interface Props {
-  callback: string;
-}
+const SignInProvider = async (provider: string) =>
+  await signIn.social(
+    {
+      provider: provider,
+      callbackURL: "/",
+    },
+    {
+      onSuccess: async () => {},
+      onError: (ctx: ErrorContext) => {
+        console.error("Sign in error:", ctx.error.message);
+        alert(ctx.error.message ?? "Something went wrong.");
+      },
+    },
+  );
 
-const SignIn = ({ callback }: Props) =>
-  void signIn("google", { callbackUrl: callback });
-
-export default SignIn;
+export default SignInProvider;

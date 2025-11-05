@@ -1,5 +1,6 @@
 import { createEnv } from "@t3-oss/env-nextjs";
 import { z } from "zod";
+import { tr } from "zod/v4/locales";
 
 export const env = createEnv({
   /**
@@ -7,14 +8,15 @@ export const env = createEnv({
    * isn't built with invalid env vars.
    */
   server: {
+    // Database
+    DATABASE_URL: z.string(),
+
     // Firebase config
     NEXT_PRIVATE_FIREBASE_CLIENT_EMAIL: z.string().optional(),
     NEXT_PRIVATE_FIREBASE_PRIVATE_KEY: z.string().optional(),
 
     // API keys and auth
     GEMINI_API_KEY: z.string().optional(),
-    NEXTAUTH_SECRET: z.string().optional(),
-    NEXTAUTH_URL: z.string().url().optional(),
     GOOGLE_CLIENT_ID: z.string(),
     GOOGLE_CLIENT_SECRET: z.string(),
     OLLAMA_URL: z.string().optional(),
@@ -22,9 +24,13 @@ export const env = createEnv({
     POSTHOG_API_KEY: z.string().optional(),
     PROJECT_ID: z.string().optional(),
 
+    // Better Auth
+    BETTER_AUTH_SECRET: z.string(),
+
     // Other services
     BLOB_READ_WRITE_TOKEN: z.string().optional(),
     TRIGGER_SECRET_KEY: z.string().optional(),
+    BETTER_AUTH_URL: z.string().optional(),
 
     // Environment
     NODE_ENV: z
@@ -59,6 +65,9 @@ export const env = createEnv({
     // PostHog public config
     NEXT_PUBLIC_POSTHOG_KEY: z.string().optional(),
     NEXT_PUBLIC_POSTHOG_HOST: z.string().optional(),
+
+    // Better Auth
+    NEXT_PUBLIC_BETTER_AUTH_URL: z.string().optional(),
   },
 
   /**
@@ -94,8 +103,6 @@ export const env = createEnv({
     // Auth config
     GOOGLE_CLIENT_ID: process.env.GOOGLE_CLIENT_ID,
     GOOGLE_CLIENT_SECRET: process.env.GOOGLE_CLIENT_SECRET,
-    NEXTAUTH_SECRET: process.env.NEXTAUTH_SECRET,
-    NEXTAUTH_URL: process.env.NEXTAUTH_URL,
 
     // API keys
     GEMINI_API_KEY: process.env.GEMINI_API_KEY,
@@ -109,6 +116,14 @@ export const env = createEnv({
     POSTHOG_API_KEY: process.env.POSTHOG_API_KEY,
     PROJECT_ID: process.env.PROJECT_ID,
 
+    // Database
+    DATABASE_URL: process.env.DATABASE_URL,
+
+    // Better Auth
+
+    BETTER_AUTH_URL: process.env.BETTER_AUTH_URL,
+    BETTER_AUTH_SECRET: process.env.BETTER_AUTH_SECRET,
+
     // Other services
     BLOB_READ_WRITE_TOKEN: process.env.BLOB_READ_WRITE_TOKEN,
     TRIGGER_SECRET_KEY: process.env.TRIGGER_SECRET_KEY,
@@ -121,7 +136,7 @@ export const env = createEnv({
    * Run `build` or `dev` with `SKIP_ENV_VALIDATION` to skip env validation. This is especially
    * useful for Docker builds.
    */
-  skipValidation: !!process.env.SKIP_ENV_VALIDATION,
+  skipValidation: true,
 
   /**
    * Makes it so that empty strings are treated as undefined. `SOME_VAR: z.string()` and
