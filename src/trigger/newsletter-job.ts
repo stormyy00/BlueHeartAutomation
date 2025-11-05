@@ -6,7 +6,7 @@ export const emailNewsletterJob = schedules.task({
   maxDuration: 300,
   run: async () => {
     logger.log("Running newsletter job...");
-    const url = `${env.NEXTAUTH_URL}/api/newsletter/schedule`;
+    const url = `${env.BETTER_AUTH_URL}/api/newsletter/schedule`;
     const res = await fetch(url, {
       method: "POST",
       body: JSON.stringify({ content: "Dynamic!" }),

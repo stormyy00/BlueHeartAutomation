@@ -1,5 +1,9 @@
 export const QUESTIONS = [
   {
+    title: "Campaign Name",
+    type: "multiselect",
+  },
+  {
     title: "To",
     type: "select",
   },

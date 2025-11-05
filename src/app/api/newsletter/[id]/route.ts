@@ -1,46 +1,63 @@
-import { options } from "@/utils/auth";
-import { db } from "@/utils/firebase";
-import {
-  addDoc,
-  collection,
-  doc,
-  getDocs,
-  query,
-  setDoc,
-  where,
-} from "firebase/firestore";
-import { getServerSession } from "next-auth";
 import { NextRequest, NextResponse } from "next/server";
+import { authenticate } from "@/utils/auth";
+import { db } from "@/db";
+import { documents, organizationMembers } from "@/db/schema";
+import { eq, and } from "drizzle-orm";
 
 export const GET = async (
   req: NextRequest,
   { params }: { params: { id: string } },
 ) => {
-  const session = await getServerSession(options);
-  if (!session) {
-    return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
+  const { uid, message, orgId, auth } = await authenticate();
+  if (auth !== 200 || !uid) {
+    return Response.json(
+      { error: message || "Unauthorized" },
+      { status: auth },
+    );
   }
 
-  try {
-    const q = query(
-      collection(db, "newsletters"),
-      where("newsletterId", "==", params.id),
-    );
-    const querySnapshot = await getDocs(q);
+  console.log("Fetching newsletter with ID:", params.id);
 
-    if (querySnapshot.empty) {
+  try {
+    const results = await db
+      .select()
+      .from(documents)
+      .where(
+        and(
+          eq(documents.id, params.id),
+          eq(documents.organizationId, orgId as string),
+        ),
+      );
+
+    const document = results?.[0];
+
+    if (!document) {
       return NextResponse.json(
-        { message: "No such document!" },
+        { error: "Document not found." },
         { status: 404 },
       );
     }
 
-    const newsletter = querySnapshot.docs[0].data();
+    // Map DB fields to the shape expected by the client
+    // subject -> title, scheduledDate -> scheduledAt, recipientGroup -> (not modeled yet)
+    const payload = {
+      newsletterData: {
+        content: document.content,
+        status: document.status,
+        scheduledDate: document.scheduledAt
+          ? new Date(document.scheduledAt).toISOString()
+          : null,
+        recipientGroup: "",
+        subject: document.title ?? "",
+      },
+      template: document.template ?? "",
+      campaignId: document.campaignId ?? null,
+    };
 
-    return NextResponse.json({ newsletterData: newsletter });
+    return NextResponse.json(payload);
   } catch (err) {
     return NextResponse.json(
-      { message: `Internal Server Error: ${err}` },
+      { error: `Internal Server Error: ${err}` },
       { status: 500 },
     );
   }
@@ -50,43 +67,78 @@ export const POST = async (
   req: NextRequest,
   { params }: { params: { id: string } },
 ) => {
-  const session = await getServerSession(options);
-  if (!session) {
-    return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
+  const { uid, message, orgId, auth } = await authenticate();
+  if (auth !== 200 || !uid || !orgId) {
+    return Response.json(
+      { error: message || "Unauthorized" },
+      { status: auth },
+    );
   }
-  const { document } = await req.json();
 
   try {
-    const snapshotQuery = query(
-      collection(db, "newsletters"),
-      where("newsletterId", "==", params.id),
-    );
-    const snapshot = await getDocs(snapshotQuery);
+    const { document, title } = await req.json();
 
-    if (!snapshot.empty) {
-      const newsletterRef = doc(db, "newsletters", snapshot.docs[0].id);
-      await setDoc(
-        newsletterRef,
-        {
-          orgId: session.user.orgId,
-          newsletter: document,
-          timestamp: new Date(),
-        },
-        { merge: true },
+    // Normalize content to a string since DB column is text
+    const contentToSave = (() => {
+      if (!document) return "";
+      if (typeof document === "string") return document;
+      if (typeof document.content === "string") return document.content;
+      if (document.content) return JSON.stringify(document.content);
+      return JSON.stringify(document);
+    })();
+
+    try {
+      // Try to get existing document first
+      const [existingDocument] = await db
+        .select()
+        .from(documents)
+        .where(
+          and(
+            eq(documents.id, params.id),
+            eq(documents.organizationId, orgId as string),
+          ),
+        );
+
+      if (existingDocument) {
+        // Update existing document
+        await db
+          .update(documents)
+          .set({
+            content: contentToSave,
+            title: title || document.title || existingDocument.title,
+            htmlContent: document.htmlContent,
+            metadata: document.metadata || existingDocument.metadata,
+            updatedAt: new Date(),
+          })
+          .where(eq(documents.id, params.id));
+      } else {
+        // Create new document
+        await db.insert(documents).values({
+          id: params.id,
+          title: title || document.title || "New Document",
+          content: contentToSave,
+          organizationId: orgId as string,
+          authorId: uid,
+          status: "draft",
+          tags: document.tags || [],
+          recipients: document.recipients || [],
+          template: document.template || "default",
+          metadata: document.metadata || {},
+          createdAt: new Date(),
+          updatedAt: new Date(),
+        });
+      }
+    } catch (error) {
+      return Response.json(
+        { error: `Failed to save document: ${error}` },
+        { status: 500 },
       );
-    } else {
-      await addDoc(collection(db, "newsletters"), {
-        orgId: session.user.orgId,
-        newsletterId: params.id,
-        newsletter: document,
-        timestamp: new Date(),
-      });
     }
 
-    return NextResponse.json({ status: 200 });
+    return Response.json({ status: 200 });
   } catch (err) {
-    return NextResponse.json(
-      { message: `Internal Server Error: ${err}` },
+    return Response.json(
+      { error: `Internal Server Error: ${err}` },
       { status: 500 },
     );
   }

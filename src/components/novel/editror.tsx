@@ -148,13 +148,13 @@ const TailwindAdvancedEditor = ({
 
       <div className="max-w-5xl mx-auto py-5 px-4">
         <div className="relative">
-          <Card className="bg-white shadow-sm border border-gray-200 rounded-lg overflow-hidden min-h-[800px] drop-shadow-md shadow-ttickles-white backdrop-blur-lg">
+          <Card className="bg-white shadow-sm border-2 border-gray-200 rounded-lg overflow-hidden min-h-[800px] drop-shadow-md shadow-ttickles-white backdrop-blur-lg">
             <CardContent className="p-6">
               <EditorRoot>
                 <EditorContent
                   initialContent={initialContent}
                   extensions={extensions}
-                  className="relative min-h-[600px] w-full"
+                  className="relative min-h-[600px] w-screen"
                   editorProps={{
                     handleDOMEvents: {
                       keydown: (_view, event) => handleCommandNavigation(event),

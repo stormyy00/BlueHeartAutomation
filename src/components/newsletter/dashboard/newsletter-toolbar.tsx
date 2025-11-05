@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Plus, Trash } from "lucide-react";
+import { Grid3x3, List, Plus, Trash } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import Select from "@/components/global/select";
 import { STATUSES } from "@/data/newsletter/toolbar";
@@ -19,6 +19,7 @@ import {
   useAddNewsletterMutation,
   useDeleteNewsletterMutation,
 } from "@/server/mutateQuery";
+import { TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 interface props {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -145,6 +146,22 @@ const NewsletterToolbar = ({
         onClick={confirmDelete}
         className="cursor-pointer text-gray-500"
       />
+      <TabsList className="bg-slate-100">
+        <TabsTrigger
+          value="grid"
+          className="data-[state=active]:bg-white data-[state=active]:text-ttickles-blue"
+        >
+          <Grid3x3 size={16} className="mr-2" />
+          Grid
+        </TabsTrigger>
+        <TabsTrigger
+          value="list"
+          className="data-[state=active]:bg-white data-[state=active]:text-ttickles-blue"
+        >
+          <List size={16} className="mr-2" />
+          List
+        </TabsTrigger>
+      </TabsList>
       <AlertDialog open={popup.visible}>
         <AlertDialogContent>
           <AlertDialogHeader>
