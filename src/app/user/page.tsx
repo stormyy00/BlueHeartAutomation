@@ -1,24 +1,10 @@
-"use client";
-import OrganizationForm from "@/components/manage/joinorg";
-import { useQuery } from "@tanstack/react-query";
+import OrganizationSelector from "@/components/user/organization-selector";
+import { listUserOrganizations } from "@/utils/auth";
 
-const Page = () => {
-  const orgQuery = useQuery({
-    queryKey: ["my-org"],
-    queryFn: async () => {
-      const resp = await fetch("/api/orgs");
-      return {
-        status: resp.status,
-        data: await resp.json(),
-      };
-    },
-  });
-  if (!orgQuery.data) return;
-  return (
-    <div className="w-full flex">
-      {orgQuery.data.status == 400 && <OrganizationForm />}
-    </div>
-  );
+const page = async () => {
+  const organizations = await listUserOrganizations();
+  console.log("Organizations:", organizations);
+  return <OrganizationSelector />;
 };
 
-export default Page;
+export default page;
