@@ -68,12 +68,9 @@ const Information = ({ orgId, orgData, users = [] }: Props) => {
     );
 
     try {
-      const response = await fetch("/api/manage", {
-        method: "PUT",
-        body: JSON.stringify({
-          orgId: orgId,
-          updatedData: updatedData,
-        }),
+      const response = await fetch(`/api/orgs/${orgId}`, {
+        method: "POST",
+        body: JSON.stringify(updatedData),
       });
 
       if (response.status !== 200) {
