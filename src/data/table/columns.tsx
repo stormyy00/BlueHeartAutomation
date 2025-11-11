@@ -79,12 +79,12 @@ export const generateSelect = <TData extends object>() => ({
 //   filterFn: includesStringArray,
 // });
 
-const includesStringArray: FilterFn<string> = (row, columnId, filterValue) => {
-  const value = row.getValue(columnId) as string[];
-  return value.some((team) =>
-    team.toLowerCase().includes(filterValue.toLowerCase()),
-  );
-};
+// const includesStringArray: FilterFn<string> = (row, columnId, filterValue) => {
+//   const value = row.getValue(columnId) as string[];
+//   return value.some((team) =>
+//     team.toLowerCase().includes(filterValue.toLowerCase()),
+//   );
+// };
 
 // export const generateSelect = <TData extends object>() => ({
 //   id: "select",

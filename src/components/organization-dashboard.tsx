@@ -36,12 +36,12 @@ interface Member {
   userId: string;
   organizationId: string;
   role: string[] | string;
-  joinedAt: string;
+  createdAt: Date;
   user: {
     id: string;
     name: string;
     email: string;
-    image?: string;
+    image?: string | null;
   };
 }
 
@@ -51,8 +51,8 @@ interface Invitation {
   organizationId: string;
   role: string[] | string;
   status: "pending" | "accepted" | "expired" | "cancelled";
-  expiresAt: string;
-  createdAt: string;
+  expiresAt: Date;
+  inviterId: string;
   inviter?: {
     name: string;
     email: string;
@@ -64,7 +64,7 @@ const OrganizationDashboard = () => {
   const currentOrganizationId = orgId as string;
   const [members, setMembers] = useState<Member[]>([]);
   const [invitations, setInvitations] = useState<Invitation[]>([]);
-  const [memberRole, setMemberRole] = useState<any>(null);
+  const [memberRole, setMemberRole] = useState<string[] | null>(null);
   const [loading, setLoading] = useState(false);
   const [activeTab, setActiveTab] = useState("overview");
 
@@ -84,15 +84,13 @@ const OrganizationDashboard = () => {
         listInvitations({ query: { organizationId: currentOrganizationId } }),
         getActiveMemberRole(),
       ]);
-
       if (membersResult.data?.members) {
-        setMembers(membersResult.data?.members as Member[]);
+        setMembers(membersResult.data.members as Member[]);
       }
       if (invitationsResult.data) {
         setInvitations(invitationsResult.data as Invitation[]);
       }
       if (roleResult.data?.role) {
-        // Ensure memberRole is always an array for consistent handling
         const role = roleResult.data.role;
         setMemberRole(Array.isArray(role) ? role : [role]);
       }
@@ -123,7 +121,7 @@ const OrganizationDashboard = () => {
     );
   };
 
-  const formatDate = (dateString: string) => {
+  const formatDate = (dateString: string | Date) => {
     return new Date(dateString).toLocaleDateString("en-US", {
       year: "numeric",
       month: "short",
@@ -298,9 +296,7 @@ const OrganizationDashboard = () => {
                         <p className="text-sm font-medium">
                           {invitation.email}
                         </p>
-                        <p className="text-xs text-gray-500">
-                          Sent {formatDate(invitation.createdAt)}
-                        </p>
+                        <p className="text-xs text-gray-500">Invited</p>
                       </div>
                       {getStatusBadge(invitation.status)}
                     </div>
@@ -341,7 +337,7 @@ const OrganizationDashboard = () => {
                           {member.user.email}
                         </p>
                         <p className="text-xs text-gray-400">
-                          Joined {formatDate(member.joinedAt)}
+                          Joined {formatDate(member.createdAt)}
                         </p>
                       </div>
                     </div>
