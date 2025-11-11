@@ -21,10 +21,10 @@ type Member = {
 type Props = {
   orgId: string | string[];
   orgData: Organization;
-  users?: Member[] | undefined;
+  users: Member[];
 };
 
-const Information = ({ orgId, orgData, users = [] }: Props) => {
+const Information = ({ orgId, orgData, users }: Props) => {
   const [edit, setEdit] = useState<boolean>(false);
 
   const [info, setInfo] = useState([
