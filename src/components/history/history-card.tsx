@@ -13,7 +13,7 @@ type props = {
   title: string;
   id: string;
   status: string;
-  timestamp: string;
+  timestamp: Date | string;
   handleConfigure: () => void;
   onClick: () => void;
   checked: boolean;

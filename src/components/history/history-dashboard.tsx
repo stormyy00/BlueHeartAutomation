@@ -45,8 +45,8 @@ const HistoryDashboard = () => {
             .filter((item) => item.newsletterSentDate)
             .sort(
               (a, b) =>
-                new Date(b.newsletterSentDate).getTime() -
-                new Date(a.newsletterSentDate).getTime(),
+                new Date(b.newsletterSentDate!).getTime() -
+                new Date(a.newsletterSentDate!).getTime(),
             )
             .map(
               (
@@ -62,7 +62,7 @@ const HistoryDashboard = () => {
                   title={newsletter === " " ? "Untitled" : newsletter}
                   id={newsletterId}
                   status={newsletterStatus || "draft"}
-                  timestamp={newsletterSentDate}
+                  timestamp={newsletterSentDate || new Date().toISOString()}
                   handleConfigure={() => console.log("yay")}
                   onClick={() => {
                     setChecked({
