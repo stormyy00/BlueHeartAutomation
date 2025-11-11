@@ -11,13 +11,13 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
-import { LegacyOrganization as Organization } from "@/types/organization";
+import { FullOrganization } from "@/types/organization";
 import { RecipientGroup } from "@/types/metadata";
 import { toast } from "sonner";
 import RecipientNew from "./recipient-new";
 
 type Props = {
-  org: Organization;
+  orgId: string | null;
   checked: number[];
   setChecked: Dispatch<SetStateAction<number[]>>;
   setList: Dispatch<SetStateAction<RecipientGroup[]>>;
@@ -29,7 +29,7 @@ const RecipientToolbar = ({
   setChecked,
   setList,
   list,
-  org,
+  orgId,
 }: Props) => {
   const [popup, setPopup] = useState({
     title: "",
@@ -48,7 +48,7 @@ const RecipientToolbar = ({
     setList(newList);
     const save = async () => {
       const toastId = toast.loading("Updating organization...");
-      const response = await fetch(`/api/orgs/${org.id}`, {
+      const response = await fetch(`/api/orgs/${orgId}`, {
         method: "POST",
         body: JSON.stringify({
           groups: newList,
@@ -98,7 +98,7 @@ const RecipientToolbar = ({
       </div>
 
       <RecipientNew
-        org={org}
+        orgId={orgId}
         setList={setList}
         list={list}
         open={adding}

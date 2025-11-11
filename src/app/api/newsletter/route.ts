@@ -64,20 +64,28 @@ export const GET = async () => {
         : text;
     };
 
-    const newsletters = documents.map((doc: any) => {
-      const content = doc?.content;
-      const title = doc.title?.trim() || "Untitled";
-      const contentPreview = preview(content);
+    const newsletters = documents.map(
+      (doc: {
+        id: string;
+        title: string | null;
+        status: string;
+        content: unknown;
+        campaignId?: string | null;
+      }) => {
+        const content = doc?.content;
+        const title = doc.title?.trim() || "Untitled";
+        const contentPreview = preview(content);
 
-      return {
-        newsletter: title,
-        newsletterId: doc.id,
-        newsletterStatus: doc.status,
-        preview:
-          contentPreview !== "Untitled" ? contentPreview : "No content yet",
-        campaignId: doc.campaignId,
-      };
-    });
+        return {
+          newsletter: title,
+          newsletterId: doc.id,
+          newsletterStatus: doc.status,
+          preview:
+            contentPreview !== "Untitled" ? contentPreview : "No content yet",
+          campaignId: doc.campaignId,
+        };
+      },
+    );
     return NextResponse.json({ newsletters });
   } catch (err) {
     return NextResponse.json(

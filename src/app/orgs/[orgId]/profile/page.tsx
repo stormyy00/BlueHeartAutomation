@@ -3,25 +3,15 @@
 import React, { useState, useEffect } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { useQuery } from "@tanstack/react-query";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
-import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
-import {
-  Building2,
-  Users,
-  Calendar,
-  Settings,
-  Edit,
-  Save,
-  X,
-} from "lucide-react";
+import { Users, Calendar, Settings } from "lucide-react";
 import { toast } from "sonner";
 import { useSession } from "@/utils/auth-client";
 import { OrganizationRole } from "@/types/organization";
+import { OrgHeader } from "@/components/profile/org-header";
+import { OrgStatCard } from "@/components/profile/org-stat-card";
+import { OrgDetailsCard } from "@/components/profile/org-details-card";
+import { RecentMembersCard } from "@/components/profile/recent-members-card";
 
 interface Organization {
   id: string;
@@ -160,189 +150,49 @@ const OrganizationProfile = () => {
   return (
     <div className="w-full max-w-4xl mx-auto p-6 space-y-6">
       {/* Header */}
-      <div className="flex items-center justify-between">
-        <div className="flex items-center space-x-4">
-          <Avatar className="h-16 w-16">
-            <AvatarFallback className="bg-blue-100 text-blue-600 text-xl">
-              <Building2 className="h-8 w-8" />
-            </AvatarFallback>
-          </Avatar>
-          <div>
-            <h1 className="text-3xl font-bold text-gray-900">
-              {isEditing ? (
-                <Input
-                  value={editedOrg.name || ""}
-                  onChange={(e) => handleInputChange("name", e.target.value)}
-                  className="text-3xl font-bold border-none p-0 h-auto"
-                />
-              ) : (
-                organization.name
-              )}
-            </h1>
-            <p className="text-gray-600">
-              {isEditing ? (
-                <Textarea
-                  value={editedOrg.description || ""}
-                  onChange={(e) =>
-                    handleInputChange("description", e.target.value)
-                  }
-                  placeholder="Organization description"
-                  className="border-none p-0 resize-none"
-                  rows={2}
-                />
-              ) : (
-                organization.description || "No description provided"
-              )}
-            </p>
-          </div>
-        </div>
-
-        {isAdmin && (
-          <div className="flex space-x-2">
-            {isEditing ? (
-              <>
-                <Button onClick={handleSave} size="sm">
-                  <Save className="h-4 w-4 mr-2" />
-                  Save
-                </Button>
-                <Button onClick={handleCancel} variant="outline" size="sm">
-                  <X className="h-4 w-4 mr-2" />
-                  Cancel
-                </Button>
-              </>
-            ) : (
-              <Button onClick={handleEdit} variant="outline" size="sm">
-                <Edit className="h-4 w-4 mr-2" />
-                Edit
-              </Button>
-            )}
-          </div>
-        )}
-      </div>
+      <OrgHeader
+        organization={organization}
+        isEditing={isEditing}
+        editedOrg={editedOrg}
+        isAdmin={isAdmin}
+        onEdit={handleEdit}
+        onSave={handleSave}
+        onCancel={handleCancel}
+        onInputChange={handleInputChange}
+      />
 
       {/* Organization Stats */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <Card>
-          <CardContent className="p-4">
-            <div className="flex items-center space-x-2">
-              <Users className="h-5 w-5 text-blue-600" />
-              <div>
-                <p className="text-sm text-gray-600">Members</p>
-                <p className="text-2xl font-bold">{memberCount}</p>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardContent className="p-4">
-            <div className="flex items-center space-x-2">
-              <Calendar className="h-5 w-5 text-green-600" />
-              <div>
-                <p className="text-sm text-gray-600">Created</p>
-                <p className="text-sm font-medium">
-                  {new Date(organization.createdAt).toLocaleDateString()}
-                </p>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardContent className="p-4">
-            <div className="flex items-center space-x-2">
-              <Settings className="h-5 w-5 text-purple-600" />
-              <div>
-                <p className="text-sm text-gray-600">Status</p>
-                <Badge variant="secondary" className="mt-1">
-                  Active
-                </Badge>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
+        <OrgStatCard
+          icon={Users}
+          iconColor="text-blue-600"
+          label="Members"
+          value={memberCount}
+        />
+        <OrgStatCard
+          icon={Calendar}
+          iconColor="text-green-600"
+          label="Created"
+          value={new Date(organization.createdAt).toLocaleDateString()}
+        />
+        <OrgStatCard
+          icon={Settings}
+          iconColor="text-purple-600"
+          label="Status"
+          value=""
+          badge={
+            <Badge variant="secondary" className="mt-1">
+              Active
+            </Badge>
+          }
+        />
       </div>
 
       {/* Organization Details */}
-      <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center space-x-2">
-            <Building2 className="h-5 w-5" />
-            <span>Organization Details</span>
-          </CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div>
-              <Label className="text-sm font-medium text-gray-700">
-                Organization ID
-              </Label>
-              <p className="text-sm text-gray-600 font-mono">
-                {organization.id}
-              </p>
-            </div>
-            <div>
-              <Label className="text-sm font-medium text-gray-700">Owner</Label>
-              <p className="text-sm text-gray-600">
-                {isOwner ? "You" : "Organization Owner"}
-              </p>
-            </div>
-            <div>
-              <Label className="text-sm font-medium text-gray-700">
-                Created
-              </Label>
-              <p className="text-sm text-gray-600">
-                {new Date(organization.createdAt).toLocaleString()}
-              </p>
-            </div>
-            <div>
-              <Label className="text-sm font-medium text-gray-700">
-                Last Updated
-              </Label>
-              <p className="text-sm text-gray-600">
-                {new Date(organization.updatedAt).toLocaleString()}
-              </p>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
+      <OrgDetailsCard organization={organization} isOwner={isOwner} />
 
       {/* Recent Members */}
-      {membersData && membersData.length > 0 && (
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center space-x-2">
-              <Users className="h-5 w-5" />
-              <span>Recent Members</span>
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-3">
-              {membersData.slice(0, 5).map(({ name, email, role }, index) => (
-                <div key={index} className="flex items-center space-x-3">
-                  <Avatar className="h-8 w-8">
-                    <AvatarFallback className="text-xs">
-                      {name?.charAt(0) || email?.charAt(0) || "U"}
-                    </AvatarFallback>
-                  </Avatar>
-                  <div className="flex-1">
-                    <p className="text-sm font-medium">{name || email}</p>
-                    <p className="text-xs text-gray-500">{role}</p>
-                  </div>
-                  <Badge variant="outline" className="text-xs">
-                    {role}
-                  </Badge>
-                </div>
-              ))}
-              {membersData.length > 5 && (
-                <p className="text-sm text-gray-500 text-center">
-                  And {membersData.length - 5} more members...
-                </p>
-              )}
-            </div>
-          </CardContent>
-        </Card>
-      )}
+      <RecentMembersCard members={membersData || []} />
     </div>
   );
 };

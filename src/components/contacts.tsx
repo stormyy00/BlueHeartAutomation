@@ -14,6 +14,8 @@ import {
 } from "@/components/ui/select";
 import Recipients from "./newsletter/recipients/recipient-list";
 import { OrganizationType } from "@/db/schema";
+import { FullOrganization } from "@/types/organization";
+import { RecipientGroup } from "@/types/metadata";
 
 type Member = {
   id: string;
@@ -25,10 +27,11 @@ type Member = {
 type ContactsProps = {
   members: Member[];
   organizationName: string;
-  org: OrganizationType | null;
+  org: FullOrganization | null;
+  orgId: string | null;
 };
 
-const Contacts = ({ members, organizationName, org }: ContactsProps) => {
+const Contacts = ({ members, organizationName, org, orgId }: ContactsProps) => {
   const [includeName, setIncludeName] = useState(true);
   const [includeEmail, setIncludeEmail] = useState(true);
   const [includeRole, setIncludeRole] = useState(false);
@@ -172,7 +175,10 @@ const Contacts = ({ members, organizationName, org }: ContactsProps) => {
           </Button>
         </div>
       </div>
-      <Recipients org={org} />
+      <Recipients
+        org={(org?.metadata as { groups?: RecipientGroup[] })?.groups ?? null}
+        orgId={orgId}
+      />
     </div>
   );
 };

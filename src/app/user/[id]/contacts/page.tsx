@@ -8,13 +8,13 @@ const Page = async ({ params }: { params: { id: string } }) => {
     getUsersbyOrgId((await getActiveOrganization()) as string),
     getFullOrganization((await getActiveOrganization()) as string, params.id),
   ]);
-  console.log("Organization in contacts page:", org);
   return (
     <div className="p-4 md:p-6">
       <Contacts
         members={members}
         organizationName={org?.name || ""}
         org={org}
+        orgId={org?.id || ""}
       />
     </div>
   );

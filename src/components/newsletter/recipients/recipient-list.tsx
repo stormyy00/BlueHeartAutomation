@@ -8,7 +8,7 @@ import {
   DialogDescription,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { LegacyOrganization as Organization } from "@/types/organization";
+import { FullOrganization } from "@/types/organization";
 import { RecipientGroup } from "@/types/metadata";
 import { Pen, User, X } from "lucide-react";
 import { KeyboardEvent, useState } from "react";
@@ -28,11 +28,12 @@ import { Label } from "@/components/ui/label";
 // ];
 
 type Props = {
-  org: Organization;
+  org: RecipientGroup[] | null;
+  orgId: string | null;
 };
 
-const Recipients = ({ org }: Props) => {
-  const [list, setList] = useState<RecipientGroup[]>(org.groups ?? []);
+const Recipients = ({ org, orgId }: Props) => {
+  const [list, setList] = useState<RecipientGroup[]>(org || []);
   const [group, setGroup] = useState<[number, RecipientGroup]>([
     -1,
     {
@@ -67,7 +68,7 @@ const Recipients = ({ org }: Props) => {
     const save = async (groups: RecipientGroup[]) => {
       const toastId = toast.loading("Updating organization...");
       setFetching(true);
-      const response = await fetch(`/api/orgs/${org.id}`, {
+      const response = await fetch(`/api/orgs/${orgId}`, {
         method: "POST",
         body: JSON.stringify({
           groups,
@@ -95,7 +96,7 @@ const Recipients = ({ org }: Props) => {
         Recipients
       </Label>
       <RecipientToolbar
-        org={org}
+        orgId={orgId}
         list={list}
         setList={setList}
         setChecked={setChecked}
