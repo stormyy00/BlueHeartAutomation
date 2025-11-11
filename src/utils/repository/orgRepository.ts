@@ -6,6 +6,8 @@ import {
   convertMetadataToLegacy,
   migrateOrganizationToMetadata,
 } from "@/utils/organization-metadata";
+import { auth, authenticate } from "../auth";
+import { RecipientGroup } from "@/types/metadata";
 
 export const getOrg = async (
   uuid: string,
@@ -91,4 +93,20 @@ export const updateOrg = async (org: Organization) => {
     console.error("Error updating organization:", error);
     return false;
   }
+};
+
+export const getOrgGroups = async (orgId: string) => {
+  const [org] = await db
+    .select()
+    .from(organizations)
+    .where(eq(organizations.id, orgId))
+    .limit(1);
+
+  if (!org) {
+    return { error: "Organization not found" };
+  }
+
+  const groups = (org.metadata as { groups?: RecipientGroup[] })?.groups || [];
+
+  return groups;
 };

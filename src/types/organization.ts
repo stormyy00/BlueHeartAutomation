@@ -49,6 +49,65 @@ export interface Organization {
 }
 
 /**
+ * Organization invitation interface
+ */
+export interface OrganizationInvitation {
+  id: string;
+  email: string;
+  organizationId: string;
+  role: OrganizationRole;
+  status: "pending" | "accepted" | "rejected" | "expired";
+  expiresAt: Date;
+  inviterId: string;
+  createdAt: Date;
+}
+
+/**
+ * Invitation status from Better Auth API
+ * Note: Better Auth uses "canceled" (one 'l'), not "cancelled" (two 'l's)
+ */
+export type InvitationStatus =
+  | "pending"
+  | "accepted"
+  | "rejected"
+  | "expired"
+  | "canceled";
+
+/**
+ * Full organization with members and invitations
+ * This matches the return type from Better Auth's getFullOrganization API
+ */
+export interface FullOrganization {
+  id: string;
+  name: string;
+  slug: string;
+  createdAt: Date;
+  logo?: string | null;
+  metadata?: OrganizationMetadata | Record<string, unknown>;
+  members: Array<{
+    id: string;
+    organizationId: string;
+    role: OrganizationRole;
+    createdAt: Date;
+    userId: string;
+    user: {
+      email: string;
+      name: string;
+      image?: string;
+    };
+  }>;
+  invitations: Array<{
+    id: string;
+    organizationId: string;
+    email: string;
+    role: OrganizationRole;
+    status: InvitationStatus;
+    inviterId: string;
+    expiresAt: Date;
+  }>;
+}
+
+/**
  * Legacy organization interface for backward compatibility
  * @deprecated Use Organization with metadata instead
  */
