@@ -1,7 +1,6 @@
 import {
   CellContext,
   ColumnDef,
-  FilterFn,
   Row,
   Table,
 } from "@tanstack/react-table";
