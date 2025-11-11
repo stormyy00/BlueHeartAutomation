@@ -1,9 +1,4 @@
-import {
-  CellContext,
-  ColumnDef,
-  Row,
-  Table,
-} from "@tanstack/react-table";
+import { CellContext, ColumnDef, Row, Table } from "@tanstack/react-table";
 import { ROLE } from "./filter";
 import { Checkbox } from "@/components/ui/checkbox";
 
