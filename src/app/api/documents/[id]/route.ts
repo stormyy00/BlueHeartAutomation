@@ -103,7 +103,7 @@ export async function PUT(
         )
         .limit(1);
 
-      if (member.length === 0 || member[0].role !== "Administrator") {
+      if (member.length === 0 || member[0].role !== "admin") {
         return NextResponse.json(
           { error: "Unauthorized to update this document" },
           { status: 403 },
@@ -176,7 +176,7 @@ export async function DELETE(
         )
         .limit(1);
 
-      if (member.length === 0 || member[0].role !== "Administrator") {
+      if (member.length === 0 || member[0].role !== "admin") {
         return NextResponse.json(
           { error: "Unauthorized to delete this document" },
           { status: 403 },
