@@ -10,8 +10,7 @@ import {
 } from "recharts";
 
 type TimeSeriesChartProps = {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  data: { date: string; [key: string]: any }[];
+  data: Array<{ date: string; [key: string]: string | number }>;
   dataKey: string;
   name: string;
   color: string;

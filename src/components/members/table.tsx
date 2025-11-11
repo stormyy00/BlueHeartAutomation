@@ -19,7 +19,7 @@ import { flexRender, Table as TableType } from "@tanstack/react-table";
 interface LinkTableProps<TData> {
   table: TableType<TData>;
   loading: boolean;
-  error: string | null;
+  error: true | Error | null;
   isRefetching: boolean;
 }
 

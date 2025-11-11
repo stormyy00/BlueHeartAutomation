@@ -1,7 +1,14 @@
+import type { OrganizationMetadata } from "./metadata";
+
 /**
  * Organization role types
  */
 export type OrganizationRole = "owner" | "admin" | "member";
+
+/**
+ * Region types
+ */
+export type Region = "US" | "Canada";
 
 /**
  * Organization member interface
@@ -22,7 +29,7 @@ export interface OrganizationMember {
 }
 
 /**
- * Organization interface
+ * Organization interface (new structure with metadata)
  */
 export interface Organization {
   id: string;
@@ -33,19 +40,34 @@ export interface Organization {
   logo?: string | null;
   documents?: string[];
   users?: string[];
-  region?: string;
+  region?: Region;
   calendarId?: string;
-  metadata?: {
-    media?: string[];
-    themes?: string[];
-    notes?: string[];
-    donors?: string[];
-    links?: Array<{ name: string; url: string }>;
-    groups?: Array<{ name: string; emails: string[] }>;
-  };
+  metadata?: OrganizationMetadata;
   keepCurrentActiveOrganization?: boolean;
   createdAt: Date;
   updatedAt: Date;
+}
+
+/**
+ * Legacy organization interface for backward compatibility
+ * @deprecated Use Organization with metadata instead
+ */
+export interface LegacyOrganization {
+  id: string;
+  name: string;
+  description: string;
+  owner: string;
+  icon: string;
+  media: string[];
+  newsletters: string[];
+  themes: string[];
+  notes: string[];
+  users: string[];
+  donors: string[];
+  links: Array<{ name: string; url: string }>;
+  region: Region;
+  groups: Array<{ name: string; emails: string[] }>;
+  calendarId: string;
 }
 
 /**

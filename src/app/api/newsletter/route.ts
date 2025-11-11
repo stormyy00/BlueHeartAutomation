@@ -6,6 +6,7 @@ import {
   updateDocument,
   deleteDocument,
 } from "@/lib/actions/documents";
+import type { DocumentContentNode } from "@/types/document";
 
 export const GET = async () => {
   try {
@@ -36,12 +37,7 @@ export const GET = async () => {
       }
 
       if (typeof value === "object" && value !== null) {
-        const node = value as {
-          type?: string;
-          content?: unknown;
-          text?: string;
-          attrs?: any;
-        };
+        const node = value as DocumentContentNode;
         if (node.type === "text" && typeof node.text === "string")
           return node.text;
         if (node.type === "doc" && Array.isArray(node.content)) {
@@ -91,7 +87,7 @@ export const GET = async () => {
   }
 };
 
-export const POST = async (request: NextRequest) => {
+export const POST = async () => {
   try {
     const { uid, message, orgId, auth } = await authenticate();
     if (auth !== 200 || !uid || !orgId) {

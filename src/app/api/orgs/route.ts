@@ -1,4 +1,4 @@
-import { Organization } from "@/data/types";
+import { LegacyOrganization as Organization } from "@/types/organization";
 import { NextRequest, NextResponse } from "next/server";
 import { getServerSession } from "@/utils/auth";
 import {
@@ -17,7 +17,7 @@ type Props = {
   mode: Mode;
 };
 
-export const GET = async (request: NextRequest) => {
+export const GET = async () => {
   try {
     const session = await getServerSession();
 

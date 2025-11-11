@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { authenticate } from "@/utils/auth";
 import { db } from "@/db";
-import { documents, organizationMembers } from "@/db/schema";
+import { documents } from "@/db/schema";
 import { eq, and } from "drizzle-orm";
 
 export const GET = async (

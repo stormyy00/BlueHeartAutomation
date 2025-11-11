@@ -15,7 +15,7 @@ import {
 import { useState } from "react";
 import { Input } from "../ui/input";
 import { Button } from "../ui/button";
-import { Organization } from "@/data/types";
+import { LegacyOrganization as Organization } from "@/types/organization";
 import { Label } from "../ui/label";
 
 type props = {

@@ -161,7 +161,7 @@ const OrganizationSwitcher = ({
       .toLowerCase()
       .replace(/\s+/g, "-")
       .replace(/[^a-z0-9-]/g, "");
-    const { data, error } = await setActiveOrganization({
+    await setActiveOrganization({
       organizationId: org.id,
       organizationSlug: orgSlug,
     });

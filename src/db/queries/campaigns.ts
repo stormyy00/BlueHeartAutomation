@@ -114,8 +114,8 @@ export const getCampaignsbyOrg = async () => {
       title: campaigns.title,
       description: campaigns.description,
       status: campaigns.status,
-      startDate: campaigns.createdAt,
-      endDate: campaigns.updatedAt,
+      createdAt: campaigns.createdAt,
+      updatedAt: campaigns.updatedAt,
       documentCount: count(documents.id).as("documentCount"),
     })
     .from(campaigns)

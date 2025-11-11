@@ -3,7 +3,7 @@ import React from "react";
 import { Button } from "../ui/button";
 import { useState } from "react";
 import { Input } from "@/components/ui/input";
-import { Organization } from "@/data/types";
+import { LegacyOrganization as Organization } from "@/types/organization";
 import { Bounce, toast } from "react-toastify";
 import { useSession } from "@/utils/auth-client";
 

@@ -1,9 +1,6 @@
-export type Newsletter = {
-  newsletter: string;
-  newsletterStatus: string;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  [key: string]: any;
-};
+import type { SearchableNewsletter } from "@/types/search";
+
+export type Newsletter = SearchableNewsletter;
 
 export const searchable = (
   data: Newsletter[],

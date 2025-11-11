@@ -218,7 +218,7 @@ const AcceptInvitePage = () => {
             </div>
             <CardTitle className="text-2xl">Organization Invitation</CardTitle>
             <CardDescription>
-              You'&apos;ve been invited to join an organization
+              You&apos;ve been invited to join an organization
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-2">

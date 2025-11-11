@@ -10,16 +10,18 @@ import {
 import { Button } from "../ui/button";
 import { Copy, Edit, Trash2Icon } from "lucide-react";
 import { Badge } from "../ui/badge";
+import { Campaign, CampaignWithCount } from "@/types/campaign";
+import { AppRouterInstance } from "next/dist/shared/lib/app-router-context.shared-runtime";
 
 interface TableProps {
-  filteredCampaigns: any[];
-  router: any;
+  filteredCampaigns: CampaignWithCount[];
+  router: AppRouterInstance;
   id: string | string[];
   statusColors: Record<string, string>;
-  setEditingCampaign: (campaign: any) => void;
+  setEditingCampaign: (campaign: Campaign | null) => void;
   setOpenEdit: (open: boolean) => void;
   handleCopy: (id: string) => void;
-  setDeletingCampaign: (campaign: any) => void;
+  setDeletingCampaign: (campaign: Campaign | null) => void;
   setOpenDelete: (open: boolean) => void;
 }
 
@@ -34,6 +36,7 @@ const Table = ({
   setDeletingCampaign,
   setOpenDelete,
 }: TableProps) => {
+  console.log("Rendering Table with campaigns:", filteredCampaigns);
   return (
     <div className="overflow-x-auto border rounded-md">
       <TableUI>
@@ -63,9 +66,21 @@ const Table = ({
                 <Badge className={statusColors[cmp.status]}>{cmp.status}</Badge>
               </TableCell>
               <TableCell>
-                {new Date(cmp.createdAt).toLocaleDateString()}
+                {(() => {
+                  const created = new Date(cmp.createdAt);
+                  const now = new Date();
+                  const msPerDay = 1000 * 60 * 60 * 24;
+                  const diffDays = Math.floor(
+                    (now.getTime() - created.getTime()) / msPerDay,
+                  );
+
+                  if (diffDays >= 1 && diffDays <= 7) {
+                    return `${diffDays} day${diffDays === 1 ? "" : "s"} ago`;
+                  }
+                  return created.toLocaleDateString();
+                })()}
               </TableCell>
-              <TableCell className="text-center">{cmp.newsletters}</TableCell>
+              <TableCell className="text-center">{cmp.documentCount}</TableCell>
               <TableCell
                 className="text-right space-x-1"
                 onClick={(e) => e.stopPropagation()}

@@ -15,38 +15,13 @@ import {
 import { Calendar } from "@/components/ui/calendar";
 import { format } from "date-fns";
 import { Input } from "@/components/ui/input";
-import { ArrowLeft, Mail, Send, CalendarIcon, Clock } from "lucide-react";
+import { ArrowLeft, Mail, Send, CalendarIcon } from "lucide-react";
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
 import { useQuery } from "@tanstack/react-query";
-
-const MOCK_CAMPAIGNS = [
-  {
-    id: "cmp-001",
-    title: "Winter Food Drive 2025",
-    description: "Raising awareness and donations for local food shelters.",
-    status: "active",
-    startDate: "2025-10-01",
-    endDate: "2025-12-31",
-    newsletters: [
-      {
-        id: "nl-1",
-        title: "Week 1 Update",
-        status: "sent",
-        date: "2025-10-07",
-      },
-      {
-        id: "nl-2",
-        title: "Week 2 Highlights",
-        status: "draft",
-        date: "2025-10-14",
-      },
-    ],
-  },
-];
 
 const statusColors: Record<string, string> = {
   active: "bg-green-100 text-green-800",
@@ -79,7 +54,7 @@ const Campaign = ({ cid, uid }: { cid: string; uid: string }) => {
   });
   const [recipientGroup, setRecipientGroup] = useState("");
   const [scheduleDate, setScheduleDate] = useState<Date | undefined>(undefined);
-
+  console.log("Selected schedule date:", scheduleDate);
   const {
     data: campaignData,
     isPending,

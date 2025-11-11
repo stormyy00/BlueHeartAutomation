@@ -1,14 +1,14 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import { useQuery } from "@tanstack/react-query";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import {
   Building2,
@@ -21,6 +21,7 @@ import {
 } from "lucide-react";
 import { toast } from "sonner";
 import { useSession } from "@/utils/auth-client";
+import { OrganizationRole } from "@/types/organization";
 
 interface Organization {
   id: string;
@@ -34,6 +35,7 @@ interface Organization {
 
 const OrganizationProfile = () => {
   const { orgId } = useParams();
+  const router = useRouter();
   const { data: session } = useSession();
   const [isEditing, setIsEditing] = useState(false);
   const [editedOrg, setEditedOrg] = useState<Partial<Organization>>({});
@@ -66,7 +68,9 @@ const OrganizationProfile = () => {
       return response.json();
     },
     enabled: !!orgId,
-  });
+  }) as {
+    data: { id: string; name: string; email: string; role: OrganizationRole }[];
+  };
 
   useEffect(() => {
     if (orgData?.message) {
@@ -100,8 +104,9 @@ const OrganizationProfile = () => {
       toast.success("Organization updated successfully!");
       setIsEditing(false);
       // Refetch data
-      window.location.reload();
+      router.refresh();
     } catch (error) {
+      console.error("Error updating organization:", error);
       toast.error("Failed to update organization");
     }
   };
@@ -135,8 +140,8 @@ const OrganizationProfile = () => {
             Organization Not Found
           </h2>
           <p className="text-gray-600">
-            The organization you're looking for doesn't exist or you don't have
-            access to it.
+            The organization you&apos;re looking for doesn&apos;t exist or you
+            don&apos;t have access to it.
           </p>
         </div>
       </div>
@@ -146,7 +151,7 @@ const OrganizationProfile = () => {
   const organization = orgData.message;
   const isOwner = session?.user?.id === organization.ownerId;
   const currentUserMember = membersData?.find(
-    (member: any) => member.id === session?.user?.id,
+    (member) => member.id === session?.user?.id,
   );
   const isAdmin =
     currentUserMember?.role === "owner" || currentUserMember?.role === "admin";
@@ -313,21 +318,19 @@ const OrganizationProfile = () => {
           </CardHeader>
           <CardContent>
             <div className="space-y-3">
-              {membersData.slice(0, 5).map((member: any, index: number) => (
+              {membersData.slice(0, 5).map(({ name, email, role }, index) => (
                 <div key={index} className="flex items-center space-x-3">
                   <Avatar className="h-8 w-8">
                     <AvatarFallback className="text-xs">
-                      {member.name?.charAt(0) || member.email?.charAt(0) || "U"}
+                      {name?.charAt(0) || email?.charAt(0) || "U"}
                     </AvatarFallback>
                   </Avatar>
                   <div className="flex-1">
-                    <p className="text-sm font-medium">
-                      {member.name || member.email}
-                    </p>
-                    <p className="text-xs text-gray-500">{member.role}</p>
+                    <p className="text-sm font-medium">{name || email}</p>
+                    <p className="text-xs text-gray-500">{role}</p>
                   </div>
                   <Badge variant="outline" className="text-xs">
-                    {member.role}
+                    {role}
                   </Badge>
                 </div>
               ))}

@@ -8,7 +8,8 @@ import {
   DialogDescription,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { Organization, RecipientGroup } from "@/data/types";
+import { LegacyOrganization as Organization } from "@/types/organization";
+import { RecipientGroup } from "@/types/metadata";
 import { Pen, User, X } from "lucide-react";
 import { KeyboardEvent, useState } from "react";
 import { toast } from "sonner";

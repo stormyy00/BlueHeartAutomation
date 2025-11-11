@@ -278,8 +278,8 @@ const OrganizationSelector = () => {
               No Organizations Found
             </h3>
             <p className="text-ttickles-gray mb-6">
-              You'&apos;re not currently part of any organizations. Create one
-              to get started!
+              You{"'"}re not currently part of any organizations. Create one to
+              get started!
             </p>
           </div>
         )}

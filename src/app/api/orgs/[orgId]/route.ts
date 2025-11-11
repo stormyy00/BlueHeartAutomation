@@ -1,4 +1,4 @@
-import { Organization } from "@/data/types";
+import { LegacyOrganization as Organization } from "@/types/organization";
 import { NextRequest } from "next/server";
 import { authenticate } from "@/utils/auth";
 import { db } from "@/db";
@@ -72,17 +72,17 @@ export const GET = async (request: NextRequest, { params }: Params) => {
 
 type Props = Partial<Organization>;
 
-const updateOrganization = <K extends keyof Organization>(
-  org: Organization,
-  key: K,
-  value: Organization[K],
-) => {
-  org[key] = value; // no cast needed here
-};
+// const updateOrganization = <K extends keyof Organization>(
+//   org: Organization,
+//   key: K,
+//   value: Organization[K],
+// ) => {
+//   org[key] = value; // no cast needed here
+// };
 
 export const POST = async (request: NextRequest, { params }: Params) => {
   try {
-    const { uid, user, message, auth } = await authenticate();
+    const { uid, message, auth } = await authenticate();
     if (auth !== 200 || !uid) {
       return Response.json(
         { error: message || "Unauthorized" },

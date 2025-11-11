@@ -1,55 +1,56 @@
 import { NextResponse } from "next/server";
-import { getServerSession } from "next-auth";
-import { options } from "@/utils/auth";
-import { getUser } from "@/utils/repository/userRepository";
-import { getOrg } from "@/utils/repository/orgRepository";
-import { collection, query, where, getDocs } from "firebase/firestore";
-import { db } from "@/utils/firebase";
+import { authenticate } from "@/utils/auth";
+import { db } from "@/db";
+import { organizations, organizationMembers } from "@/db/schema";
+import { eq } from "drizzle-orm";
 
 export const GET = async () => {
-  const res = NextResponse;
-  const session = await getServerSession(options);
-  if (!session) {
-    return NextResponse.json(
-      { message: "You are not authorized to access the Groups API." },
-      { status: 403 },
-    );
-  }
-  const result = await getUser(session.user.id);
-  if (!result) {
-    return NextResponse.json(
-      {
-        message:
-          "Something went wrong retrieving your user data. Please try again later.",
-      },
-      { status: 400 },
-    );
-  }
-  const org = await getOrg(result.orgId);
-  if (!org) {
-    return res.json(
-      { message: "You are not a part of an organization." },
-      { status: 400 },
-    );
-  }
   try {
-    const q = query(collection(db, "orgs"), where("id", "==", org.id));
-    const querySnapshot = await getDocs(q);
-    const queryDocs = querySnapshot.docs;
-
-    if (queryDocs.length != 1) {
-      return res.json({ message: "Server Error" }, { status: 500 });
+    const { uid, message, auth } = await authenticate();
+    if (auth !== 200 || !uid) {
+      return NextResponse.json(
+        { error: message || "Unauthorized" },
+        { status: auth },
+      );
     }
-    const calendarId = queryDocs[0].data().calendarId;
-    if (!calendarId) {
-      return res.json(
-        { message: "Google Calendar CalendarId not setup." },
+
+    // Get user's organization
+    const [membership] = await db
+      .select()
+      .from(organizationMembers)
+      .where(eq(organizationMembers.userId, uid));
+
+    if (!membership) {
+      return NextResponse.json(
+        { error: "You are not a part of an organization." },
+        { status: 400 },
+      );
+    }
+
+    const [org] = await db
+      .select()
+      .from(organizations)
+      .where(eq(organizations.id, membership.organizationId));
+
+    if (!org) {
+      return Response.json(
+        { error: "Organization not found." },
         { status: 404 },
       );
     }
 
-    return res.json({ message: "OK", calendarId: calendarId }, { status: 200 });
+    if (!org.calendarId) {
+      return Response.json(
+        { error: "Google Calendar CalendarId not setup." },
+        { status: 404 },
+      );
+    }
+
+    return NextResponse.json({ message: "OK", calendarId: org.calendarId });
   } catch (err) {
-    return res.json({ message: `Server Error: ${err}` }, { status: 500 });
+    return NextResponse.json(
+      { error: `Server Error: ${err}` },
+      { status: 500 },
+    );
   }
 };

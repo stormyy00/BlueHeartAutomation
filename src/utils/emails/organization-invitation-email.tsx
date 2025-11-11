@@ -28,14 +28,18 @@ export const OrganizationInvitationEmail = ({
   return (
     <Html>
       <Head />
-      <Preview>You'&apos;ve been invited to join {teamName}</Preview>
+      <Preview>
+        You{"'"}re invited to join {teamName}
+      </Preview>
       <Body style={main}>
         <Container style={container}>
           <Section style={logoContainer}>
             <Text style={logo}>BlueHeart Automation</Text>
           </Section>
 
-          <Heading style={h1}>You'&apos;re invited to join {teamName}</Heading>
+          <Heading style={h1}>
+            You{"'"}re invited to join {teamName}
+          </Heading>
 
           <Text style={text}>
             <strong>{invitedByUsername}</strong> ({invitedByEmail}) has invited
@@ -53,15 +57,15 @@ export const OrganizationInvitationEmail = ({
           </Section>
 
           <Text style={text}>
-            If the button doesn'&apos;t work, you can copy and paste this link
+            If the button doesn{"'"}t work, you can copy and paste this link
             into your browser:
           </Text>
 
           <Text style={link}>{inviteLink}</Text>
 
           <Text style={text}>
-            This invitation will expire in 7 days. If you don'&apos;t want to
-            join this organization, you can safely ignore this email.
+            This invitation will expire in 7 days. If you don{"'"}t want to join
+            this organization, you can safely ignore this email.
           </Text>
 
           <Text style={footer}>

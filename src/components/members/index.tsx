@@ -133,14 +133,17 @@ const Members = () => {
   const [searchValue, setSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");
   const [checked, setChecked] = useState<RowSelectionState>({});
-  const [error, setError] = useState<string | null>(null);
   const [pagination, setPagination] = useState({
     pageIndex: 0,
     pageSize: 10,
   });
 
   const { orgId } = useParams();
-  const orgQuery = useQuery({
+  const {
+    data: orgQuery,
+    isPending: orgPending,
+    error: orgError,
+  } = useQuery({
     queryKey: ["my-org"],
     queryFn: async () => {
       const resp = await fetch(`/api/orgs/${orgId}`);
@@ -156,10 +159,11 @@ const Members = () => {
     isPending,
     refetch,
     isRefetching,
+    isError,
   } = useQuery({
     queryKey: ["user", orgId],
     queryFn: async () => getUsersbyOrgId(orgId ?? ""),
-    enabled: !!orgQuery.data && orgQuery.data.status === 200,
+    enabled: !!orgQuery && orgQuery.status === 200,
   });
 
   // Use mock data for testing - comment out the line below to use real data
@@ -191,7 +195,6 @@ const Members = () => {
     getPaginationRowModel: getPaginationRowModel(),
     enableFilters: true,
     enableRowSelection: true,
-    enablePagination: true,
     onRowSelectionChange: setChecked,
     onPaginationChange: setPagination,
     state: {
@@ -201,6 +204,8 @@ const Members = () => {
   });
 
   const { getFilteredSelectedRowModel } = tableInstance;
+
+  const error = isError || orgError;
 
   return (
     <div className=" w-full">
@@ -217,7 +222,7 @@ const Members = () => {
         />
         <Table
           table={tableInstance}
-          loading={isPending}
+          loading={isPending || orgPending}
           error={error}
           isRefetching={isRefetching}
         />

@@ -57,9 +57,9 @@ const EmailVerificationEmail = ({
               </Text>
 
               <Text className="text-base text-gray-600 mb-6 leading-relaxed">
-                Thanks for signing up for Ttickle! We'&apos;re excited to help
-                you amplify your social outreach and create compelling content
-                for your cause.
+                Thanks for signing up for Ttickle! We{"'"}re excited to help you
+                amplify your social outreach and create compelling content for
+                your cause.
               </Text>
 
               <Text className="text-base text-gray-600 mb-6 leading-relaxed">
@@ -103,7 +103,7 @@ const EmailVerificationEmail = ({
                   <strong>{userEmail}</strong>
                 </Text>
                 <Text className="mb-0">
-                  If you didn'&apos;t create an account with Ttickle, you can
+                  If you didn{"'"}t create an account with Ttickle, you can
                   safely ignore this email.
                 </Text>
               </div>

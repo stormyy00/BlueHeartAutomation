@@ -262,7 +262,7 @@ export async function createOrganizationWithBetterAuth(data: {
   name: string;
   slug?: string;
   logo?: string;
-  metadata?: Record<string, any>;
+  metadata?: Record<string, OrientationType>;
 }) {
   try {
     const session = await getServerSession();

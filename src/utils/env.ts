@@ -1,6 +1,5 @@
 import { createEnv } from "@t3-oss/env-nextjs";
 import { z } from "zod";
-import { tr } from "zod/v4/locales";
 
 export const env = createEnv({
   /**
@@ -65,9 +64,6 @@ export const env = createEnv({
     // PostHog public config
     NEXT_PUBLIC_POSTHOG_KEY: z.string().optional(),
     NEXT_PUBLIC_POSTHOG_HOST: z.string().optional(),
-
-    // Better Auth
-    NEXT_PUBLIC_BETTER_AUTH_URL: z.string().optional(),
   },
 
   /**

@@ -1,7 +1,6 @@
 interface DataTableProps {
   headers: string[];
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  data: { [key: string]: any }[];
+  data: Record<string, string | number | boolean | null>[];
 }
 
 const DataTable: React.FC<DataTableProps> = ({ headers, data }) => (

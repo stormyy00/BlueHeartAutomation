@@ -8,7 +8,7 @@ import { useState } from "react";
 import { ChangeEvent } from "react";
 import { HTMLInputs } from "@/types/inputs";
 import { toast } from "sonner";
-import { Organization } from "@/data/types";
+import { LegacyOrganization as Organization } from "@/types/organization";
 import { Label } from "../ui/label";
 
 interface User {

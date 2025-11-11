@@ -1,9 +1,9 @@
 import React from "react";
-import { Role } from "@/data/types";
 import { redirect } from "next/navigation";
 import { getServerSession } from "@/utils/auth";
 import { getRole, getActiveMemberRole } from "@/lib/actions/organizations";
 import Error from "./error";
+import { headers } from "next/headers";
 
 const ProtectedPage = async ({
   children,
@@ -17,8 +17,12 @@ const ProtectedPage = async ({
   requiresAdmin?: boolean;
 }) => {
   const session = await getServerSession();
+  const header = headers();
+  const pathName = header.get("x-url") || "";
+  console.log("ProtectedPage pathName:", pathName);
+
   if (!session?.user) {
-    redirect("/signin");
+    redirect("/signin?callbackUrl=" + pathName);
   }
 
   // Check organization membership if required

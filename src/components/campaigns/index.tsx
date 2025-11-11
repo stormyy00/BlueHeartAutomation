@@ -29,21 +29,13 @@ import {
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import Toolbar from "./toolbar";
 import Table from "./table";
+import {
+  Campaign,
+  CampaignWithCount,
+  CAMPAIGN_STATUS_COLORS,
+} from "@/types/campaign";
 
-const statusColors: Record<string, string> = {
-  active: "bg-green-100 text-green-800",
-  draft: "bg-yellow-100 text-yellow-800",
-  completed: "bg-gray-100 text-gray-800",
-};
-
-type Campaign = {
-  id: string;
-  title: string;
-  description: string;
-  status: string;
-  createdAt: string;
-  newsletters: number;
-};
+const statusColors = CAMPAIGN_STATUS_COLORS;
 
 const Campaigns = ({}) => {
   const router = useRouter();
@@ -54,8 +46,10 @@ const Campaigns = ({}) => {
   const [openEdit, setOpenEdit] = useState(false);
   const [openDelete, setOpenDelete] = useState(false);
 
-  const [editingCampaign, setEditingCampaign] = useState<any>(null);
-  const [deletingCampaign, setDeletingCampaign] = useState<any>(null);
+  const [editingCampaign, setEditingCampaign] = useState<Campaign | null>(null);
+  const [deletingCampaign, setDeletingCampaign] = useState<Campaign | null>(
+    null,
+  );
   const [newTitle, setNewTitle] = useState("");
   const [newDescription, setNewDescription] = useState("");
 
@@ -81,7 +75,7 @@ const Campaigns = ({}) => {
 
   // ------------------- Derived Campaigns -------------------
   const filteredCampaigns = useMemo(() => {
-    return campaignsData?.filter(({ title, status }: Campaign) => {
+    return campaignsData?.filter(({ title, status }: CampaignWithCount) => {
       const matchesFilter = filter === "all" || status === filter;
       const matchesSearch = title.toLowerCase().includes(search.toLowerCase());
       return matchesFilter && matchesSearch;
@@ -106,6 +100,7 @@ const Campaigns = ({}) => {
   };
 
   const handleEditSave = async () => {
+    if (!editingCampaign) return;
     await updateCampaignAction(
       editingCampaign.id,
       editingCampaign.title,
@@ -117,6 +112,7 @@ const Campaigns = ({}) => {
   };
 
   const handleDeleteConfirm = async () => {
+    if (!deletingCampaign) return;
     await deleteCampaignAction(deletingCampaign.id);
     queryClient.invalidateQueries({ queryKey: ["campaigns", id] });
     queryClient.invalidateQueries({ queryKey: ["newsletters"] });

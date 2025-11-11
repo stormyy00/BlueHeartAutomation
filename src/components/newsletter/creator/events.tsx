@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 import { Plus, Info } from "lucide-react";
 import {
@@ -17,7 +16,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { QUESTIONS } from "@/data/newsletter/event";
 import { ChangeEvent } from "react";
-import { EventType } from "@/types/event";
+import { EventType, CalendarEvent } from "@/types/event";
 import Loading from "@/components/global/loading";
 import { useCalendarEventsQuery, useCalendarIdQuery } from "./actions";
 
@@ -89,7 +88,7 @@ const Events = ({ onChange, eventLoading, setEventLoading }: EventsProps) => {
   } = useCalendarEventsQuery(calendarId ?? "");
 
   useEffect(() => {
-    const newEvents = items.map((event: any) => ({
+    const newEvents = items.map((event: CalendarEvent) => ({
       name: event.summary,
       description: event.description,
       location: event.location,

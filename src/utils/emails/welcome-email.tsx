@@ -53,7 +53,7 @@ const WelcomeEmail = ({ userName, dashboardLink }: WelcomeEmailProps) => {
               </Text>
 
               <Text className="text-base text-gray-600 mb-6 leading-relaxed">
-                We'&apos;re thrilled to have you join Ttickle - your AI-powered
+                We{"'"}re thrilled to have you join Ttickle - your AI-powered
                 platform to amplify social outreach and create compelling
                 content for your cause.
               </Text>

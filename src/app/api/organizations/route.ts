@@ -1,15 +1,18 @@
-import { NextRequest, NextResponse } from "next/server";
-import { getServerSession } from "@/utils/auth";
+import { NextResponse } from "next/server";
+import { authenticate } from "@/utils/auth";
 import { db } from "@/db";
 import { organizationMembers, organizations } from "@/db/schema";
-import { eq, and } from "drizzle-orm";
+import { eq } from "drizzle-orm";
 
-export async function GET(request: NextRequest) {
+export async function GET() {
   try {
-    const session = await getServerSession();
+    const { uid, auth, message } = await authenticate();
 
-    if (!session?.user) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    if (!uid || auth !== 200) {
+      return NextResponse.json(
+        { error: message || "Unauthorized" },
+        { status: 401 },
+      );
     }
 
     // Get all organizations where the user is a member
@@ -26,7 +29,7 @@ export async function GET(request: NextRequest) {
         organizations,
         eq(organizationMembers.organizationId, organizations.id),
       )
-      .where(eq(organizationMembers.userId, session.user.id))
+      .where(eq(organizationMembers.userId, uid))
       .orderBy(organizationMembers.joinedAt);
 
     return NextResponse.json(userOrganizations);

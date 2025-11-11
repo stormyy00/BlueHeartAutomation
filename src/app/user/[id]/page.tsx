@@ -10,16 +10,12 @@ import {
   CartesianGrid,
   Tooltip,
   ResponsiveContainer,
-  PieChart,
-  Pie,
-  Cell,
 } from "recharts";
 import {
   Mail,
   Calendar,
   Zap,
   Plus,
-  Eye,
   ChevronRight,
   Building2,
 } from "lucide-react";
@@ -33,6 +29,9 @@ import {
 import Link from "next/link";
 import { useQuery } from "@tanstack/react-query";
 import { resolveOrganizationFromSlug } from "@/utils/organization-utils";
+import { SmallStatBox } from "@/components/dashboard/stat-box";
+import { ContentCard } from "@/components/dashboard/content-card";
+import { ContentMixChart } from "@/components/dashboard/content-mix-chart";
 
 interface Organization {
   id: string;
@@ -142,64 +141,6 @@ const OrganizationDashboard = () => {
     },
   ];
 
-  const SmallStatBox = ({
-    icon: Icon,
-    label,
-    value,
-    color,
-  }: {
-    icon: any;
-    label: string;
-    value: string;
-    color: string;
-  }) => (
-    <div className="inline-flex items-center gap-2 rounded-full px-3 py-1.5 text-sm font-medium text-ttickles-gray bg-ttickles-white border border-ttickles-lightblue shadow-sm hover:shadow transition-all">
-      <div className={`p-1 rounded-full ${color}`}>
-        <Icon size={12} className="text-white" />
-      </div>
-      <span className="text-ttickles-gray">{label}</span>
-      <span className="font-semibold text-ttickles-darkblue">{value}</span>
-    </div>
-  );
-
-  const ContentCard = ({ item }: { item: any }) => (
-    <div className="bg-white rounded-lg border border-ttickles-lightblue hover:shadow-md transition-all p-3 group">
-      <div className="flex items-start gap-3">
-        <div className="text-3xl">
-          {item.type === "newsletter" ? "📧" : "🖼️"}
-        </div>
-        <div className="flex-1 min-w-0">
-          <div className="flex items-start justify-between gap-2">
-            <div className="flex-1">
-              <h3 className="font-semibold text-ttickles-darkblue text-sm truncate group-hover:text-ttickles-blue cursor-pointer">
-                {item.title}
-              </h3>
-              <p className="text-xs text-ttickles-gray mt-0.5">{item.date}</p>
-            </div>
-          </div>
-          <div className="flex items-center justify-between mt-2">
-            <span
-              className={`px-2 py-0.5 rounded text-xs font-medium ${
-                item.status === "Published"
-                  ? "bg-emerald-100 text-emerald-700"
-                  : item.status === "Draft"
-                    ? "bg-gray-100 text-gray-700"
-                    : "bg-ttickles-lightblue/20 text-ttickles-darkblue"
-              }`}
-            >
-              {item.status}
-            </span>
-            {item.engagement !== "—" && (
-              <span className="flex items-center gap-0.5 text-xs text-gray-600">
-                <Eye size={12} /> {item.engagement}
-              </span>
-            )}
-          </div>
-        </div>
-      </div>
-    </div>
-  );
-
   if (isLoading) {
     return (
       <div className="min-h-screen bg-ttickles-white/5 flex items-center justify-center">
@@ -220,8 +161,8 @@ const OrganizationDashboard = () => {
             Organization Not Found
           </h3>
           <p className="text-ttickles-gray mb-6">
-            The organization you're looking for doesn'&apos;t exist or you don't
-            have access to it.
+            The organization you&apos;re looking for doesn&apos;t exist or you
+            don&apos;t have access to it.
           </p>
           <Button onClick={() => router.push("/user")}>
             Back to Organizations
@@ -314,48 +255,7 @@ const OrganizationDashboard = () => {
           </div>
 
           {/* Middle Column - Pie Chart */}
-          <div className="bg-white rounded-xl border border-ttickles-lightblue p-6">
-            <h2 className="text-lg font-bold text-ttickles-darkblue mb-4">
-              Content Mix
-            </h2>
-            <ResponsiveContainer width="100%" height={280}>
-              <PieChart>
-                <Pie
-                  data={performanceData}
-                  cx="50%"
-                  cy="50%"
-                  innerRadius={50}
-                  outerRadius={85}
-                  paddingAngle={2}
-                  dataKey="value"
-                >
-                  {performanceData.map((entry, index) => (
-                    <Cell key={`cell-${index}`} fill={entry.fill} />
-                  ))}
-                </Pie>
-                <Tooltip formatter={(value) => `${value}%`} />
-              </PieChart>
-            </ResponsiveContainer>
-            <div className="mt-4 space-y-2">
-              {performanceData.map((item) => (
-                <div
-                  key={item.name}
-                  className="flex items-center justify-between text-sm"
-                >
-                  <div className="flex items-center gap-2">
-                    <div
-                      className="w-2 h-2 rounded-full"
-                      style={{ backgroundColor: item.fill }}
-                    ></div>
-                    <span className="text-ttickles-gray">{item.name}</span>
-                  </div>
-                  <span className="font-semibold text-ttickles-darkblue">
-                    {item.value}%
-                  </span>
-                </div>
-              ))}
-            </div>
-          </div>
+          <ContentMixChart data={performanceData} />
         </div>
 
         {/* Performance Chart */}

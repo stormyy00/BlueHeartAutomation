@@ -3,26 +3,7 @@
 import React, { useState, useEffect } from "react";
 import { Label } from "../ui/label";
 import { Button } from "../ui/button";
-import { Input } from "../ui/input";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "../ui/card";
-import { Badge } from "../ui/badge";
-import {
-  Mail,
-  Clock,
-  CheckCircle,
-  XCircle,
-  RefreshCw,
-  Trash2,
-  Users,
-  UserPlus,
-  AlertCircle,
-} from "lucide-react";
+import { RefreshCw, XCircle, UserPlus, AlertCircle } from "lucide-react";
 import {
   listInvitations,
   cancelInvitation,
@@ -31,7 +12,10 @@ import {
 } from "@/utils/auth-client";
 import { useParams } from "next/navigation";
 import { toast } from "sonner";
-import Select from "../global/select";
+import { ErrorContext, SuccessContext } from "better-auth/react";
+import { InviteFormCard } from "./invite-form-card";
+import { InvitationCard } from "./invitation-card";
+import { EmptyInvitations } from "./empty-invitations";
 
 interface Invitation {
   id: string;
@@ -87,24 +71,24 @@ const Invitations = () => {
 
   const loadInvitations = async () => {
     setLoading(true);
-    try {
-      const { data, error } = await listInvitations({
+    return await listInvitations(
+      {
         query: {
           organizationId: currentOrganizationId,
         },
-      });
-      if (data) {
-        console.log("Invitations loaded:", data);
-        setInvitations(data);
-      } else if (error) {
-        toast.error(String(error));
-      }
-    } catch (error) {
-      console.error("Error loading invitations:", error);
-      toast.error(String(error));
-    } finally {
-      setLoading(false);
-    }
+      },
+      {
+        onSuccess: ({ data }: SuccessContext) => {
+          console.log("Invitations fetched successfully:", data);
+          setInvitations(data || []);
+          setLoading(false);
+        },
+        onError: (error: ErrorContext) => {
+          console.error("Error fetching invitations:", error);
+          toast.error(String(error));
+        },
+      },
+    );
   };
   const handleSendInvitation = async () => {
     if (!inviteForm.email || !inviteForm.role.length) {
@@ -118,36 +102,26 @@ const Invitations = () => {
     }
 
     setLoading(true);
-    try {
-      console.log("Sending invitation with:", {
-        email: inviteForm.email,
-        role: inviteForm.role,
-        organizationId: currentOrganizationId,
-      });
 
-      const { data, error } = await inviteMember({
+    return await inviteMember(
+      {
         email: inviteForm.email,
         role: inviteForm.role as ("admin" | "owner" | "member")[],
         organizationId: currentOrganizationId,
-      });
-
-      console.log("Invitation result:", { data, error });
-
-      if (data) {
-        toast.success("Invitation sent successfully!");
-        setInviteForm({ email: "", role: ["member"] });
-        setShowInviteForm(false);
-        await loadInvitations();
-      } else if (error) {
-        console.error("Invitation error:", error);
-        toast.error(String(error));
-      }
-    } catch (error) {
-      console.error("Error sending invitation:", error);
-      toast.error("Failed to send invitation");
-    } finally {
-      setLoading(false);
-    }
+      },
+      {
+        onSuccess: async ({ data }: SuccessContext) => {
+          console.log("Invitation sent successfully:", data);
+          setInviteForm({ email: "", role: ["member"] });
+          setShowInviteForm(false);
+          await loadInvitations();
+        },
+        onError: (error: ErrorContext) => {
+          console.error("Error sending invitation:", error);
+          toast.error(String(error));
+        },
+      },
+    );
   };
 
   const handleResendInvitation = async (invitationId: string) => {
@@ -173,55 +147,21 @@ const Invitations = () => {
     if (!confirm("Are you sure you want to cancel this invitation?")) return;
 
     setLoading(true);
-    try {
-      const result = await cancelInvitation({ invitationId });
-
-      if (result.data) {
-        toast.success("Invitation cancelled successfully!");
-        await loadInvitations();
-      } else if (result.error) {
-        toast.error(String(result.error));
-      }
-    } catch (error) {
-      console.error("Error cancelling invitation:", error);
-      toast.error("Failed to cancel invitation");
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const getStatusBadge = (status: string) => {
-    const statusConfig = {
-      pending: { color: "bg-yellow-100 text-yellow-800", icon: Clock },
-      accepted: { color: "bg-green-100 text-green-800", icon: CheckCircle },
-      expired: { color: "bg-red-100 text-red-800", icon: XCircle },
-      cancelled: { color: "bg-gray-100 text-gray-800", icon: XCircle },
-    };
-
-    const config =
-      statusConfig[status as keyof typeof statusConfig] || statusConfig.pending;
-    const Icon = config.icon;
-
-    return (
-      <Badge className={`${config.color} flex items-center gap-1`}>
-        <Icon className="w-3 h-3" />
-        {status.charAt(0).toUpperCase() + status.slice(1)}
-      </Badge>
+    return await cancelInvitation(
+      { invitationId },
+      {
+        onSuccess: async () => {
+          toast.success("Invitation cancelled successfully!");
+          await loadInvitations();
+          setLoading(false);
+        },
+        onError: (error: ErrorContext) => {
+          console.error("Error cancelling invitation:", error);
+          toast.error(String(error));
+          setLoading(false);
+        },
+      },
     );
-  };
-
-  const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString("en-US", {
-      year: "numeric",
-      month: "short",
-      day: "numeric",
-      hour: "2-digit",
-      minute: "2-digit",
-    });
-  };
-
-  const isExpired = (expiresAt: string) => {
-    return new Date(expiresAt) < new Date();
   };
 
   if (!currentOrganizationId) {
@@ -278,70 +218,13 @@ const Invitations = () => {
           </div>
 
           {showInviteForm && (
-            <Card>
-              <CardHeader>
-                <CardTitle className="text-base">Invite New Member</CardTitle>
-                <CardDescription>
-                  Send an invitation to join your organization
-                </CardDescription>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <div>
-                  <Label htmlFor="email">Email Address</Label>
-                  <Input
-                    id="email"
-                    type="email"
-                    placeholder="user@example.com"
-                    value={inviteForm.email}
-                    onChange={(e) =>
-                      setInviteForm((prev) => ({
-                        ...prev,
-                        email: e.target.value,
-                      }))
-                    }
-                  />
-                </div>
-
-                <div>
-                  <Label htmlFor="role">Role</Label>
-                  <Select
-                    options={[
-                      { value: "member", label: "Member" },
-                      { value: "admin", label: "Admin" },
-                      { value: "owner", label: "Owner" },
-                    ]}
-                    onChange={(selectedOption) =>
-                      setInviteForm((prev) => ({
-                        ...prev,
-                        role: [selectedOption],
-                      }))
-                    }
-                    placeholder="Select a role"
-                  />
-                </div>
-
-                <div className="flex gap-2">
-                  <Button
-                    onClick={handleSendInvitation}
-                    disabled={loading}
-                    className="flex-1"
-                  >
-                    {loading ? (
-                      <RefreshCw className="w-4 h-4 animate-spin" />
-                    ) : (
-                      <Mail className="w-4 h-4" />
-                    )}
-                    Send Invitation
-                  </Button>
-                  <Button
-                    variant="outline"
-                    onClick={() => setShowInviteForm(false)}
-                  >
-                    Cancel
-                  </Button>
-                </div>
-              </CardContent>
-            </Card>
+            <InviteFormCard
+              inviteForm={inviteForm}
+              loading={loading}
+              onFormChange={setInviteForm}
+              onSendInvitation={handleSendInvitation}
+              onCancel={() => setShowInviteForm(false)}
+            />
           )}
         </div>
 
@@ -369,90 +252,16 @@ const Invitations = () => {
                 <span className="ml-2">Loading invitations...</span>
               </div>
             ) : invitations.length === 0 ? (
-              <Card>
-                <CardContent className="flex flex-col items-center justify-center py-8">
-                  <Users className="w-12 h-12 text-gray-400 mb-4" />
-                  <h3 className="text-lg font-semibold text-gray-600">
-                    No invitations yet
-                  </h3>
-                  <p className="text-gray-500 text-center">
-                    Send your first invitation to get started
-                  </p>
-                </CardContent>
-              </Card>
+              <EmptyInvitations />
             ) : (
               invitations.map((invitation) => (
-                <Card
+                <InvitationCard
                   key={invitation.id}
-                  className="hover:shadow-md transition-shadow"
-                >
-                  <CardContent className="p-6">
-                    <div className="flex items-start justify-between">
-                      <div className="flex-1">
-                        <div className="flex items-center gap-3 mb-2">
-                          <Mail className="w-5 h-5 text-gray-500" />
-                          <span className="font-semibold text-lg">
-                            {invitation.email}
-                          </span>
-                          {getStatusBadge(invitation.status)}
-                        </div>
-
-                        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm text-gray-600">
-                          <div>
-                            <span className="font-medium">Role:</span>{" "}
-                            {Array.isArray(invitation.role)
-                              ? invitation.role.join(", ")
-                              : invitation.role}
-                          </div>
-                          <div>
-                            <span className="font-medium">Sent:</span>{" "}
-                            {formatDate(invitation.createdAt)}
-                          </div>
-                          <div>
-                            <span className="font-medium">Expires:</span>{" "}
-                            {formatDate(invitation.expiresAt)}
-                            {isExpired(invitation.expiresAt) && (
-                              <AlertCircle className="w-4 h-4 text-red-500 inline ml-1" />
-                            )}
-                          </div>
-                        </div>
-
-                        <div className="text-sm text-gray-500 mt-2">
-                          Invited by {invitation.inviterId}
-                        </div>
-                      </div>
-
-                      <div className="flex flex-col gap-2 ml-4">
-                        {invitation.status === "pending" && (
-                          <>
-                            <Button
-                              size="sm"
-                              variant="outline"
-                              onClick={() =>
-                                handleResendInvitation(invitation.id)
-                              }
-                              disabled={loading}
-                            >
-                              <RefreshCw className="w-4 h-4" />
-                              Resend
-                            </Button>
-                            <Button
-                              size="sm"
-                              variant="destructive"
-                              onClick={() =>
-                                handleCancelInvitation(invitation.id)
-                              }
-                              disabled={loading}
-                            >
-                              <Trash2 className="w-4 h-4" />
-                              Cancel
-                            </Button>
-                          </>
-                        )}
-                      </div>
-                    </div>
-                  </CardContent>
-                </Card>
+                  invitation={invitation}
+                  loading={loading}
+                  onResend={handleResendInvitation}
+                  onCancel={handleCancelInvitation}
+                />
               ))
             )}
           </div>

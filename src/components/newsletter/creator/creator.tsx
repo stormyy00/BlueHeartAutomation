@@ -23,7 +23,7 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet";
-import Editor from "@/components/novel/editror";
+import Editor from "@/components/novel/editor";
 import { JSONContent } from "novel";
 import { createEditor } from "@udecode/plate";
 import { AIContext } from "@/context/ai-context";
@@ -31,7 +31,7 @@ import { useChat } from "@ai-sdk/react";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Input } from "@/components/ui/input";
 import Select from "@/components/global/select";
-import { Organization } from "@/data/types";
+import { LegacyOrganization as Organization } from "@/types/organization";
 import { TEMPLATES } from "@/data/newsletter/newsletter";
 import { useNewsletterByIdQuery } from "@/server/useQuery";
 import { ChevronDownIcon } from "lucide-react";

@@ -313,7 +313,9 @@ export const documents = createTable("document", {
   tags: jsonb("tags").$type<string[]>().default([]),
   recipients: jsonb("recipients").$type<string[]>().default([]),
   template: text("template").default("default"),
-  metadata: jsonb("metadata").$type<Record<string, any>>().default({}),
+  metadata: jsonb("metadata")
+    .$type<Record<string, OrientationType>>()
+    .default({}),
   createdAt: timestamp("created_at").notNull().defaultNow(),
   updatedAt: timestamp("updated_at")
     .notNull()

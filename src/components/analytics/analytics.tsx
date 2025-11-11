@@ -1,5 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-
 "use client";
 
 import { useState, useEffect } from "react";
@@ -9,46 +7,16 @@ import InsightsTab from "./insightsTab";
 import TrendsTab from "./trendTab";
 import SessionsTab from "./sessionTab";
 import { toast } from "sonner";
+import type {
+  AnalyticsData,
+  HeatmapData,
+  UserEvent,
+  ProcessedEvent,
+  TimeSeriesDataPoint,
+  RawAnalyticsData,
+} from "@/types/analytics";
 
 const AnalyticsDashboard = () => {
-  type AnalyticsData = {
-    pageviews: any[];
-    userEvents: any[];
-    sessionData: { date: any; value: any; label: any }[];
-  };
-
-  type HeatmapData = {
-    grid: number[][];
-    xLabels: string[];
-    yLabels: string[];
-  };
-
-  type Event = {
-    action?: {
-      days?: string[];
-    };
-    data?: number[];
-  };
-
-  type ProcessedEvent = {
-    timestamp: string;
-    count: number;
-  };
-
-  type TimeSeriesDataPoint = {
-    timestamp: string;
-    value: number;
-  };
-
-  type RawData = {
-    result: Array<{
-      label: string;
-      data: number[];
-      days?: string[];
-      labels?: string[];
-    }>;
-  };
-
   const [analyticsData, setAnalyticsData] = useState<AnalyticsData>({
     pageviews: [],
     userEvents: [],
@@ -91,7 +59,7 @@ const AnalyticsDashboard = () => {
     return () => clearInterval(interval);
   }, []);
 
-  const getHeatmapData = (events: Event[]): HeatmapData => {
+  const getHeatmapData = (events: UserEvent[]): HeatmapData => {
     if (!events || !events.length)
       return { grid: [], xLabels: [], yLabels: [] };
 
@@ -125,7 +93,9 @@ const AnalyticsDashboard = () => {
     return { grid: heatmapGrid, xLabels: hours, yLabels: daysOfWeek };
   };
 
-  const prepareTimeSeriesData = (events: Event[]): TimeSeriesDataPoint[] => {
+  const prepareTimeSeriesData = (
+    events: UserEvent[],
+  ): TimeSeriesDataPoint[] => {
     if (!events.length || !events[0]?.action?.days) return [];
 
     const timeSeriesData: TimeSeriesDataPoint[] = [];
@@ -142,19 +112,19 @@ const AnalyticsDashboard = () => {
     return timeSeriesData;
   };
 
-  const processAnalyticsData = (data: RawData): AnalyticsData => {
+  const processAnalyticsData = (data: RawAnalyticsData): AnalyticsData => {
     const pageviews =
       data.result?.filter((item) => item.label === "$pageview") || [];
     const userEvents =
       data.result?.filter((item) => item.label !== "$pageview") || [];
 
-    const sessionData: { date: any; value: any; label: any }[] = [];
+    const sessionData: AnalyticsData["sessionData"] = [];
     if (data.result && data.result[0] && data.result[0].data) {
       for (let i = 0; i < data.result[0].data.length; i++) {
         sessionData.push({
-          date: data.result[0].days?.[i],
+          date: data.result[0].days?.[i] || "",
           value: data.result[0].data[i],
-          label: data.result[0].labels?.[i],
+          label: data.result[0].labels?.[i] || "",
         });
       }
     }
@@ -177,13 +147,13 @@ const AnalyticsDashboard = () => {
   const timeSeriesData = prepareTimeSeriesData(analyticsData.pageviews);
 
   const tabConfig = [
-    {
-      id: "insights",
-      label: "Insights",
-      content: (
-        <InsightsTab analyticsData={analyticsData} heatmapData={heatmapData} />
-      ),
-    },
+    // {
+    //   id: "insights",
+    //   label: "Insights",
+    //   content: (
+    //     <InsightsTab analyticsData={analyticsData} heatmapData={heatmapData} />
+    //   ),
+    // },
     {
       id: "trends",
       label: "Trends",

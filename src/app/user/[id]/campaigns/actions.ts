@@ -6,7 +6,6 @@ import {
   updateCampaignQuery,
   updateDocumentCampaignIdQuery,
 } from "@/db/queries/campaigns";
-import { authenticate } from "@/utils/auth";
 
 export const createCampaignAction = async (
   title: string,

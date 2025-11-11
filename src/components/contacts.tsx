@@ -13,7 +13,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import Recipients from "./newsletter/recipients/recipient-list";
-import { Organization } from "@/data/types";
+import { OrganizationType } from "@/db/schema";
 
 type Member = {
   id: string;
@@ -25,7 +25,7 @@ type Member = {
 type ContactsProps = {
   members: Member[];
   organizationName: string;
-  org: Organization;
+  org: OrganizationType | null;
 };
 
 const Contacts = ({ members, organizationName, org }: ContactsProps) => {

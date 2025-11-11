@@ -29,7 +29,7 @@ import SidebarProfile from "./sidebar-profile";
 import { PaperPlaneIcon } from "@radix-ui/react-icons";
 
 const Navigation = () => {
-  const { data: session, isPending } = useSession();
+  const { data: session } = useSession();
   const path = usePathname().split("/");
   const navParent = path[1];
 
