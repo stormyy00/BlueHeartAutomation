@@ -28,7 +28,7 @@ const Profile = ({
   session,
   orgs,
 }: {
-  session: Session & { user: User | null };
+  session: { session: Session; user: User } | null;
   orgs: { id: string; name: string; role: string }[];
 }) => {
   const user = session?.user;
@@ -49,14 +49,16 @@ const Profile = ({
       .join("");
   }, [name, email]);
 
-  const fmt = (date: Date) =>
-    new Date(date).toLocaleString(undefined, {
-      month: "short",
-      day: "numeric",
-      year: "numeric",
-      hour: "2-digit",
-      minute: "2-digit",
-    });
+  const fmt = (date?: Date) =>
+    date
+      ? new Date(date).toLocaleString(undefined, {
+          month: "short",
+          day: "numeric",
+          year: "numeric",
+          hour: "2-digit",
+          minute: "2-digit",
+        })
+      : "Unknown";
 
   const onSave = useCallback(async () => {
     try {
@@ -283,7 +285,7 @@ const Profile = ({
                 <p className="text-sm font-medium">This device</p>
                 <p className="text-xs text-gray-500 flex items-center gap-1">
                   <Globe className="h-3 w-3" />
-                  {session.ipAddress ?? "IP unknown"} • Active now
+                  {session?.session.ipAddress ?? "IP unknown"} • Active now
                 </p>
               </div>
             </div>
@@ -298,7 +300,7 @@ const Profile = ({
               <div>
                 <p className="text-sm font-medium">MacBook Pro • Chrome</p>
                 <p className="text-xs text-gray-500">
-                  Last active {fmt(session.updatedAt)}
+                  Last active {fmt(session?.session?.updatedAt)}
                 </p>
               </div>
             </div>
