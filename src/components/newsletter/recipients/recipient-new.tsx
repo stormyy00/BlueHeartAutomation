@@ -7,7 +7,6 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { Label } from "@/components/ui/label";
-import { FullOrganization } from "@/types/organization";
 import { RecipientGroup } from "@/types/metadata";
 import { X } from "lucide-react";
 import { Dispatch, KeyboardEvent, SetStateAction, useState } from "react";

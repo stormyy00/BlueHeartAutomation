@@ -11,17 +11,17 @@ import { toast } from "sonner";
 import { LegacyOrganization as Organization } from "@/types/organization";
 import { Label } from "../ui/label";
 
-interface User {
+type Member = {
   id: string;
   name: string;
   email: string;
   role: string;
-}
+};
 
 type Props = {
   orgId: string | string[];
   orgData: Organization;
-  users?: User[] | undefined;
+  users?: Member[] | undefined;
 };
 
 const Information = ({ orgId, orgData, users = [] }: Props) => {

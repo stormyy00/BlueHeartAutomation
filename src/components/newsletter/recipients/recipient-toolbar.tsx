@@ -11,7 +11,6 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
-import { FullOrganization } from "@/types/organization";
 import { RecipientGroup } from "@/types/metadata";
 import { toast } from "sonner";
 import RecipientNew from "./recipient-new";

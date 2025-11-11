@@ -13,7 +13,6 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import Recipients from "./newsletter/recipients/recipient-list";
-import { OrganizationType } from "@/db/schema";
 import { FullOrganization } from "@/types/organization";
 import { RecipientGroup } from "@/types/metadata";
 

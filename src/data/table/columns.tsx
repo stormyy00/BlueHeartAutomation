@@ -49,35 +49,35 @@ export const generateSelect = <TData extends object>() => ({
   ),
 });
 
-export const generateTeams = <TData extends object>(teams: string[]) => ({
-  accessorKey: "team",
-  header: "Team",
-  enableColumnFilter: true,
-  cell: ({ row }: CellContext<TData, string[]>) => {
-    const value = row.getValue("team") as string[];
-    if (!Array.isArray(value)) return null;
-    return (
-      <div className="flex flex-wrap items-center gap-1">
-        {value.map((team) => {
-          const style = ROLE[team as keyof typeof ROLE] ?? {
-            text: "",
-            bg: "",
-            border: "",
-          };
-          return (
-            <span
-              key={team}
-              className={`inline-block ${style.bg} ${style.text} ${style.border} border text-xs font-medium mr-2 px-2.5 py-0.5 rounded-full`}
-            >
-              {team}
-            </span>
-          );
-        })}
-      </div>
-    );
-  },
-  filterFn: includesStringArray,
-});
+// export const generateTeams = <TData extends object>(teams: string[]) => ({
+//   accessorKey: "team",
+//   header: "Team",
+//   enableColumnFilter: true,
+//   cell: ({ row }: CellContext<TData, string[]>) => {
+//     const value = row.getValue("team") as string[];
+//     if (!Array.isArray(value)) return null;
+//     return (
+//       <div className="flex flex-wrap items-center gap-1">
+//         {value.map((team) => {
+//           const style = ROLE[team as keyof typeof ROLE] ?? {
+//             text: "",
+//             bg: "",
+//             border: "",
+//           };
+//           return (
+//             <span
+//               key={team}
+//               className={`inline-block ${style.bg} ${style.text} ${style.border} border text-xs font-medium mr-2 px-2.5 py-0.5 rounded-full`}
+//             >
+//               {team}
+//             </span>
+//           );
+//         })}
+//       </div>
+//     );
+//   },
+//   filterFn: includesStringArray,
+// });
 
 const includesStringArray: FilterFn<string> = (row, columnId, filterValue) => {
   const value = row.getValue(columnId) as string[];

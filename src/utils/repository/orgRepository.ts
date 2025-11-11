@@ -6,7 +6,6 @@ import {
   convertMetadataToLegacy,
   migrateOrganizationToMetadata,
 } from "@/utils/organization-metadata";
-import { auth, authenticate } from "../auth";
 import { RecipientGroup } from "@/types/metadata";
 
 export const getOrg = async (

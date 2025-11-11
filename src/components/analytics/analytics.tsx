@@ -3,7 +3,6 @@
 import { useState, useEffect } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Loader2 } from "lucide-react";
-import InsightsTab from "./insightsTab";
 import TrendsTab from "./trendTab";
 import SessionsTab from "./sessionTab";
 import { toast } from "sonner";
@@ -144,6 +143,7 @@ const AnalyticsDashboard = () => {
   }
 
   const heatmapData = getHeatmapData(analyticsData.pageviews);
+  console.log("Heatmap Data:", heatmapData);
   const timeSeriesData = prepareTimeSeriesData(analyticsData.pageviews);
 
   const tabConfig = [
