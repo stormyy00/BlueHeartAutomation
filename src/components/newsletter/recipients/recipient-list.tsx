@@ -8,7 +8,6 @@ import {
   DialogDescription,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { FullOrganization } from "@/types/organization";
 import { RecipientGroup } from "@/types/metadata";
 import { Pen, User, X } from "lucide-react";
 import { KeyboardEvent, useState } from "react";

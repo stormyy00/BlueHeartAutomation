@@ -1,5 +1,6 @@
 import Recipients from "@/components/newsletter/recipients/recipient-list";
-import { getOrg } from "@/utils/repository/orgRepository";
+import { RecipientGroup } from "@/types/metadata";
+import { getOrgGroups } from "@/utils/repository/orgRepository";
 
 type Params = {
   params: {
@@ -9,10 +10,10 @@ type Params = {
 
 const Page = async ({ params }: Params) => {
   const { orgId } = params;
-  const org = await getOrg(orgId);
+  const groups = await getOrgGroups(orgId);
   return (
     <div className="flex flex-col w-full bg-white">
-      <Recipients org={org!} />
+      <Recipients org={groups as RecipientGroup[]} orgId={orgId} />
     </div>
   );
 };
