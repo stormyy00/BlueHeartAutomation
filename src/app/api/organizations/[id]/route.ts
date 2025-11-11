@@ -99,7 +99,7 @@ export async function PUT(
       .set({
         name,
         description,
-        icon,
+        logo: icon,
         updatedAt: new Date(),
       })
       .where(eq(organizations.id, params.id))
