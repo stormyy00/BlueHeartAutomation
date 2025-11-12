@@ -26,28 +26,28 @@ const mockMembers = [
     id: "1",
     name: "Arch Linux",
     email: "alinux@example.com",
-    role: "Administrator",
+    role: "owner",
     joinedAt: new Date("2024-01-15"),
   },
   {
     id: "2",
     name: "Jane Smith",
     email: "jane.smith@example.com",
-    role: "User",
+    role: "admin",
     joinedAt: new Date("2024-02-20"),
   },
   {
     id: "3",
     name: "Alice Johnson",
     email: "alice.johnson@example.com",
-    role: "User",
+    role: "member",
     joinedAt: new Date("2024-03-10"),
   },
   {
     id: "4",
     name: "Taaha Brown",
     email: "taaha.brown@example.com",
-    role: "Administrator",
+    role: "admin",
     joinedAt: new Date("2024-01-25"),
   },
   {
@@ -212,6 +212,7 @@ const Members = () => {
       <div className="max-w-7xl mx-auto p-6 space-y-6">
         <Label className="font-semibold text-3xl">Members</Label>
         <Toolbar
+          organizationId={Array.isArray(orgId) ? orgId[0] : (orgId ?? "")}
           searchValue={searchValue}
           onSearchChange={(value) => setSearch(value)}
           setFilterStatus={setStatusFilter}

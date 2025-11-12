@@ -3,9 +3,10 @@ import {
   magicLinkClient,
   organizationClient,
 } from "better-auth/client/plugins";
+import { env } from "./env";
 
 const authClient = createAuthClient({
-  baseURL: "http://localhost:3000", // Point to the Next.js app
+  baseURL: env.BETTER_AUTH_URL, // Point to the Next.js app
   plugins: [organizationClient(), magicLinkClient()],
 });
 

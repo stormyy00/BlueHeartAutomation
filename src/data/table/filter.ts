@@ -1,10 +1,13 @@
-export const ROLE = {
-  admin: {
+export const ROLE: Record<
+  string,
+  { text: string; bg: string; border: string }
+> = {
+  owner: {
     text: "text-blue-600",
     bg: "bg-blue-100",
     border: "border-blue-200",
   },
-  moderator: {
+  admin: {
     text: "text-green-600",
     bg: "bg-green-100",
     border: "border-green-200",

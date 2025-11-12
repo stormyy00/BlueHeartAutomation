@@ -82,7 +82,7 @@ const SignUp = () => {
           email,
           password,
           name: `${firstName} ${lastName}`,
-          callbackURL: "http://localhost:3000/user",
+          callbackURL: "/",
         },
         {
           onSuccess: () => {

@@ -9,7 +9,7 @@ export const generateStatus = <TData extends object>(
   header: "Role",
   enableColumnFilter: true,
   filterFn: "includesString",
-  cell: ({ row }: CellContext<TData, string>) => {
+  cell: ({ row }: CellContext<TData, Member>) => {
     const role = row.getValue("role");
     const roleStyles = roles[role as keyof typeof roles];
 
