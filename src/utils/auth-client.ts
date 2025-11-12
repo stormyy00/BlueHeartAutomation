@@ -18,6 +18,7 @@ export const {
   organization,
   requestPasswordReset,
   resetPassword,
+  useActiveOrganization,
 } = authClient;
 
 // Export organization client methods for easier access

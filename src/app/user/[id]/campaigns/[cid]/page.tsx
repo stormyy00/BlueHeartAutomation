@@ -1,7 +1,7 @@
 import Campaign from "@/components/campaigns/campaign";
 import React from "react";
 
-const Page = ({ params }: { params: { id: string; cid: string } }) => {
+const page = ({ params }: { params: { id: string; cid: string } }) => {
   const { id: uid, cid } = params;
   return (
     <div className="w-full">
@@ -10,4 +10,4 @@ const Page = ({ params }: { params: { id: string; cid: string } }) => {
   );
 };
 
-export default Page;
+export default page;

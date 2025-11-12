@@ -1,21 +1,9 @@
-import React from "react";
-import Contacts from "@/components/contacts";
-import { getUsersbyOrgId } from "@/components/manage/actions";
-import { getActiveOrganization, getFullOrganization } from "@/utils/auth";
+import Index from "@/components/contacts";
 
-const Page = async ({ params }: { params: { id: string } }) => {
-  const [members, org] = await Promise.all([
-    getUsersbyOrgId((await getActiveOrganization()) as string),
-    getFullOrganization((await getActiveOrganization()) as string, params.id),
-  ]);
+const Page = ({ params }: { params: { id: string } }) => {
   return (
-    <div className="p-4 md:p-6">
-      <Contacts
-        members={members}
-        organizationName={org?.name || ""}
-        org={org}
-        orgId={org?.id || ""}
-      />
+    <div>
+      <Index id={params.id} />
     </div>
   );
 };

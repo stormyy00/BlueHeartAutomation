@@ -1,16 +1,16 @@
-"use client";
-
-import React from "react";
 import { OrgProvider } from "@/context/org-context";
-import { useParams } from "next/navigation";
 import { SidebarProvider } from "@/components/ui/sidebar";
 import Navigation from "@/components/global/navigation";
 
-const UserOrgLayout = ({ children }: { children: React.ReactNode }) => {
-  const { orgId } = useParams();
-  const slug = (orgId as string) || "";
+const UserOrgLayout = async ({
+  children,
+  params,
+}: {
+  children: React.ReactNode;
+  params: { orgId: string };
+}) => {
+  const slug = params.orgId;
 
-  console.log("Org Layout Slug:", slug);
   return (
     <OrgProvider slug={slug}>
       <SidebarProvider>

@@ -1,5 +1,7 @@
 import OrganizationDashboard from "@/components/organization-dashboard";
 
-export default function OrganizationDashboardPage() {
+const page = () => {
   return <OrganizationDashboard />;
-}
+};
+
+export default page;

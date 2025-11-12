@@ -1,8 +1,8 @@
 import Creator from "@/components/newsletter/creator/creator";
-import { getOrg } from "@/utils/repository/orgRepository";
 import { getActiveOrganization } from "@/utils/auth";
+import { getOrg } from "@/utils/repository/orgRepository";
 
-const page = async () => {
+const Index = async () => {
   const orgId = await getActiveOrganization();
   if (orgId === null) {
     console.error("Organization not found");
@@ -10,8 +10,10 @@ const page = async () => {
   }
   const org = await getOrg(orgId);
   return (
-    <div className="flex w-full bg-white">{org && <Creator org={org} />}</div>
+    <div className="flex w-full bg-white">
+      <Creator org={org!} />
+    </div>
   );
 };
 
-export default page;
+export default Index;

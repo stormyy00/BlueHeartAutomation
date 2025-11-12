@@ -1,5 +1,5 @@
 import NewsletterDashboard from "@/components/newsletter/dashboard/newsletter-dashboard";
-const Page = () => {
+const page = () => {
   return (
     <div className="w-full flex flex-col bg-white">
       <NewsletterDashboard />
@@ -7,4 +7,4 @@ const Page = () => {
   );
 };
 
-export default Page;
+export default page;

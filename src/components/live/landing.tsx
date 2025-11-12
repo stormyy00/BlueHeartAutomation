@@ -31,7 +31,7 @@ const Landing = () => {
         className="absolute inset-0"
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
-        transition={{ duration: 1.2, ease: "easeOut" }}
+        transition={{ duration: 0.5, ease: "easeOut" }}
         viewport={{ once: true }}
       >
         <div className="absolute inset-0 bg-gradient-to-br from-primary/10 via-background to-secondary/10" />
@@ -83,7 +83,7 @@ const Landing = () => {
           </span>
           <br />
           <span className="bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
-            to transform your social outreach
+            to transform your social amplification
           </span>
         </motion.h2>
 
@@ -117,11 +117,11 @@ const Landing = () => {
           transition={{ duration: 1, ease: "easeOut", delay: 1.8 }}
         >
           <Link
-            href="/orgs/@mine/newsletter"
+            href=""
             className="group relative flex items-center justify-center gap-3 px-5 py-3 rounded-2xl bg-gradient-to-r from-primary to-primary/90 text-primary-foreground font-bold text-base shadow-2xl transition-all duration-300 hover:shadow-primary/40 hover:scale-105"
           >
             <Play className="w-5 h-5" />
-            <span>Get Started Free</span>
+            <span>Contact Us</span>
             <ArrowRight className="w-4 h-4 transition-transform duration-300 group-hover:translate-x-1" />
           </Link>
 

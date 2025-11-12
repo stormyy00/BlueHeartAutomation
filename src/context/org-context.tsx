@@ -20,22 +20,22 @@ const OrgContext = createContext<OrgContextValue>({
   ready: false,
 });
 
-function nameToSlug(name: string): string {
+const nameToSlug = (name: string): string => {
   return name
     .toLowerCase()
     .replace(/\s+/g, "-")
     .replace(/[^a-z0-9-]/g, "")
     .replace(/-+/g, "-")
     .replace(/^-|-$/g, "");
-}
+};
 
-export function OrgProvider({
+export const OrgProvider = ({
   slug,
   children,
 }: {
   slug: string;
   children: React.ReactNode;
-}) {
+}) => {
   const [orgId, setOrgId] = useState<string | null>(null);
   const [orgName, setOrgName] = useState<string | null>(null);
   const [ready, setReady] = useState(false);
@@ -104,8 +104,8 @@ export function OrgProvider({
   );
 
   return <OrgContext.Provider value={value}>{children}</OrgContext.Provider>;
-}
+};
 
-export function useOrg() {
+export const useOrg = () => {
   return useContext(OrgContext);
-}
+};

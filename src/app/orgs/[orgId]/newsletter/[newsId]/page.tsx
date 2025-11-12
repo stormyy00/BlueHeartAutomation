@@ -1,20 +1,9 @@
-import Creator from "@/components/newsletter/creator/creator";
-import { getOrg } from "@/utils/repository/orgRepository";
+import Index from "./_index";
 
-type Params = {
-  params: {
-    orgId: string;
-  };
+export const dynamic = "force-dynamic";
+
+const page = () => {
+  return <Index />;
 };
 
-const Page = async ({ params }: Params) => {
-  const { orgId } = params;
-  const org = await getOrg(orgId);
-  return (
-    <div className="flex w-full bg-white">
-      <Creator org={org!} />
-    </div>
-  );
-};
-
-export default Page;
+export default page;

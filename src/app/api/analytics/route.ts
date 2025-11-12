@@ -1,4 +1,7 @@
 import { env } from "@/utils/env";
+
+export const dynamic = "force-dynamic";
+
 export const GET = async () => {
   try {
     const response = await fetch(

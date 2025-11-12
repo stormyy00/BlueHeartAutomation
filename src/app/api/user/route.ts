@@ -1,7 +1,9 @@
 import { NextResponse } from "next/server";
 import { getServerSession } from "@/utils/auth";
 
-export async function GET() {
+export const dynamic = "force-dynamic";
+
+export const GET = async () => {
   try {
     const session = await getServerSession();
 
@@ -17,4 +19,4 @@ export async function GET() {
       { status: 500 },
     );
   }
-}
+};

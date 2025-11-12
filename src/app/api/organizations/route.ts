@@ -4,18 +4,16 @@ import { db } from "@/db";
 import { organizationMembers, organizations } from "@/db/schema";
 import { eq } from "drizzle-orm";
 
-export async function GET() {
+export const GET = async () => {
+  const { uid, auth, message } = await authenticate();
+
+  if (!uid || auth !== 200) {
+    return NextResponse.json(
+      { error: message || "Unauthorized" },
+      { status: 401 },
+    );
+  }
   try {
-    const { uid, auth, message } = await authenticate();
-
-    if (!uid || auth !== 200) {
-      return NextResponse.json(
-        { error: message || "Unauthorized" },
-        { status: 401 },
-      );
-    }
-
-    // Get all organizations where the user is a member
     const userOrganizations = await db
       .select({
         id: organizations.id,
@@ -40,4 +38,4 @@ export async function GET() {
       { status: 500 },
     );
   }
-}
+};

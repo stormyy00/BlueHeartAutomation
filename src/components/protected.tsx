@@ -7,16 +7,17 @@ import { headers } from "next/headers";
 
 const ProtectedPage = async ({
   children,
+  session,
   role,
   requiresOrg = false,
   requiresAdmin = false,
 }: {
   children: React.ReactNode;
+  session: Awaited<ReturnType<typeof getServerSession>>;
   role?: { admin?: boolean; user?: boolean };
   requiresOrg?: boolean;
   requiresAdmin?: boolean;
 }) => {
-  const session = await getServerSession();
   const header = headers();
   const pathName = header.get("x-url") || "";
   console.log("ProtectedPage pathName:", pathName);
@@ -25,7 +26,6 @@ const ProtectedPage = async ({
     redirect("/signin?callbackUrl=" + pathName);
   }
 
-  // Check organization membership if required
   if (requiresOrg || requiresAdmin) {
     try {
       const memberRole = await getActiveMemberRole();
@@ -41,7 +41,6 @@ const ProtectedPage = async ({
         );
       }
 
-      // Check admin role if required
       if (requiresAdmin && !memberRole.role?.includes("admin")) {
         return (
           <Error

@@ -4,10 +4,10 @@ import { db } from "@/db";
 import { organizationMembers, users } from "@/db/schema";
 import { eq, and } from "drizzle-orm";
 
-export async function GET(
+export const GET = async (
   request: NextRequest,
   { params }: { params: { orgId: string } },
-) {
+) => {
   try {
     const { uid, message, auth } = await authenticate();
     if (auth !== 200 || !uid) {
@@ -60,4 +60,4 @@ export async function GET(
       { status: 500 },
     );
   }
-}
+};

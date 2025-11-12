@@ -9,6 +9,7 @@
         "@ai-sdk/react": "^1.1.21",
         "@ariakit/react": "^0.4.15",
         "@auth/firebase-adapter": "^2.7.4",
+        "@better-fetch/fetch": "^1.1.18",
         "@clerk/nextjs": "^6.9.6",
         "@emoji-mart/data": "^1.2.1",
         "@faker-js/faker": "^9.5.0",

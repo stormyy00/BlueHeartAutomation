@@ -1,12 +1,51 @@
 import { NextRequest, NextResponse } from "next/server";
+import { betterFetch } from "@better-fetch/fetch";
+
+const protectedRoutes = ["/user", "/orgs"];
+const authRoutes = ["/signin", "/signup"];
 
 export const middleware = async (req: NextRequest) => {
-  const headers = req.headers;
   const path = req.nextUrl.pathname;
-  headers.set("x-url", path);
+
+  const requestHeaders = req.headers;
+  requestHeaders.set("x-url", path);
+
+  const isProtectedRoute = protectedRoutes.some((route) =>
+    path.startsWith(route),
+  );
+  const isAuthRoute = authRoutes.some((route) => path.startsWith(route));
+
+  if (isProtectedRoute) {
+    const { data: session } = await betterFetch("/api/auth/get-session", {
+      baseURL: req.nextUrl.origin,
+      headers: {
+        cookie: req.headers.get("cookie") || "",
+      },
+    });
+
+    if (!session) {
+      const signInUrl = new URL("/signin", req.url);
+      signInUrl.searchParams.set("callbackUrl", path);
+      return NextResponse.redirect(signInUrl);
+    }
+  }
+
+  if (isAuthRoute) {
+    const { data: session } = await betterFetch("/api/auth/get-session", {
+      baseURL: req.nextUrl.origin,
+      headers: {
+        cookie: req.headers.get("cookie") || "",
+      },
+    });
+
+    if (session) {
+      return NextResponse.redirect(new URL("/user", req.url));
+    }
+  }
+
   return NextResponse.next({
     request: {
-      headers: headers,
+      headers: requestHeaders,
     },
   });
 };

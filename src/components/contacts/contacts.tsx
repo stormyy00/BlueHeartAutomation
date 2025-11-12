@@ -12,7 +12,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import Recipients from "./newsletter/recipients/recipient-list";
+import Recipients from "@/components/newsletter/recipients/recipient-list";
 import { FullOrganization } from "@/types/organization";
 import { RecipientGroup } from "@/types/metadata";
 

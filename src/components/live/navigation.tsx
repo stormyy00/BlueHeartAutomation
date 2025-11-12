@@ -3,8 +3,6 @@
 import Link from "next/link";
 import { motion } from "framer-motion";
 import { FC, ReactNode } from "react";
-import Image from "next/image";
-import LOGO from "@/public/temporarylogo.png";
 import { signOut, useSession } from "@/utils/auth-client";
 import { LogOut, User } from "lucide-react";
 
@@ -37,18 +35,15 @@ const Navigation = () => {
       <div className="mx-auto flex items-center justify-between px-6 max-w-8xl">
         <Link
           href="/"
-          className="flex items-center text-3xl tracking-wide font-bold text-ttickles-blue hover:opacity-80 transition"
+          className="flex items-center gap-0.5 text-3xl tracking-wide font-bold text-primary hover:opacity-80 transition"
         >
-          <Image
-            src={LOGO}
-            alt="TTickle Logo"
-            className="h-12 w-12"
-            priority
-            quality={100}
-          />
-          <span className="-ml-1.5">ickle</span>
+          <div className="w-8 h-8 bg-gradient-to-br from-primary/35 to-primary/35 rounded-lg flex items-center justify-center shadow-md">
+            <span className="text-primary font-black text-xl leading-none">
+              A
+            </span>
+          </div>
+          <span>mpen</span>
         </Link>
-
         <div className="flex gap-x-6 items-center">
           <NavLink href="/about">About Us</NavLink>
 
