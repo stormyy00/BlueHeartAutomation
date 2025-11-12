@@ -23,7 +23,7 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet";
-import Editor from "@/components/novel/editror";
+import Editor from "@/components/novel/editor";
 import { JSONContent } from "novel";
 import { createEditor } from "@udecode/plate";
 import { AIContext } from "@/context/ai-context";
@@ -31,7 +31,7 @@ import { useChat } from "@ai-sdk/react";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Input } from "@/components/ui/input";
 import Select from "@/components/global/select";
-import { Organization } from "@/data/types";
+import { LegacyOrganization as Organization } from "@/types/organization";
 import { TEMPLATES } from "@/data/newsletter/newsletter";
 import { useNewsletterByIdQuery } from "@/server/useQuery";
 import { ChevronDownIcon } from "lucide-react";
@@ -46,7 +46,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 
 type NewsletterData = {
-  body: string;
+  body: JSONContent | string;
   status: string;
   subject: string;
   recipientGroup: string;
@@ -72,6 +72,7 @@ const Creator = ({ org }: { org: Organization }) => {
     scheduledDate: undefined,
     template: "modern",
   });
+  console.log("Newsletter State:", newsletter);
   const [sheetOpen, setSheetOpen] = useState(false);
   const [sending, setSending] = useState(false);
   const [error, setError] = useState(false);
@@ -140,7 +141,7 @@ const Creator = ({ org }: { org: Organization }) => {
     if (newsletterData) {
       const {
         newsletterData: {
-          newsletter,
+          content,
           status,
           scheduledDate,
           recipientGroup,
@@ -151,21 +152,42 @@ const Creator = ({ org }: { org: Organization }) => {
 
       let formattedContent;
 
-      if (typeof newsletter === "string") {
+      if (typeof content === "string") {
         try {
-          formattedContent = JSON.parse(newsletter);
+          const parsed = JSON.parse(content);
+          // If it's already a proper doc structure, use it
+          if (
+            parsed &&
+            typeof parsed === "object" &&
+            parsed.type === "doc" &&
+            Array.isArray(parsed.content)
+          ) {
+            formattedContent = parsed;
+          } else if (Array.isArray(parsed)) {
+            // If it's an array of nodes, wrap in doc
+            formattedContent = { type: "doc", content: parsed };
+          } else {
+            formattedContent = createBasicJSONContent(content);
+          }
         } catch {
-          formattedContent = createBasicJSONContent(newsletter);
+          formattedContent = createBasicJSONContent(content);
         }
-      } else if (Array.isArray(newsletter)) {
-        formattedContent = createBasicJSONContent(newsletter.join("\n"));
+      } else if (Array.isArray(content)) {
+        formattedContent = { type: "doc", content };
+      } else if (
+        content &&
+        typeof content === "object" &&
+        content.type === "doc"
+      ) {
+        // Already a proper doc structure
+        formattedContent = content;
       } else {
-        formattedContent = newsletter;
+        formattedContent = content;
       }
       setNewsletter({
-        body: formattedContent,
+        body: formattedContent as JSONContent,
         status: status ?? "draft",
-        scheduledDate: scheduledDate ?? null,
+        scheduledDate: (scheduledDate as string | undefined) ?? undefined,
         recipientGroup: recipientGroup ?? "",
         subject: subject ?? "",
         template: template ?? "",
@@ -201,7 +223,8 @@ const Creator = ({ org }: { org: Organization }) => {
   };
 
   const generateDocument = async () => {
-    if (!data) return;
+    const payload = data ?? textContent;
+    if (!payload) return;
 
     setIsLoading(false);
 
@@ -211,7 +234,10 @@ const Creator = ({ org }: { org: Organization }) => {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ document: data }),
+        body: JSON.stringify({
+          document: payload,
+          title: newsletter.subject || "Untitled",
+        }),
       });
 
       if (!res.ok) {
@@ -222,12 +248,54 @@ const Creator = ({ org }: { org: Organization }) => {
       setError(true);
     } finally {
       setIsLoading(true);
-      toast.success("Newsletter saved successfully!");
     }
   };
   const handleChange = (value: JSONContent) => {
     // console.log("Updated", value);
     setData(value);
+  };
+
+  // Auto-save title changes with debouncing
+  const [titleTimeout, setTitleTimeout] = useState<NodeJS.Timeout | null>(null);
+  const [titleSaveStatus, setTitleSaveStatus] = useState<
+    "saved" | "saving" | "unsaved"
+  >("saved");
+
+  const handleTitleChange = (newTitle: string) => {
+    setNewsletter((prev) => ({
+      ...prev,
+      subject: newTitle,
+    }));
+
+    setTitleSaveStatus("unsaved");
+
+    // Clear existing timeout
+    if (titleTimeout) {
+      clearTimeout(titleTimeout);
+    }
+
+    // Set new timeout for auto-save
+    const timeout = setTimeout(async () => {
+      setTitleSaveStatus("saving");
+      try {
+        await fetch(`/api/newsletter/${id}`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            document: data || textContent,
+            title: newTitle || "Untitled",
+          }),
+        });
+        setTitleSaveStatus("saved");
+      } catch (error) {
+        console.error("Failed to save title:", error);
+        setTitleSaveStatus("unsaved");
+      }
+    }, 1000);
+
+    setTitleTimeout(timeout);
   };
 
   if (error) {
@@ -296,13 +364,18 @@ const Creator = ({ org }: { org: Organization }) => {
         <div className="bg-white border-b border-gray-200 px-6 py-4">
           <div className="flex items-center justify-between ">
             <div className="flex items-center space-x-4">
-              <h1 className="text-2xl font-semibold text-gray-900">
-                {newsletter.subject}
-              </h1>
-              {/* <div className="hidden sm:flex items-center space-x-2 text-sm text-gray-500">
-                <div className="w-2 h-2 bg-green-400 rounded-full" />
-                <span>Auto-saved</span>
-              </div> */}
+              <Input
+                value={newsletter.subject}
+                onChange={(e) => handleTitleChange(e.target.value)}
+                placeholder="Newsletter title..."
+                className={`text-2xl font-semibold text-gray-900 px-3 py-2 rounded-md transition-colors ${
+                  titleSaveStatus === "saved"
+                    ? "hover:border-green-300 hover:bg-green-50"
+                    : titleSaveStatus === "saving"
+                      ? "hover:border-yellow-300 hover:bg-yellow-50"
+                      : "hover:border-gray-300 hover:bg-white"
+                }`}
+              />
             </div>
 
             <div className="flex items-center space-x-3">
@@ -362,7 +435,7 @@ const Creator = ({ org }: { org: Organization }) => {
         </div>
         <div className="flex-1 flex overflow-hidden">
           <div className="flex-1 flex items-center justify-center p-2 w-full">
-            <Card className="w-full h-full shadow-sm border-gray-200">
+            <Card className="w-full border-0 h-full shadow-sm border-gray-200">
               <CardContent className="p-0 h-full">
                 {newsletter.body ? (
                   <ScrollArea className="h-full">

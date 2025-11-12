@@ -1,118 +1,232 @@
 "use client";
 import React from "react";
 import { Button } from "../ui/button";
-// import Image from "next/image";
 import { useState } from "react";
 import { Input } from "@/components/ui/input";
-import { Organization } from "@/data/types";
+import { LegacyOrganization as Organization } from "@/types/organization";
 import { Bounce, toast } from "react-toastify";
-import { useSession } from "next-auth/react";
+import { useSession } from "@/utils/auth-client";
 
 const OrganizationForm = () => {
   const [orgID, setOrgID] = useState("");
   const [orgName, setOrgName] = useState("");
   const [activeTab, setActiveTab] = useState("join");
+  const [loading, setLoading] = useState(false);
 
   const { data: session } = useSession();
+  const user = session?.user;
 
-  const joinOrg = () => {
-    fetch(`/api/orgs/${orgID}?data=false`).then((resp) => {
-      resp.json().then((json) => {
-        const exists = json["message"];
-        if (!exists) {
-          toast("This organization does not exist.", {
-            position: "top-center",
-            autoClose: 1500,
-            hideProgressBar: false,
-            closeOnClick: true,
-            pauseOnHover: true,
-            draggable: true,
-            progress: undefined,
-            type: "error",
-            theme: "colored",
-            className: "w-[500px] text-center",
-            transition: Bounce,
-          });
-        } else {
-          //TODO: have to update user object so they actually join the org
-          fetch("/api/orgs", {
-            method: "POST",
-            body: JSON.stringify({
-              mode: "join",
-              orgId: orgID,
-            }),
-            headers: {
-              "Content-Type": "application/json",
-            },
-          }).then((resp) => {
-            resp.json().then((json) => {
-              toast(json["message"], {
-                position: "top-center",
-                autoClose: 1500,
-                hideProgressBar: false,
-                closeOnClick: true,
-                pauseOnHover: true,
-                draggable: true,
-                progress: undefined,
-                type: resp.status == 200 ? "success" : "error",
-                theme: "colored",
-                className: "w-[500px] text-center",
-                transition: Bounce,
-              });
-            });
-          });
-        }
+  const joinOrg = async () => {
+    if (!orgID.trim()) {
+      toast("Please enter an organization ID", {
+        position: "top-center",
+        autoClose: 1500,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        type: "error",
+        theme: "colored",
+        className: "w-[500px] text-center",
+        transition: Bounce,
       });
-    });
+      return;
+    }
+
+    setLoading(true);
+    try {
+      // First check if organization exists
+      const checkResp = await fetch(`/api/orgs/${orgID}?data=false`);
+      const checkData = await checkResp.json();
+
+      if (!checkResp.ok || !checkData.message) {
+        toast("This organization does not exist.", {
+          position: "top-center",
+          autoClose: 1500,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          type: "error",
+          theme: "colored",
+          className: "w-[500px] text-center",
+          transition: Bounce,
+        });
+        return;
+      }
+
+      // Join the organization
+      const joinResp = await fetch("/api/orgs", {
+        method: "POST",
+        body: JSON.stringify({
+          mode: "join",
+          orgId: orgID,
+        }),
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+
+      const joinData = await joinResp.json();
+
+      if (joinResp.ok) {
+        toast("Successfully joined the organization!", {
+          position: "top-center",
+          autoClose: 1500,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          type: "success",
+          theme: "colored",
+          className: "w-[500px] text-center",
+          transition: Bounce,
+        });
+        // Refresh the page to update the user's organization status
+        setTimeout(() => {
+          window.location.reload();
+        }, 1500);
+      } else {
+        toast(joinData.message || "Failed to join organization", {
+          position: "top-center",
+          autoClose: 1500,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          type: "error",
+          theme: "colored",
+          className: "w-[500px] text-center",
+          transition: Bounce,
+        });
+      }
+    } catch (error) {
+      console.error("Error joining organization:", error);
+      toast("An error occurred while joining the organization", {
+        position: "top-center",
+        autoClose: 1500,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        type: "error",
+        theme: "colored",
+        className: "w-[500px] text-center",
+        transition: Bounce,
+      });
+    } finally {
+      setLoading(false);
+    }
   };
 
-  const createOrg = () => {
-    fetch("/api/orgs", {
-      body: JSON.stringify({
-        org: {
-          id: crypto.randomUUID(),
-          name: orgName,
-          description: "Your organization's description goes here.",
-          icon: "",
-          links: [{ name: "Home", url: "http://yourwebsite.tld" }],
-          donors: [],
-          media: [],
-          newsletters: [],
-          notes: [],
-          themes: [],
-          users: [],
-          groups: [],
-          region: "US",
-          owner: session?.user.uuid,
-          calendarId: "",
-        } as Organization,
-        mode: "create",
-      }),
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-    }).then((resp) => {
-      resp.json().then((json) => {
-        const msg = json["message"];
-        toast(
-          resp.status == 200 ? "Successfully created your organization." : msg,
-          {
-            position: "top-center",
-            autoClose: 1500,
-            hideProgressBar: false,
-            closeOnClick: true,
-            pauseOnHover: true,
-            draggable: true,
-            progress: undefined,
-            type: "success",
-            theme: "colored",
-            className: "w-[500px] text-center",
-            transition: Bounce,
-          },
-        );
+  const createOrg = async () => {
+    if (!orgName.trim()) {
+      toast("Please enter an organization name", {
+        position: "top-center",
+        autoClose: 1500,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        type: "error",
+        theme: "colored",
+        className: "w-[500px] text-center",
+        transition: Bounce,
       });
-    });
+      return;
+    }
+
+    setLoading(true);
+    try {
+      const orgId = `org_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+      const organization: Organization = {
+        id: orgId,
+        name: orgName,
+        description: "Your organization's description goes here.",
+        icon: "",
+        links: [{ name: "Home", url: "http://yourwebsite.tld" }],
+        donors: [],
+        media: [],
+        newsletters: [],
+        notes: [],
+        themes: [],
+        users: [user?.id || ""],
+        groups: [],
+        region: "US",
+        owner: user?.id || "",
+        calendarId: "",
+      };
+
+      const response = await fetch("/api/orgs", {
+        method: "POST",
+        body: JSON.stringify({
+          org: organization,
+          mode: "create",
+        }),
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        toast("Successfully created your organization!", {
+          position: "top-center",
+          autoClose: 1500,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          type: "success",
+          theme: "colored",
+          className: "w-[500px] text-center",
+          transition: Bounce,
+        });
+        // Refresh the page to update the user's organization status
+        setTimeout(() => {
+          window.location.reload();
+        }, 1500);
+      } else {
+        toast(data.message || "Failed to create organization", {
+          position: "top-center",
+          autoClose: 1500,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          type: "error",
+          theme: "colored",
+          className: "w-[500px] text-center",
+          transition: Bounce,
+        });
+      }
+    } catch (error) {
+      console.error("Error creating organization:", error);
+      toast("An error occurred while creating the organization", {
+        position: "top-center",
+        autoClose: 1500,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        type: "error",
+        theme: "colored",
+        className: "w-[500px] text-center",
+        transition: Bounce,
+      });
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -153,17 +267,20 @@ const OrganizationForm = () => {
             <label className="block font-semibold">Organization ID</label>
             <Input
               onChange={(e) => setOrgID(e.target.value)}
-              id="email"
-              name="email"
-              type="email"
+              id="orgId"
+              name="orgId"
+              type="text"
               value={orgID}
+              placeholder="Enter organization ID"
               className="w-full border p-2 rounded-md mt-1"
+              disabled={loading}
             />
             <Button
-              className="mt-3 w-full bg-teal-600 text-white p-2 rounded-md hover:bg-slate-600"
+              className="mt-3 w-full bg-teal-600 text-white p-2 rounded-md hover:bg-slate-600 disabled:opacity-50"
               onClick={joinOrg}
+              disabled={loading}
             >
-              Submit
+              {loading ? "Joining..." : "Join Organization"}
             </Button>
           </div>
         ) : (
@@ -175,17 +292,20 @@ const OrganizationForm = () => {
             <label className="block font-semibold">Organization Name</label>
             <Input
               onChange={(e) => setOrgName(e.target.value)}
-              id="email"
-              name="email"
-              type="email"
+              id="orgName"
+              name="orgName"
+              type="text"
               value={orgName}
+              placeholder="Enter organization name"
               className="w-full border p-2 rounded-md mt-1"
+              disabled={loading}
             />
             <Button
-              className="mt-3 w-full bg-teal-600 text-white p-2 rounded-md hover:bg-slate-600"
+              className="mt-3 w-full bg-teal-600 text-white p-2 rounded-md hover:bg-slate-600 disabled:opacity-50"
               onClick={createOrg}
+              disabled={loading}
             >
-              Submit
+              {loading ? "Creating..." : "Create Organization"}
             </Button>
           </div>
         )}

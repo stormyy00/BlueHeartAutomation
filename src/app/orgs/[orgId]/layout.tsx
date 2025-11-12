@@ -1,40 +1,24 @@
-import Navigation from "@/components/global/navigation";
-import ProtectedPage from "@/components/protected";
+import { OrgProvider } from "@/context/org-context";
 import { SidebarProvider } from "@/components/ui/sidebar";
-import { options } from "@/utils/auth";
-import { Metadata } from "next";
-import { getServerSession } from "next-auth";
-import { headers } from "next/headers";
-import { redirect } from "next/navigation";
+import Navigation from "@/components/global/navigation";
 
-export const metadata: Metadata = {
-  title: "Organizations",
-  description: "The Organizations Dashboard for Ttickle",
-};
-
-type LayoutProps = {
+const UserOrgLayout = async ({
+  children,
+  params,
+}: {
   children: React.ReactNode;
-};
-const Layout = async ({ children }: LayoutProps) => {
-  const session = await getServerSession(options);
-  const header = await headers();
-  const path = header.get("x-url") || "";
-  if (!session?.user.orgId || session?.user.orgId === "") {
-    redirect("/user");
-  }
-  if (path === "/orgs" || path.startsWith("/orgs/@mine")) {
-    redirect(path.replace("@mine", session.user.orgId));
-  }
+  params: { orgId: string };
+}) => {
+  const slug = params.orgId;
+
   return (
-    <div>
-      <ProtectedPage>
-        <SidebarProvider>
-          <Navigation />
-          {children}
-        </SidebarProvider>
-      </ProtectedPage>
-    </div>
+    <OrgProvider slug={slug}>
+      <SidebarProvider>
+        <Navigation />
+        {children}
+      </SidebarProvider>
+    </OrgProvider>
   );
 };
 
-export default Layout;
+export default UserOrgLayout;

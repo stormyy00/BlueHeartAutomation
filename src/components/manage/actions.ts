@@ -1,28 +1,34 @@
 "use server";
-import { options } from "@/utils/auth";
-import { db } from "@/utils/firebase";
-import { collection, getDocs, query, where } from "firebase/firestore";
-import { getServerSession } from "next-auth";
+import { db } from "@/db";
+import { organizationMembers, users } from "@/db/schema";
+import { eq } from "drizzle-orm";
 
-export const getUsersbyOrgId = async (orgId: string | string[]) => {
-  const session = await getServerSession(options);
-  if (!session) {
-    throw new Error("Unauthorized");
-  }
+type Member = {
+  id: string;
+  name: string | null;
+  email: string;
+  role: string;
+  joinedAt: Date;
+};
 
+export const getUsersbyOrgId = async (
+  orgId: string | string[],
+): Promise<Member[]> => {
   try {
-    const q = query(collection(db, "users"), where("orgId", "==", orgId));
-    const querySnapshot = await getDocs(q);
-
-    return querySnapshot.docs.map((doc) => {
-      const { name, email, role } = doc.data();
-      return {
-        id: doc.id,
-        name,
-        email,
-        role,
-      };
-    });
+    // Get organization members from database
+    const members = await db
+      .select({
+        id: users.id,
+        name: users.name,
+        email: users.email,
+        role: organizationMembers.role,
+        joinedAt: organizationMembers.joinedAt,
+      })
+      .from(organizationMembers)
+      .innerJoin(users, eq(organizationMembers.userId, users.id))
+      .where(eq(organizationMembers.organizationId, orgId as string));
+    console.log("Fetched members from DB:", members);
+    return members;
   } catch (err) {
     throw new Error(`Internal Server Error: ${err}`);
   }

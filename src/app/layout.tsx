@@ -3,8 +3,7 @@ import localFont from "next/font/local";
 import "./globals.css";
 import Providers from "@/components/providers";
 import { PosHoProvider } from "./provider";
-import { getServerSession } from "next-auth";
-import { options } from "@/utils/auth";
+// import { AuthProvider } from "@/components/providers/auth-provider";
 import { Toaster } from "sonner";
 import dynamic from "next/dynamic";
 
@@ -29,12 +28,11 @@ export const metadata: Metadata = {
     "The Ttickles Platform is built to automate marketing with text generation, text optimization, and chat edits.",
 };
 
-export default async function RootLayout({
+export default function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const session = await getServerSession(options);
   return (
     <PosHoProvider>
       <html lang="en">
@@ -48,7 +46,7 @@ export default async function RootLayout({
           className={`${geistSans.variable} ${geistMono.variable} antialiased`}
         >
           <PostHogPageView />
-          <Providers session={session}>
+          <Providers>
             <Toaster />
             {children}
           </Providers>

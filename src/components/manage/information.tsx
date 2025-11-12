@@ -8,23 +8,23 @@ import { useState } from "react";
 import { ChangeEvent } from "react";
 import { HTMLInputs } from "@/types/inputs";
 import { toast } from "sonner";
-import { Organization } from "@/data/types";
+import { LegacyOrganization as Organization } from "@/types/organization";
 import { Label } from "../ui/label";
 
-interface User {
+type Member = {
   id: string;
   name: string;
   email: string;
   role: string;
-}
+};
 
 type Props = {
   orgId: string | string[];
   orgData: Organization;
-  users?: User[] | undefined;
+  users: Member[];
 };
 
-const Information = ({ orgId, orgData, users = [] }: Props) => {
+const Information = ({ orgId, orgData, users }: Props) => {
   const [edit, setEdit] = useState<boolean>(false);
 
   const [info, setInfo] = useState([
@@ -68,12 +68,9 @@ const Information = ({ orgId, orgData, users = [] }: Props) => {
     );
 
     try {
-      const response = await fetch("/api/manage", {
-        method: "PUT",
-        body: JSON.stringify({
-          orgId: orgId,
-          updatedData: updatedData,
-        }),
+      const response = await fetch(`/api/orgs/${orgId}`, {
+        method: "POST",
+        body: JSON.stringify(updatedData),
       });
 
       if (response.status !== 200) {

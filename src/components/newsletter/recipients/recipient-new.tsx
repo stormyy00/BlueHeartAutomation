@@ -7,19 +7,19 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { Label } from "@/components/ui/label";
-import { Organization, RecipientGroup } from "@/data/types";
+import { RecipientGroup } from "@/types/metadata";
 import { X } from "lucide-react";
 import { Dispatch, KeyboardEvent, SetStateAction, useState } from "react";
 import { toast } from "sonner";
 type Props = {
-  org: Organization;
+  orgId: string | null;
   open: boolean;
   list: RecipientGroup[];
   setOpen: Dispatch<SetStateAction<boolean>>;
   setList: Dispatch<SetStateAction<RecipientGroup[]>>;
 };
 
-const RecipientNew = ({ open, setOpen, setList, list, org }: Props) => {
+const RecipientNew = ({ open, setOpen, setList, list, orgId }: Props) => {
   const [recipientInput, setRecipientInput] = useState("");
   const [groupName, setGroupName] = useState("");
   const [emails, setEmails] = useState<string[]>([]);
@@ -54,7 +54,7 @@ const RecipientNew = ({ open, setOpen, setList, list, org }: Props) => {
     const create = async () => {
       const toastId = toast.loading("Adding new group to organization...");
       setFetching(true);
-      const response = await fetch(`/api/orgs/${org.id}`, {
+      const response = await fetch(`/api/orgs/${orgId}`, {
         method: "POST",
         body: JSON.stringify({
           groups: newList,

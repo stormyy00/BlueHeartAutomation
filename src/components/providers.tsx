@@ -7,17 +7,16 @@ import {
   HydrationBoundary,
   DehydratedState,
 } from "@tanstack/react-query";
-import { SessionProvider } from "next-auth/react";
-import { Session } from "next-auth";
+
 import { useState } from "react";
+// import ProtectedPage from "./protected";
 
 type Props = {
   children: React.ReactNode;
-  session: Session | null;
   dehydratedState?: DehydratedState;
 };
 
-const Providers = ({ children, session, dehydratedState }: Props) => {
+const Providers = ({ children, dehydratedState }: Props) => {
   const [queryClient] = useState(
     () =>
       new QueryClient({
@@ -31,14 +30,14 @@ const Providers = ({ children, session, dehydratedState }: Props) => {
       }),
   );
   return (
-    <SessionProvider session={session}>
-      <QueryClientProvider client={queryClient}>
-        <HydrationBoundary state={dehydratedState}>
-          <ToastContainer />
-          {children}
-        </HydrationBoundary>
-      </QueryClientProvider>
-    </SessionProvider>
+    // <ProtectedPage role={"User"}>
+    <QueryClientProvider client={queryClient}>
+      <HydrationBoundary state={dehydratedState}>
+        <ToastContainer />
+        {children}
+      </HydrationBoundary>
+    </QueryClientProvider>
+    // </ProtectedPage>
   );
 };
 

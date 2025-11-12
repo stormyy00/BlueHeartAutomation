@@ -47,7 +47,7 @@ const Manage = () => {
           <Information
             orgId={orgId}
             orgData={orgQuery.data.data}
-            users={userData}
+            users={(userData || []).map((u) => ({ ...u, name: u.name ?? "" }))}
           />
         </div>
       )}

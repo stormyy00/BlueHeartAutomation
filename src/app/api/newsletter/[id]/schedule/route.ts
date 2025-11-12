@@ -1,12 +1,12 @@
-import { db } from "@/utils/firebase";
-import {
-  collection,
-  doc,
-  getDocs,
-  query,
-  updateDoc,
-  where,
-} from "firebase/firestore";
+// import { db } from "@/utils/firebase";
+// import {
+//   collection,
+//   doc,
+//   getDocs,
+//   query,
+//   updateDoc,
+//   where,
+// } from "firebase/firestore";
 import { NextRequest, NextResponse } from "next/server";
 
 // const createCampaign = async (data: CreateCampaignData) => {
@@ -76,21 +76,21 @@ export const POST = async (
   console.log("SERVER:", date);
   console.log("template", template);
   try {
-    console.log(params.id);
-    const snapshotQuery = query(
-      collection(db, "newsletters"),
-      where("newsletterId", "==", params.id),
-    );
-    const snapshot = await getDocs(snapshotQuery);
+    console.log(params.id, date, subject, recipientGroup, template);
+    // const snapshotQuery = query(
+    //   collection(db, "newsletters"),
+    //   where("newsletterId", "==", params.id),
+    // );
+    // const snapshot = await getDocs(snapshotQuery);
 
-    if (snapshot.empty) {
-      return NextResponse.json(
-        { message: "No newsletter exist." },
-        { status: 404 },
-      );
-    }
+    // if (snapshot.empty) {
+    //   return NextResponse.json(
+    //     { message: "No newsletter exist." },
+    //     { status: 404 },
+    //   );
+    // }
 
-    const newsletter = snapshot.docs[0].data();
+    // const newsletter = snapshot.docs[0].data();
 
     // const campaignData: CreateCampaignData = {
     //   type: "regular",
@@ -140,14 +140,14 @@ export const POST = async (
     //       { status: 500 },
     //     );
     //   });
-    await updateDoc(doc(collection(db, "newsletters"), snapshot.docs[0].id), {
-      ...newsletter,
-      scheduledDate: date,
-      status: "scheduled",
-      subject,
-      recipientGroup,
-      template,
-    });
+    // await updateDoc(doc(collection(db, "newsletters"), snapshot.docs[0].id), {
+    //   ...newsletter,
+    //   scheduledDate: date,
+    //   status: "scheduled",
+    //   subject,
+    //   recipientGroup,
+    //   template,
+    // });
     // .then(async () => {
     //   await fetch(`${process.env.BACKEND_SERVER_URL}/api/scheduler`, {
     //     method: "PUT",

@@ -1,41 +1,51 @@
-import { options } from "@/utils/auth";
-import { db } from "@/utils/firebase";
-import { getDocs, collection, query, where } from "firebase/firestore";
-import { getServerSession } from "next-auth";
 import { NextResponse } from "next/server";
+import { authenticate } from "@/utils/auth";
+import { db } from "@/db";
+import { documents, organizationMembers, type DocumentType } from "@/db/schema";
+import { eq } from "drizzle-orm";
 
 export const GET = async () => {
-  const session = await getServerSession(options);
-  if (!session) {
-    return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
-  }
-
   try {
-    const q = query(
-      collection(db, "newsletters"),
-      where("orgId", "==", session.user.orgId),
-      where("status", "==", "sent"),
-    );
-    const querySnapshot = await getDocs(q);
+    const { uid, message, auth } = await authenticate();
+    if (auth !== 200 || !uid) {
+      return NextResponse.json(
+        { error: message || "Unauthorized" },
+        { status: auth },
+      );
+    }
 
-    const newsletters = querySnapshot.docs.map((doc) => {
-      const data = doc.data();
-      const newsletterContent =
-        data?.newsletter?.content?.[0]?.content
-          ?.map(({ text }: { text: string }) => text)
-          .join("") || "";
-      return {
-        newsletter: newsletterContent || data.newsletter[0],
-        newsletterId: data.newsletterId,
-        newsletterStatus: data.status,
-        newsletterSentDate: data.sentDate ? new Date(data.sentDate) : null,
-      };
-    });
+    // Get user's organization
+    const [membership] = await db
+      .select()
+      .from(organizationMembers)
+      .where(eq(organizationMembers.userId, uid));
 
-    return NextResponse.json({ newsletters }, { status: 200 });
+    if (!membership) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
+    // Get documents for the organization
+    const orgDocuments = await db
+      .select()
+      .from(documents)
+      .where(eq(documents.organizationId, membership.organizationId));
+
+    // Filter for published documents (equivalent to "sent" status)
+    const newsletters = orgDocuments
+      .filter((doc: DocumentType) => doc.status === "published")
+      .map((doc: DocumentType) => {
+        return {
+          newsletter: doc.content,
+          newsletterId: doc.id,
+          newsletterStatus: doc.status,
+          newsletterSentDate: doc.publishedAt,
+        };
+      });
+
+    return NextResponse.json({ newsletters });
   } catch (err) {
     return NextResponse.json(
-      { message: `Internal Server Error: ${err}` },
+      { error: `Internal Server Error: ${err}` },
       { status: 500 },
     );
   }

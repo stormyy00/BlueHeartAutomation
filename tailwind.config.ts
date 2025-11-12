@@ -11,8 +11,8 @@ export default {
     extend: {
       colors: {
         ttickles: {
-          blue: "#006d77",
-          darkblue: "#036C76",
+          blue: "#1C6D96",
+          darkblue: "#1C6D96",
           lightblue: "#83c5be",
           white: "#edf6f9",
           gray: "#7e8287",
@@ -59,7 +59,7 @@ export default {
           "5": "hsl(var(--chart-5))",
         },
         sidebar: {
-          DEFAULT: "#006d77",
+          DEFAULT: "#1C6D96",
           foreground: "hsl(var(--sidebar-foreground))",
           primary: "hsl(var(--sidebar-primary))",
           "primary-foreground": "hsl(var(--sidebar-primary-foreground))",
