@@ -65,7 +65,7 @@ const SignIn = () => {
       }
 
       await signIn.email(
-        { email, password, callbackURL: "http://localhost:3000/user" },
+        { email, password, callbackURL: "/" },
         {
           onSuccess: async () => {
             setLoading(false);

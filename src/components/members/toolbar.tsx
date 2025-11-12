@@ -13,8 +13,11 @@ import {
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 import { useState } from "react";
+import { removeMember } from "@/utils/auth-client";
+import { on } from "events";
 
 type props = {
+  organizationId: string;
   searchValue: string;
   onSearchChange: (value: string) => void;
   setFilterStatus: (status: string) => void;
@@ -27,6 +30,7 @@ type props = {
 };
 
 const Toolbar = ({
+  organizationId,
   searchValue,
   onSearchChange,
   setFilterStatus,
@@ -51,20 +55,26 @@ const Toolbar = ({
 
   const ids = Object.keys(checked).filter((id) => checked[id]);
 
-  const handleDeleteNewsletter = () => {
-    // deleteNewsletter(ids, {
-    //   onSuccess: () => {
-    //     toast.success("Member deleted successfully");
-    //   },
-    //   onError: () => {
-    //     toast.error("Failed to delete member(s)");
-    //   },
-    // });
+  const handleDeleteMember = () => {
+    ids.forEach((id) => {
+      removeMember(
+        { memberIdOrEmail: id, organizationId: organizationId },
+        {
+          onSuccess: () => {
+            console.log("Member removed successfully");
+            refetch();
+          },
+          onError: (error) => {
+            console.error("Error removing member:", error);
+          },
+        },
+      );
+    });
   };
 
   const confirmDelete = () => {
     if (ids.length === 0) {
-      alert("No newsletters selected for deletion.");
+      alert("No members selected for removal.");
       return;
     }
 
@@ -73,7 +83,7 @@ const Toolbar = ({
       text: "Are you sure you want to delete this member? This action is irreversible.",
       color: "red",
       visible: true,
-      onClick: handleDeleteNewsletter,
+      onClick: handleDeleteMember,
       button: "Confirm",
     });
   };
@@ -114,11 +124,10 @@ const Toolbar = ({
             Accept
           </Button>
           <Button
-            onClick={() => {
-              console.log("Reject action", { rows: rows.map((row) => row.id) });
-            }}
+            onClick={confirmDelete}
             variant="outline"
             className="border-red-300 text-red-700 hover:bg-red-100"
+            disabled={ids.length === 0}
           >
             Reject
           </Button>
