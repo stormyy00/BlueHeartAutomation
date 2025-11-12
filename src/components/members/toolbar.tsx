@@ -14,7 +14,6 @@ import {
 } from "@/components/ui/alert-dialog";
 import { useState } from "react";
 import { removeMember } from "@/utils/auth-client";
-import { on } from "events";
 
 type props = {
   organizationId: string;
