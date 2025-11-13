@@ -24,7 +24,7 @@ const Circle = forwardRef<
 });
 Circle.displayName = "Circle";
 
-const Landing = () => {
+const Landing = React.memo(() => {
   return (
     <div className="relative min-h-screen w-full flex items-center justify-center text-foreground overflow-hidden bg-gradient-to-br from-primary/5 via-background to-secondary/5 pt-20">
       <motion.div
@@ -76,7 +76,7 @@ const Landing = () => {
           className="text-4xl md:text-5xl lg:text-6xl font-bold mb-8 max-w-5xl leading-tight"
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 1, ease: "easeOut", delay: 1.2 }}
+          transition={{ duration: 1, ease: "easeOut", delay: 0.6 }}
         >
           <span className="bg-gradient-to-r from-foreground to-foreground/80 bg-clip-text text-transparent">
             The Agentic Platform
@@ -91,7 +91,7 @@ const Landing = () => {
           className="text-lg md:text-xl lg:text-2xl font-medium  max-w-4xl leading-relaxed text-muted-foreground"
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 1, ease: "easeOut", delay: 1.4 }}
+          transition={{ duration: 1, ease: "easeOut", delay: 0.6 }}
         >
           Create compelling newsletters and social media posts in minutes, not
           hours.
@@ -105,7 +105,7 @@ const Landing = () => {
           className="my-4 w-full flex items-center justify-center"
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 1, ease: "easeOut", delay: 1.6 }}
+          transition={{ duration: 1, ease: "easeOut", delay: 0.6 }}
         >
           <AnimatedBeamComponent />
         </motion.div>
@@ -114,7 +114,7 @@ const Landing = () => {
           className="flex flex-col sm:flex-row gap-6 mb-16"
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 1, ease: "easeOut", delay: 1.8 }}
+          transition={{ duration: 1, ease: "easeOut", delay: 0.8 }}
         >
           <Link
             href=""
@@ -139,7 +139,7 @@ const Landing = () => {
           className="text-center"
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 1, ease: "easeOut", delay: 2 }}
+          transition={{ duration: 1, ease: "easeOut", delay: 0.6 }}
         >
           <p className="text-sm text-muted-foreground mb-4">
             Trusted by leading nonprofits
@@ -154,6 +154,8 @@ const Landing = () => {
       </motion.div>
     </div>
   );
-};
+});
+
+Landing.displayName = "Landing";
 
 export default Landing;

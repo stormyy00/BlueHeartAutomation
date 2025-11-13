@@ -1,13 +1,11 @@
-import Navigation from "@/components/global/navigation";
 import ProtectedPage from "@/components/protected";
-import { SidebarProvider } from "@/components/ui/sidebar";
 import { getServerSession } from "@/utils/auth";
 import { Metadata } from "next";
 import { redirect } from "next/navigation";
 
 export const metadata: Metadata = {
   title: "User",
-  description: "The User Dashboard for Ttickle",
+  description: "The User Dashboard for Ampen",
 };
 
 type LayoutProps = {
@@ -21,10 +19,7 @@ const Layout = async ({ children }: LayoutProps) => {
 
   return (
     <ProtectedPage session={session} role={{ user: true }}>
-      <SidebarProvider>
-        <Navigation />
-        {children}
-      </SidebarProvider>
+      {children}
     </ProtectedPage>
   );
 };

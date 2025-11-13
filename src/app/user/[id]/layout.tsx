@@ -1,5 +1,6 @@
-import React from "react";
 import { OrgProvider } from "@/context/org-context";
+import { SidebarProvider } from "@/components/ui/sidebar";
+import Navigation from "@/components/global/navigation";
 
 const UserOrgLayout = async ({
   children,
@@ -10,7 +11,14 @@ const UserOrgLayout = async ({
 }) => {
   const slug = params.id;
 
-  return <OrgProvider slug={slug}>{children}</OrgProvider>;
+  return (
+    <OrgProvider slug={slug}>
+      <SidebarProvider>
+        <Navigation />
+        {children}
+      </SidebarProvider>
+    </OrgProvider>
+  );
 };
 
 export default UserOrgLayout;

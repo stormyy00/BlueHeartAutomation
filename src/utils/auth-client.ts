@@ -8,6 +8,9 @@ import { env } from "./env";
 const authClient = createAuthClient({
   baseURL: env.BETTER_AUTH_URL, // Point to the Next.js app
   plugins: [organizationClient(), magicLinkClient()],
+  fetchOptions: {
+    credentials: "include",
+  },
 });
 
 export const {
