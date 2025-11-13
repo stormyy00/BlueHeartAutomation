@@ -1,6 +1,7 @@
 import { betterAuth } from "better-auth";
 import { drizzleAdapter } from "better-auth/adapters/drizzle";
 import { db } from "@/db";
+import { eq } from "drizzle-orm";
 import {
   users,
   accounts,
@@ -35,6 +36,42 @@ export const auth = betterAuth({
       member: organizationMembers,
     },
   }),
+
+  databaseHooks: {
+    session: {
+      create: {
+        before: async (session) => {
+          // When a new session is created, check if user has organizations
+          // and set the first one as active (or the last active one)
+          try {
+            const userOrgs = await db
+              .select()
+              .from(organizationMembers)
+              .where(eq(organizationMembers.userId, session.userId))
+              .limit(1);
+
+            if (userOrgs.length > 0) {
+              return {
+                data: {
+                  ...session,
+                  activeOrganizationId: userOrgs[0].organizationId,
+                },
+              };
+            }
+          } catch (error) {
+            console.error(
+              "Error setting active organization on session create:",
+              error,
+            );
+          }
+
+          return {
+            data: session,
+          };
+        },
+      },
+    },
+  },
 
   emailAndPassword: {
     enabled: true,

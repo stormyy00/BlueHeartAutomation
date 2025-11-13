@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
+import { useSearchParams } from "next/navigation";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -24,6 +25,9 @@ import type { ErrorContext } from "better-auth/react";
 type Mode = "password" | "magic";
 
 const SignIn = () => {
+  const searchParams = useSearchParams();
+  const callbackUrl = searchParams.get("callbackUrl") || "/";
+
   const [mode, setMode] = useState<Mode>("password");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -55,7 +59,7 @@ const SignIn = () => {
         await signIn.magicLink({
           email,
           name: undefined,
-          callbackURL: "/",
+          callbackURL: callbackUrl,
           newUserCallbackURL: "/welcome",
           errorCallbackURL: "/error",
         });
@@ -65,7 +69,7 @@ const SignIn = () => {
       }
 
       await signIn.email(
-        { email, password, callbackURL: "/" },
+        { email, password, callbackURL: callbackUrl },
         {
           onSuccess: async () => {
             setLoading(false);
