@@ -71,21 +71,24 @@ const OrganizationSelector = () => {
 
   // Auto-redirect if user has only one organization
   // Commented out to allow manual selection even with single organization
-  // useEffect(() => {
-  //   if (organizations && organizations.length === 1) {
-  //     const org = organizations[0];
-  //     // Store the mapping first
-  //     storeOrganizationMapping(org);
-  //     // Create user-friendly slug for URL
-  //     const orgSlug = org.name.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '');
-  //     // Add a small delay to prevent interference with manual clicks
-  //     const timer = setTimeout(() => {
-  //       router.push(`/user/${orgSlug}`);
-  //     }, 100);
+  useEffect(() => {
+    if (organizations && organizations.length === 1) {
+      const org = organizations[0];
 
-  //     return () => clearTimeout(timer);
-  //   }
-  // }, [organizations, router]);
+      storeOrganizationMapping(org);
+
+      const orgSlug = org.name
+        .toLowerCase()
+        .replace(/\s+/g, "-")
+        .replace(/[^a-z0-9-]/g, "");
+      // Add a small delay to prevent interference with manual clicks
+      const timer = setTimeout(() => {
+        router.push(`/user/${orgSlug}`);
+      }, 100);
+
+      return () => clearTimeout(timer);
+    }
+  }, [organizations, router]);
 
   const handleOrganizationSelect = async (org: Organization) => {
     console.log("Organization selected:", org);
@@ -96,15 +99,21 @@ const OrganizationSelector = () => {
       .toLowerCase()
       .replace(/\s+/g, "-")
       .replace(/[^a-z0-9-]/g, "");
-    const { data, error } = await setActiveOrganization({
-      organizationId: org.id,
-      organizationSlug: orgSlug,
-    });
-    console.log("setActiveOrganization result:", { data, error });
-    console.log("Navigating to:", `/user/${orgSlug}`);
 
-    // Use window.location.href instead of router.push to ensure navigation
-    window.location.href = `/user/${orgSlug}`;
+    await setActiveOrganization(
+      {
+        organizationId: org.id,
+      },
+      {
+        onSuccess: async () => {
+          console.log("Active organization set successfully on server");
+          window.location.href = `/user/${orgSlug}`;
+        },
+        onError: (err) => {
+          console.error("Error setting active organization:", err);
+        },
+      },
+    );
   };
 
   const formatDate = (dateString: string) => {
