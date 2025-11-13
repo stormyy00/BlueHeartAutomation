@@ -103,9 +103,9 @@ const Toolbar = ({
       <Select
         options={[
           { label: "All", value: "all" },
-          { label: "Administrator", value: "Administrator" },
-          { label: "Moderator", value: "Moderator" },
-          { label: "User", value: "User" },
+          { label: "owner", value: "Owner" },
+          { label: "admin", value: "Admin" },
+          { label: "member", value: "Member" },
         ]}
         placeholder="Filter by"
         onChange={(selected) => {
